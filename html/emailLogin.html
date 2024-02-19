@@ -4,39 +4,33 @@
     <meta charset="utf-8">
     <title></title>
     <style media="screen">
-        #divClock{
-            font-size: 12px;
-            color: rgb(255, 255, 255);
-        }
-        body {
-            background: #131722!important;
-            color: #fff!important;
-        }
-        body > .grid {
-            height: 100%;
-        }
-        .image {
-            margin-top: -100px;
-        }
-        .column {
-            max-width: 450px;
-        }
-        .colorWhite {
-            color : white!important;
-        }
-        .ui.blue.button {
-            background-color: #0061ff!important;
-            color: #FFFFFF;
-            text-shadow: none;
-            background-image: none;
-        }
-        .ui.inverted.button {
-            box-shadow: 0px 0px 0px 1px #FFFFFF inset !important;
-            background: transparent none;
-            color: #FFFFFF;
-            text-shadow: none !important;
-        }
-        </style>
+      #divClock{
+        font-size: 12px;
+        color: rgb(255, 255, 255);
+      }
+      body {
+        background: #131722!important;
+        color: #fff!important;
+      }
+      body > .grid {
+        height: 100%;
+      }
+      .image {
+        margin-top: -100px;
+      }
+      .column {
+        max-width: 450px;
+      }
+      .colorWhite {
+        color : white!important;
+      }
+      .ui.blue.button {
+        background-color: #0061ff!important;
+        color: #FFFFFF;
+        text-shadow: none;
+        background-image: none;
+      }
+    </style>
     <link rel="stylesheet" type="text/css" href="asset/css/semantic.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -145,6 +139,7 @@
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
+
         window.evt = {}
         window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
           //debugger;
@@ -167,15 +162,13 @@
           if( password == "" ){
             return alert("비밀번호를 입력해주세요")
           }
-          
-
 
           return console.log( "window.el.btn.login - click!" )
 
         })        
         window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){
           console.log( "window.el.btn.join - click!" )
-          window.location.href = "/html/login.html"
+          window.location.href = "/html/join.html"
         })      
       });
       
@@ -188,7 +181,7 @@
         <h2 class="ui image header">
           <div class="content">
             <!-- <div>🔑</div> -->
-            <div class="colorWhite">이메일로 회원가입</div>
+            <div class="colorWhite">이메일로 로그인</div>
             <div id="divClock" class="clock"></div>
           </div>
         </h2>
@@ -199,57 +192,24 @@
                 <input id="inputEmail" type="text" name="email" placeholder="이메일">
               </div>
             </div>
-
             <div class="field">
               <div class="ui input">
                 <input id="inputPassword" type="password" name="password" placeholder="비밀번호">
               </div>
             </div>
-            
-            <div id="btnLogin" class="ui fluid large blue submit button">어카운트 만들기</div>
+            <div id="btnLogin" class="ui fluid large blue submit button">로그인</div>
     
     
           <div class="ui error message"></div>
     
-        
-            <div class="ui horizontal divider colorWhite" style="margin-top: 40px;">
-                광고성메일 수신동의
-            </div>
-
-            <div style="margin-bottom: 10px;">
-                <div class="field">
-                    <div class="ui checkbox">
-                        <input type="checkbox" tabindex="0">
-                        <label class="colorWhite">새 기능, 이벤트 홍보, 대회 안내 등의 알림 수신 (선택)</label>
-                    </div>
-                </div>
-                <div style="font-size: 0.8rem">이용약관의 변경이나 관계 법령에 따라 회원님께 안내되어야 할 중요 고지 사항은 메일 수신 동의 여부에 상관 없이 안내될 수 있습니다.</div>
-            </div>
-          
-            <div class="ui horizontal divider colorWhite">
-              서비스 이용약관 및 개인정보처리방침 동의
-            </div>
-
-            <div style="margin-bottom: 10px;">
-              <div class="field">
-                  <div class="ui checkbox">
-                      <input type="checkbox" tabindex="0">
-                      <label class="colorWhite">회원가입 시 서비스 약관 및 개인정보 처리방침을 확인하였으며, 동의합니다. (필수)</label>
-                  </div>
-              </div>
-              <div style="font-size: 0.8rem">이용약관의 변경이나 관계 법령에 따라 회원님께 안내되어야 할 중요 고지 사항은 메일 수신 동의 여부에 상관 없이 안내될 수 있습니다.</div>
-            </div>
-          
-
         </form>
+        <div style="font-size: 0.8rem;margin-top: 15px;">
+          회원가입시 등록한 이메일로 로그인합니다.
+        </div>
         <div id="btnJoin" class="ui message">
-          이미 어카운트가 있나요? <a href="#">Sign In</a>
+          어카운트가 없나요? <a href="#">Sign Up</a>
         </div>
-        <div class="ui divider">
-        </div>
-        <div>
-          
-        </div>
+
       </div>
     </div>
   </body>

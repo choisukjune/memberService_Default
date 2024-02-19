@@ -51,6 +51,8 @@
 
       window.addEventListener('DOMContentLoaded', function()
       {
+
+        //https://tyrannocoding.tistory.com/51 <-- SSO 로그인 구현방법 읽어보기!
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
@@ -152,7 +154,7 @@
         window.evt.btnLoginClick = window.el.btn.emaillogin.addEventListener("click",function(evt){
          
           console.log( "window.el.btn.join - click!" )
-          window.location.href = "/html/login.html"
+          window.location.href = "/html/emailLogin.html"
 
         })        
         window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){
@@ -211,9 +213,6 @@
     
         <div id="btnJoin" class="ui message">
           어카운트가 없나요? <a href="#">Sign Up</a>
-        </div>
-        <div>
-          회원가입 시 서비스 약관 및 개인정보 처리방침을 확인하였으며, 동의합니다.
         </div>
       </div>
     </div>
