@@ -61,7 +61,7 @@ var ROUTER_DIRECTORY_PATH = CWD + "/js/";
 //-------------------------------------------------------;
 
 global.server = http.createServer(function(req, res){
-
+	console.log( "[S] - " +  req.url );
     req.on('error', function( err ){
         console.error(err);
         res.statusCode = 400;
@@ -153,16 +153,16 @@ global.server = http.createServer(function(req, res){
 		var filePath = "./index.html"
 	}
 	else if( urlPath.indexOf( "asset" ) != -1 ){
-		console.log( req.url.split("?")[0] )
+		//console.log( req.url.split("?")[0] )
 		var filePath = '.' + req.url.split("?")[0].replace("/html","");
 	}
 	else
 	{
-		console.log( req.url.split("?")[0] )
+		//console.log( req.url.split("?")[0] )
 		var filePath = '.' + req.url.split("?")[0];
 	}
 
-	console.log( filePath );
+	//console.log( req.url );
 
 	var extname = path.extname(filePath);
 	var contentType = _oContentTypes[ extname ];
@@ -175,18 +175,26 @@ global.server = http.createServer(function(req, res){
 			if(error.code == 'ENOENT')
 			{
 				res.statusCode = 404;
+				console.log( "   [err] - res.statusCode " +  res.statusCode );
+				console.log( "   [err] - " +  req.url );
+				console.log( "[E] - " +  req.url );
 				res.end('404: File Not Found - 테스트중입니다.');
 			}
 			else
 			{
 				res.writeHead(500);
+				console.log( "   [err] - res.statusCode " +  res.statusCode );
+				console.log( "   [err] - " +  req.url );
+				console.log( "[E] - " +  req.url );çççç
 				res.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
 				res.end(); 
 			}
 		}
 		else
 		{
+			console.log( "[E] - " +  req.url );
 			res.end(content, 'utf-8');
+
 		}
 	});
 	return;
