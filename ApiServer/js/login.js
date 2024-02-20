@@ -16,9 +16,12 @@ var url = require('url');
 
 var ROOT_PATH = process.cwd();
 
+//mongosh command 
+//mongosh "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0"
+
 var CP_COMMAND = {};
 	//CP_COMMAND.MONGO = "..\\Binary\\Mongodb\\mongodb-win32-x86_64-windows-4.4.3\\bin\\mongo";
-	CP_COMMAND.MONGO = "mongo";
+	CP_COMMAND.MONGO = "mongosh";
 
 var DBJS_DIRECTORY_PATH = ROOT_PATH + "/dbjs/";
 var _tDbjs_PATH = ROOT_PATH + "/tdbjs/";
@@ -43,6 +46,7 @@ var exec_query_DB = function( dbjsNm, bResult ){
 	var DBJS_NM = dbjsNm;
 	var FILE_PATH = ROOT_PATH + "/dbjs/" + DBJS_NM;
 
+	/*
 	var _t_command = CP_COMMAND.MONGO + " --username <!=ID=!> --password <!=PWD=!> --authenticationDatabase admin --host <!=HOST=!> --port <!=PORT=!> admin \"<!=FILE_PATH=!>\"";
 	if( bResult ) _t_command = _t_command + " > " + dbjsNm + "__" + Date.now() + ".result";
 	
@@ -51,6 +55,9 @@ var exec_query_DB = function( dbjsNm, bResult ){
 		.replace( "<!=HOST=!>", global.CONST.MongoDB.OPTIONS.self.HOST )
 		.replace( "<!=PORT=!>", global.CONST.MongoDB.OPTIONS.self.PORT )
 		.replace( "<!=FILE_PATH=!>", FILE_PATH );
+	*/
+
+	var command = CP_COMMAND.MONGO + ` "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0" ${FILE_PATH}`
 	console.log( command )
 	var r = cp.execSync( command ).toString();
 		r = deleteLines( r , 4 )
@@ -245,7 +252,30 @@ function SHA256(s){
 	
 // 암호화 확인
 // console.log(SHA256("Test")) ;
-// 출처: https://fruitdev.tistory.com/191 [과일가게 개발자:티스토리]
+// https://ko.javascript.info/cookie 쿠키 내용확인
+
+function parseCookie( reqCookie ){
+
+	if( !reqCookie ) return {};
+	var _cookies = reqCookie.split("; ")
+		
+	console.log( _cookies );
+	
+	var r = {}
+	var i = 0,iLen = _cookies.length,io;
+
+	for(;i<iLen;++i){
+		io = _cookies[ i ];
+		var _t = io.split( "=" );
+		r[ _t[0] ] = _t[ 1 ]
+	}
+
+	return r;
+}
+
+function randomStr(){
+	return Math.random().toString(36).substr(2,11)
+}
 
 //-------------------------;
 //-------------------------;
@@ -288,6 +318,11 @@ function SHA256(s){
 		
 		https://lab.cliel.com/entry/nodejs-http
 		여기서 세션처리하는 거 확인하기
+
+		https://www.mongodb.com/docs/manual/tutorial/expire-data/
+		몽고디비에서 세션컬렉션의 문서를 시간이지나면 자동으로 파기하는 방법
+
+		일정시간이 지나고, 브라우저 쿠키가 만료되고, 로그인페이지로 이동시김
 		*/
 		console.log("[ S ] - /Login");
 
@@ -296,21 +331,8 @@ function SHA256(s){
 		// var _tdbjs_nm = "find";
 		
 		console.log( req.headers.cookie )
-		
-		var _cookies = req.headers.cookie.split("; ")
-		
-		console.log( _cookies );
-		
-		var cookies = {}
-		var i = 0,iLen = _cookies.length,io;
 
-		for(;i<iLen;++i){
-			io = _cookies[ i ];
-			var _t = io.split( "=" );
-			cookies[ _t[0] ] = _t[ 1 ]
-		}
-
-		console.log( cookies );
+		console.log( parseCookie( req.headers.cookie ) );
 
 		res.statusCode = 200;
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
@@ -339,13 +361,14 @@ function SHA256(s){
 
 		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
 		// var r = exec_query_DB( dbjs_nm )
-		var r = "{ a: 1 }"
+		var r = "{ a: 1 }" + randomStr();
 		var sid = SHA256( r )
-		res.setHeader('Set-Cookie', 'sid=' + sid )
+		res.setHeader('Set-Cookie', 'sid=' + sid + "; max-age=" + 3600 );
+	
 
 		console.log("[ E ] - /Login");
 
-		res.end( r )	
+		res.end( JSON.stringify( parseCookie( req.headers.cookie ), null, 4 ) )	
 
 	});
 	/**
@@ -370,11 +393,11 @@ function SHA256(s){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	global.server.addRouter("/find",function( req, res ){
+	global.server.addRouter("/test",function( req, res ){
 
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "find";
+		var _tdbjs_nm = "insert";
 				
 
 		res.statusCode = 200;
@@ -393,9 +416,8 @@ function SHA256(s){
 			res.end("{ sucess : 0, data : null }");
 		}
 		
-		var query = _tQuery.replace( "<!=BRAND_NM=!>", paramsO.brandNm )
-		.replace( "<!=PAGE=!>", paramsO.page );
-		var dbjs_nm = "find_" + paramsO.brandNm + ".dbjs";
+		var query = _tQuery
+		var dbjs_nm = "insert.dbjs";
 
 		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
 		
