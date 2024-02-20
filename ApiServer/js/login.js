@@ -329,7 +329,7 @@ function randomStr(){
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
 		// var _tdbjs_nm = "find";
-		
+		console.log( paramsO )
 		console.log( req.headers.cookie )
 
 		console.log( parseCookie( req.headers.cookie ) );
@@ -368,7 +368,7 @@ function randomStr(){
 
 		console.log("[ E ] - /Login");
 
-		res.end( JSON.stringify( parseCookie( req.headers.cookie ), null, 4 ) )	
+		res.end( sid )	
 
 	});
 	/**

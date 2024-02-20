@@ -61,7 +61,7 @@ var ROUTER_DIRECTORY_PATH = CWD + "/js/";
 //-------------------------------------------------------;
 
 global.server = http.createServer(function(req, res){
-	console.log( "[S] - " +  req.url );
+	
     req.on('error', function( err ){
         console.error(err);
         res.statusCode = 400;
@@ -74,130 +74,147 @@ global.server = http.createServer(function(req, res){
 	//var routerNm = req.url.replace(/\//,"");
 	var routerNm = req.url.split("?")[0];
 	
-	
-	//필요시 mime-type 추가함;
-	var _oContentTypes = {
-		".aac": "audio/aac",
-		".abw": "application/x-abiword",
-		".arc": "application/octet-stream",
-		".avi": "video/x-msvideo",
-		".azw": "application/vnd.amazon.ebook",
-		".bin": "application/octet-stream",
-		".bz": "application/x-bzip",
-		".bz2": "application/x-bzip2",
-		".csh": "application/x-csh",
-		".css": "text/css",
-		".csv": "text/csv",
-		".doc": "application/msword",
-		".epub": "application/epub+zip",
-		".gif": "image/gif",
-		".html": "text/html",
-		".htm": "text/html",
-		".ico": "image/x-icon",
-		".ics": "text/calendar",
-		".jar": "application/java-archive",
-		".jpeg.jpg": "image/jpeg",
-		".jpg.jpg": "image/jpeg",
-		".js": "application/js",
-		".json": "application/json",
-		".midi": "audio/midi",
-		".mid": "audio/midi",
-		".mpeg": "video/mpeg",
-		".mpkg": "application/vnd.apple.installer+xml",
-		".odp": "application/vnd.oasis.opendocument.presentation",
-		".ods": "application/vnd.oasis.opendocument.spreadsheet",
-		".odt": "application/vnd.oasis.opendocument.text",
-		".oga": "audio/ogg",
-		".ogv": "video/ogg",
-		".ogx": "application/ogg",
-		".pdf": "application/pdf",
-		".ppt": "application/vnd.ms-powerpoint",
-		".rar": "application/x-rar-compressed",
-		".rtf": "application/rtf",
-		".sh": "application/x-sh",
-		".svg": "image/svg+xml",
-		".swf": "application/x-shockwave-flash",
-		".tar": "application/x-tar",
-		".tiff": "image/tiff",
-		".tif": "image/tiff",
-		".ttf": "application/x-font-ttf",
-		".vsd": "application/vnd.visio",
-		".wav": "audio/x-wav",
-		".weba": "audio/webm",
-		".webm": "video/webm",
-		".webp": "image/webp",
-		".woff": "application/x-font-woff",
-		".xhtml": "application/xhtml+xml",
-		".xls": "application/vnd.ms-excel",
-		".xml": "application/xml",
-		".xul": "application/vnd.mozilla.xul+xml",
-		".zip": "application/zip",
-	//    ".3gp": "video/3gpp\naudio/3gpp if it doesn't contain video",
-	//    ".3g2": "video/3gpp2\naudio/3gpp2 if it doesn't contain video",
-		".7z": "application/x-7z-compressed"
-	}
+	if (req.method == 'POST') {
+        var jsonString = '';
 
-	//라우터를 활용하는부분이지만 이서버는 html서빙망 하므로 사용하지않음;
-	/*
-	if( global.ROUTER_LIST[ routerNm ] )
-	{
-		res.statusCode = 200;
-		return global.ROUTER_LIST[ routerNm ]( req, res );
-	}
-	*/
-	
-	var urlPath = req.url.split("?")[0];
+        req.on('data', function (data) {
+            jsonString += data;
+        });
 
-	if( req.url == "/" )
-	{
-		var filePath = "./index.html"
-	}
-	else if( urlPath.indexOf( "asset" ) != -1 ){
-		//console.log( req.url.split("?")[0] )
-		var filePath = '.' + req.url.split("?")[0].replace("/html","");
-	}
+        req.on('end', function () {
+			//console.log(JSON.parse(jsonString));
+			res.statusCode = 200;
+			global.ROUTER_LIST[ routerNm ]( req, res, JSON.parse(jsonString) );
+        });
+    }
 	else
 	{
-		//console.log( req.url.split("?")[0] )
-		var filePath = '.' + req.url.split("?")[0];
-	}
-
-	//console.log( req.url );
-
-	var extname = path.extname(filePath);
-	var contentType = _oContentTypes[ extname ];
-
-	res.writeHead(200, { 'Content-Type': contentType + ';charset=UTF-8' });		
 	
-	fs.readFile(filePath, function(error, content) {
-		if(error)
+		//필요시 mime-type 추가함;
+		var _oContentTypes = {
+			".aac": "audio/aac",
+			".abw": "application/x-abiword",
+			".arc": "application/octet-stream",
+			".avi": "video/x-msvideo",
+			".azw": "application/vnd.amazon.ebook",
+			".bin": "application/octet-stream",
+			".bz": "application/x-bzip",
+			".bz2": "application/x-bzip2",
+			".csh": "application/x-csh",
+			".css": "text/css",
+			".csv": "text/csv",
+			".doc": "application/msword",
+			".epub": "application/epub+zip",
+			".gif": "image/gif",
+			".html": "text/html",
+			".htm": "text/html",
+			".ico": "image/x-icon",
+			".ics": "text/calendar",
+			".jar": "application/java-archive",
+			".jpeg.jpg": "image/jpeg",
+			".jpg.jpg": "image/jpeg",
+			".js": "application/js",
+			".json": "application/json",
+			".midi": "audio/midi",
+			".mid": "audio/midi",
+			".mpeg": "video/mpeg",
+			".mpkg": "application/vnd.apple.installer+xml",
+			".odp": "application/vnd.oasis.opendocument.presentation",
+			".ods": "application/vnd.oasis.opendocument.spreadsheet",
+			".odt": "application/vnd.oasis.opendocument.text",
+			".oga": "audio/ogg",
+			".ogv": "video/ogg",
+			".ogx": "application/ogg",
+			".pdf": "application/pdf",
+			".ppt": "application/vnd.ms-powerpoint",
+			".rar": "application/x-rar-compressed",
+			".rtf": "application/rtf",
+			".sh": "application/x-sh",
+			".svg": "image/svg+xml",
+			".swf": "application/x-shockwave-flash",
+			".tar": "application/x-tar",
+			".tiff": "image/tiff",
+			".tif": "image/tiff",
+			".ttf": "application/x-font-ttf",
+			".vsd": "application/vnd.visio",
+			".wav": "audio/x-wav",
+			".weba": "audio/webm",
+			".webm": "video/webm",
+			".webp": "image/webp",
+			".woff": "application/x-font-woff",
+			".xhtml": "application/xhtml+xml",
+			".xls": "application/vnd.ms-excel",
+			".xml": "application/xml",
+			".xul": "application/vnd.mozilla.xul+xml",
+			".zip": "application/zip",
+		//    ".3gp": "video/3gpp\naudio/3gpp if it doesn't contain video",
+		//    ".3g2": "video/3gpp2\naudio/3gpp2 if it doesn't contain video",
+			".7z": "application/x-7z-compressed"
+		}
+
+		//라우터를 활용하는부분이지만 이서버는 html서빙망 하므로 사용하지않음;
+		
+		if( global.ROUTER_LIST[ routerNm ] )
 		{
-			if(error.code == 'ENOENT')
-			{
-				res.statusCode = 404;
-				console.log( "   [err] - res.statusCode " +  res.statusCode );
-				console.log( "   [err] - " +  req.url );
-				console.log( "[E] - " +  req.url );
-				res.end('404: File Not Found - 테스트중입니다.');
-			}
-			else
-			{
-				res.writeHead(500);
-				console.log( "   [err] - res.statusCode " +  res.statusCode );
-				console.log( "   [err] - " +  req.url );
-				console.log( "[E] - " +  req.url );çççç
-				res.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
-				res.end(); 
-			}
+			res.statusCode = 200;
+			return global.ROUTER_LIST[ routerNm ]( req, res );
+		}
+		
+		console.log( "[S] - " +  req.url );
+		var urlPath = req.url.split("?")[0];
+
+		if( req.url == "/" )
+		{
+			var filePath = "./index.html"
+		}
+		else if( urlPath.indexOf( "asset" ) != -1 ){
+			//console.log( req.url.split("?")[0] )
+			var filePath = '.' + req.url.split("?")[0].replace("/html","");
 		}
 		else
 		{
-			console.log( "[E] - " +  req.url );
-			res.end(content, 'utf-8');
-
+			//console.log( req.url.split("?")[0] )
+			var filePath = '.' + req.url.split("?")[0];
 		}
-	});
+
+		//console.log( req.url );
+
+		var extname = path.extname(filePath);
+		var contentType = _oContentTypes[ extname ];
+
+		res.writeHead(200, { 'Content-Type': contentType + ';charset=UTF-8' });		
+		
+		fs.readFile(filePath, function(error, content) {
+			if(error)
+			{
+				if(error.code == 'ENOENT')
+				{
+					res.statusCode = 404;
+					console.log( "   [err] - res.statusCode " +  res.statusCode );
+					console.log( "   [err] - " +  req.url );
+					console.log( "[E] - " +  req.url );
+					res.end('404: File Not Found - 테스트중입니다.');
+				}
+				else
+				{
+					res.writeHead(500);
+					console.log( "   [err] - res.statusCode " +  res.statusCode );
+					console.log( "   [err] - " +  req.url );
+					console.log( "[E] - " +  req.url );çççç
+					res.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
+					res.end(); 
+				}
+			}
+			else
+			{
+				console.log( "[E] - " +  req.url );
+				res.end(content, 'utf-8');
+
+			}
+		});
+	}
 	return;
+
 })
 
 

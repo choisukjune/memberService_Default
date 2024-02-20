@@ -7,7 +7,7 @@ var col0 = db0.getCollection( col_nm );
 //collection data all remove;
 col0.remove({});
 
-var _o = { _id :1, d :1,t:1}
+var _o = { _id :1, userId : "12k4@naver.com", password : "123qwe"}
 
 
 col0.insert( _o );
