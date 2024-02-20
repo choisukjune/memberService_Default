@@ -21,4 +21,4 @@ var _q = {};
  
 var r = col0.findOne( _q )
 
-printjson( r )
+print( JSON.stringify(r) )

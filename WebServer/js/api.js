@@ -159,13 +159,13 @@ function httpPostCallback(option,data, cbFunction ) {
 		var _d = { email : "12k4@naver.com", pass : "123qwe"}
 		httpPostCallback( option, _d, function(d){
 
-			console.log( d );
+			
 			var _d = JSON.parse( d );
-
+			console.log( "====>", _d );
 			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			res.statusCode = 301;
-			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-			res.end( _d );
+			//res.statusCode = 301;
+			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+			res.end( d );
 		})
 
 		

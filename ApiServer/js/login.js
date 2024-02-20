@@ -367,7 +367,7 @@ function randomStr(){
 		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
 		var _r = exec_query_DB( dbjs_nm )
 		console.log( _r );
-		var r = deleteLines( _r, 4 );
+		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
 		console.log( r )
 		var sid = SHA256( r + randomStr() )
 	

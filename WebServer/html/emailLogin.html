@@ -76,6 +76,16 @@
         //-------------------------------------------------------;
         //-------------------------------------------------------;
 
+        var webStorageSetItem = function( o ){
+          debugger;
+          var s,so;
+          for( s in o ){
+            so = o[ s ];
+            console.log( s );
+            window.localStorage.setItem( s , so );
+          }
+        }
+
     	/* 
     	[요약 설명]
     	1. XMLHttpRequest : 비동기식 통신 방식 객체이며, 서버와 데이터를 교환할 때 사용됩니다
@@ -179,7 +189,7 @@
     	
     	
     	/* 이벤트 함수 정의 */
-    	function requestPostBodyJson( url, data ){
+    	function requestPostBodyJson( url, data, cbFunction ){
     		console.log("");
     		console.log("[requestPostBodyJson] : [start]");    		
     		console.log("");
@@ -189,7 +199,7 @@
     		
     		// 전송 json 데이터 선언
     		var jsonData = data//{"userId" : 1 , "id" : 1};
-    		    		    		    		
+    		    		    		    		debugger;
     		// XMLHttpRequest 객체 생성 및 요청 수행
     		var xhr = new XMLHttpRequest();
     		xhr.open("POST", url, true);
@@ -206,7 +216,8 @@
     					console.log("[status] : " + xhr.status);
     					console.log("[response] : " + "[success]");    				   				    				
     					console.log("[response] : " + xhr.responseText);
-    					console.log("");        				
+    					console.log("");
+              cbFunction( xhr.responseText )        				
     				}
     				else {
     					console.log("[status] : " + xhr.status);
@@ -286,22 +297,31 @@
           }
           console.log( "window.el.btn.login - click!" );
 
-          var xhr = new XMLHttpRequest();
-            xhr.open("GET" , `/api/login`, {redirect: "follow",});
-            xhr.onreadystatechange = function(){
+          // var xhr = new XMLHttpRequest();
+          //   xhr.open("GET" , `/api/login`, {redirect: "follow",});
+          //   xhr.onreadystatechange = function(){
               
-              if( xhr.readyState == 4 && xhr.status == 200)
-              {
-                var d =  xhr.responseText
-                debugger;
-                console.log(d)
-                location.href="/"
-              }
-            }
+          //     if( xhr.readyState == 4 && xhr.status == 200)
+          //     {
+          //       var d =  xhr.responseText
+          //       debugger;
+          //       console.log(d)
+          //       location.href="/"
+          //     }
+          //   }
 
-            xhr.send();
-            requestPostBodyJson('/api/login', { a:1,b:2})
-            window.localStorage.setItem("email", "12k4@naver.com");
+          //   xhr.send();
+            requestPostBodyJson('/api/login', { a:1,b:2}, function( d ){
+              console.log( "===========" )
+              console.log( "===========" )
+              console.log( "===========" )
+              console.log( "===========" )
+              var _d = JSON.parse( d );
+              webStorageSetItem( JSON.parse( _d.d ) )
+              location.href="/"
+
+            })
+           
 
 
     
