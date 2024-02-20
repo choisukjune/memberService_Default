@@ -78,7 +78,7 @@ var exec_query_DB = function( dbjsNm, bResult ){
 var deleteLines = function( str, n ){
 	var i = 0,iLen = n,io;
 	for(;i<iLen;++i){ str = str.slice(str.indexOf("\n") + 1, str.length ); }
-	//str = str.replace( /\t/g, '' );
+	//]]str = str.replace( /\t/g, '' );
 	//str = str.replace( /\r\n/g, '' );
 	return str;
 };
@@ -313,7 +313,7 @@ function randomStr(){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	global.server.addRouter("/login",function( req, res ){
+	global.server.addRouter("/login",function( req, res, data ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -326,49 +326,54 @@ function randomStr(){
 		*/
 		console.log("[ S ] - /Login");
 
+		console.log( data )
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
-		// var _tdbjs_nm = "find";
+		var paramBody = JSON.parse( data )
+		var _tdbjs_nm = "login";
+		
+		console.log( routerNm )
 		console.log( paramsO )
+		console.log( paramBody )
 		console.log( req.headers.cookie )
 
-		console.log( parseCookie( req.headers.cookie ) );
+		//console.log( parseCookie( req.headers.cookie ) );
 
 		res.statusCode = 200;
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
-		// console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
 		
-		// try
-		// {
-		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		// }
-		// catch( err )
-		// {
-		// 	console.log( routerNm + " - DBJS File Not Found! - " + err );
-		// 	res.end("{ sucess : 0, data : null }");
-		// }
+		try
+		{
+			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		}
+		catch( err )
+		{
+			console.log( routerNm + " - DBJS File Not Found! - " + err );
+			res.end("{ sucess : 0, data : null }");
+		}
 		
-		// var query = _tQuery.replace( "<!=BRAND_NM=!>", paramsO.brandNm )
-		// .replace( "<!=PAGE=!>", paramsO.page );
-		// var dbjs_nm = "find_" + paramsO.brandNm + ".dbjs";
+		var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
+		.replace( "<!=PASSWORD=!>", paramBody.pass );
+		var dbjs_nm = "login_" + paramBody.email + ".dbjs";
 
-		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
 		
-		// console.log( FILE_PATH )
+		console.log( FILE_PATH )
 
-		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		// var r = exec_query_DB( dbjs_nm )
-		var r = "{ a: 1 }" + randomStr();
-		var sid = SHA256( r )
-		res.setHeader('Set-Cookie', 'sid=' + sid + "; max-age=" + 3600 );
+		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		var _r = exec_query_DB( dbjs_nm )
+		console.log( _r );
+		var r = deleteLines( _r, 4 );
+		console.log( r )
+		var sid = SHA256( r + randomStr() )
 	
-
 		console.log("[ E ] - /Login");
 
-		res.end( sid )	
+		res.end( JSON.stringify( { sid : sid, d : r } ) )	
 
 	});
 	/**

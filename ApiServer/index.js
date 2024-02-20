@@ -31,7 +31,7 @@ global.server.addRouter = function(a,b){ return global.ROUTER_LIST[ a ] = b; };
 //-------------------------;
 
 global.CONFIG = {};
-global.CONFIG.wss = 0;
+global.CONFIG.wss = 0; //소켓통신사용여부 1 : true / 0 : false;
 
 //-------------------------;
 //-------------------------;
