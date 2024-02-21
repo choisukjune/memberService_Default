@@ -235,7 +235,8 @@
          showClock();
         }
         var renderAfterLogin = function(){
-          var userEmail = window.localStorage.getItem("email")
+          var userId = window.localStorage.getItem("userId")
+          var name = window.localStorage.getItem("name")
 
           var html = `
           <div class="column" style="max-width: 450px;">
@@ -248,7 +249,8 @@
             </h2>
             <div class="content">
               <div>회원정보</div>
-              ${userEmail}
+              ${userId}<br>
+              ${name}
             </div>
             <div class="ui horizontal divider colorWhite">
               로그아웃할거에요~

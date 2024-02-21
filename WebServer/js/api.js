@@ -156,7 +156,10 @@ function httpPostCallback(option,data, cbFunction ) {
 				//"Content-Length": Buffer.byteLength(post_data)
 			}
 		};
-		var _d = { email : "12k4@naver.com", pass : "123qwe"}
+		
+		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
+		var _d = { email : data.email, pass : data.pass }
+
 		httpPostCallback( option, _d, function(d){
 
 			

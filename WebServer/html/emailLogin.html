@@ -311,7 +311,8 @@
           //   }
 
           //   xhr.send();
-            requestPostBodyJson('/api/login', { a:1,b:2}, function( d ){
+            var postBody = { email : email, pass : password }
+            requestPostBodyJson('/api/login',postBody , function( d ){
               console.log( "===========" )
               console.log( "===========" )
               console.log( "===========" )
