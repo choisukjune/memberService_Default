@@ -53,6 +53,10 @@
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="asset/js/semantic.js"></script>
+    <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- (2) LoginWithNaverId Javscript SDK -->
+	  <script src="asset/js/naveridlogin_js_sdk_2.0.2.js"></script>
     <script type="text/javascript">
 
 
@@ -186,10 +190,12 @@
               <button id="yahoo" class="ui black basic mini button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="#6001D2" d="M11.05 18.42L5 4h5.58l3.26 8.37L17.56 4h5.11L14.3 24H8.72l2.33-5.58z"></path></svg>
               </button>
-
-              <button id="naver" class="ui black basic mini button">
+              
+              <button id="naverIdLogin" class="ui black basic mini button">
+                <a id="naverIdLogin_loginButton" href="/api/oauth/naver" role="button">  
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="#55BA4D" d="M6 6v16h5.33v-8l5.34 8H22V6h-5.33v7.82L11.33 6"></path></svg>
-              </button>
+                  </a>
+                </button>
 
               <button id="kakao" class="ui black basic mini button">
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="28" height="28" viewBox="0 0 48 48">
@@ -201,6 +207,8 @@
             <div class="ui horizontal divider colorWhite">
               또는
             </div>
+            <div id='message'></div>
+      <div id='button_area'></div>
             <div id="btnEmailLogin" class="ui fluid inverted large submit button">이메일로 로그인</div>
               <div id="btnJoin" class="ui message">
               어카운트가 없나요? <a href="#">Sign Up</a>
@@ -289,10 +297,56 @@
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
-        
+    //     const naverLogin = new naver.LoginWithNaverId(
+    //     {
+    //       clientId: "M8iKRLr_1Ld0T3nVxeV_",
+    //       callbackUrl: "http://localhost:8889",
+    //       //loginButton: {color: "green", type: 2, height: 40}
+    //       }
+    //     );
 
+
+    // naverLogin.init();
+    // naverLogin.getLoginStatus(function (status) {
+    //   if (status) {
+    //       const nickName=naverLogin.user.getNickName();
+    //       const age=naverLogin.user.getAge();
+    //       const birthday=naverLogin.user.getBirthday();
+
+    //       if(nickName===null||nickName===undefined ){
+    //         alert("별명이 필요합니다. 정보제공을 동의해주세요.");
+    //         naverLogin.reprompt();
+    //         return ;  
+    //      }else{
+    //       setLoginStatus();
+    //      }
+    // }
+    // });
+    // console.log(naverLogin);
+
+    // function setLoginStatus(){
+
+    //   const message_area=document.getElementById('message');
+    //   message_area.innerHTML=`
+    //   <h3> Login 성공 </h3>
+    //   <div>user Nickname : ${naverLogin.user.nickname}</div>
+    //   <div>user Age(범위) : ${naverLogin.user.email}</div>
+    //   <div>user Birthday : ${naverLogin.user.mobile}</div>
+    //   `;
+    //   const button_area=document.getElementById('button_area');
+    //   button_area.innerHTML="<button id='btn_logout'>로그아웃</button>";
+
+    //   const logout=document.getElementById('btn_logout');
+    //   logout.addEventListener('click',(e)=>{
+    //     naverLogin.logout();
+    // location.replace("http://localhost:8889");
+    //   })
+    // }
       });
       
+    </script>
+    <script>
+      //
     </script>
   </head>
   <body>
@@ -301,6 +355,7 @@
 
       </div>
       <div class="column"> -->
+        <!-- <div id="naverIdLogin"><a id="naverIdLogin_loginButton" href="#" role="button"><img src="https://static.nid.naver.com/oauth/big_g.PNG" width=320></a></div> -->
         <div id="container" class="ui middle aligned center aligned grid" style="height: 100%;"></div>
       <!-- </div> -->
     <!-- </div> -->

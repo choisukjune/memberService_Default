@@ -13,7 +13,16 @@ var url = require('url');
 //-------------------------------------------------------;
 // VARIABLE;
 //-------------------------------------------------------;
+/*
 
+Client ID
+M8iKRLr_1Ld0T3nVxeV_
+
+Client Secret
+fiKA87hc1K
+
+
+*/
 var ROOT_PATH = process.cwd();
 
 //mongosh command 
@@ -362,77 +371,21 @@ function randomStr(){
 
 		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
 		
-		console.log( FILE_PATH )
+		console.log( FILE_PATH );
 
 		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm )
-		console.log( _r );
+		var _r = exec_query_DB( dbjs_nm );
+		
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r )
-		var sid = SHA256( r + randomStr() )
+		
+		var sid = SHA256( r + randomStr() );
 	
 		console.log("[ E ] - /Login");
 
 		res.end( JSON.stringify( { sid : sid, d : r } ) )	
 
 	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
 
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/find?brand=varihope&page=1
-	* </code>
-	*/
-	global.server.addRouter("/test",function( req, res ){
-
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "insert";
-				
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery
-		var dbjs_nm = "insert.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		res.end( r )	
-
-	});
 	/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function

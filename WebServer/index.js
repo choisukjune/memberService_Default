@@ -87,6 +87,11 @@ global.server = http.createServer(function(req, res){
 			global.ROUTER_LIST[ routerNm ]( req, res, JSON.parse(jsonString) );
         });
     }
+	else if( global.ROUTER_LIST[ routerNm ] )
+	{
+		res.statusCode = 200;
+		global.ROUTER_LIST[ routerNm ]( req, res );
+	}
 	else
 	{
 	
