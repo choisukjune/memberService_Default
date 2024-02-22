@@ -239,6 +239,92 @@ function httpPostCallback(option,data, cbFunction ) {
 	*
 	* @example
 	* <code>
+		http://localhost:8889/html/test.html
+	* </code>
+	*/
+	global.server.addRouter("/api/checksession",function( req, res, data ){
+
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		console.log( data )
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+
+		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
+		httpGetCallback( "checksession?sid=" + paramsO.sid, function(d){
+			// res.setHeader('Set-Cookie', 'sid=' + d + "; max-age=" + 3600 + "; path=/;" );
+			// res.statusCode = 301;
+			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+			res.end( d );
+		})
+
+		
+	});
+		/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8889/html/test.html
+	* </code>
+	*/
+	global.server.addRouter("/api/deletesession",function( req, res, data ){
+
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		console.log( data )
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+
+		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
+		httpGetCallback( "deletesession?sid=" + paramsO.sid, function(d){
+			// res.setHeader('Set-Cookie', 'sid=' + d + "; max-age=" + 3600 + "; path=/;" );
+			// res.statusCode = 301;
+			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+			res.end( d );
+		})
+
+		
+	});
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/

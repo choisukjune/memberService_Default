@@ -162,7 +162,132 @@
           template.innerHTML = html;
           return template.content.firstChild;
         }
+        function requestGet( url ){
+    		console.log("");
+    		console.log("[requestGet] : [start]");    		
+    		console.log("");
+    		
+    		// url 및 전송 데이터 선언
+    		//var url = "http://jsonplaceholder.typicode.com/posts?userId=1&id=1";
+    		    		    		    		
+    		// XMLHttpRequest 객체 생성 및 요청 수행
+    		var xhr = new XMLHttpRequest();
+    		xhr.open("GET", url, true);
+    		    		
+    		console.log("[request url] : " + url);    		    	
+    		console.log("[request method] : " + "GET");
+    		console.log("");
+    		
+    		//xhr.onreadystatechange = CallbackFunction; //콜백 함수 지정해서 처리 가능    		
+    		xhr.onreadystatechange = function() {
+    			if (xhr.readyState == 4) { 
+    				if (xhr.status == 200 || xhr.status == 201){
+    					console.log("[status] : " + xhr.status);
+    					console.log("[response] : " + "[success]");    				   				    				
+    					console.log("[response] : " + xhr.responseText);
+    					console.log("");
+              console.log("[requestGet] : [finish]");    		
+    		      console.log("");        				
+    				}
+    				else {
+    					console.log("[status] : " + xhr.status);
+    					console.log("[response] : " + "[fail]");    				   				    				
+    					console.log("[response] : " + xhr.responseText);
+    					console.log("");
+              console.log("[requestGet] : [finish]");    		
+    		      console.log("");        				
+    				}					
+    			}    			
+    		}
+    		xhr.send(null); //get 쿼리 파람 방식일때 null    					    		    		
+									
+    	};
 
+    	
+    	
+    	/* 이벤트 함수 정의 */
+    	function requestPost(){
+    		console.log("");
+    		console.log("[requestPost] : [start]");    		
+    		console.log("");
+    		
+    		// url 및 전송 데이터 선언
+    		var url = "http://jsonplaceholder.typicode.com/posts?userId=1&id=1";
+    		    		    		    		
+    		// XMLHttpRequest 객체 생성 및 요청 수행
+    		var xhr = new XMLHttpRequest();
+    		xhr.open("POST", url, true);
+    		    		
+    		console.log("[request url] : " + url);    		    	
+    		console.log("[request method] : " + "POST");
+    		console.log("");
+    		
+    		//xhr.onreadystatechange = CallbackFunction; //콜백 함수 지정해서 처리 가능    		
+    		xhr.onreadystatechange = function() {
+    			if (xhr.readyState == 4) {
+    				if (xhr.status == 200 || xhr.status == 201){
+    					console.log("[status] : " + xhr.status);
+    					console.log("[response] : " + "[success]");    				   				    				
+    					console.log("[response] : " + xhr.responseText);
+    					console.log("");        				
+    				}
+    				else {
+    					console.log("[status] : " + xhr.status);
+    					console.log("[response] : " + "[fail]");    				   				    				
+    					console.log("[response] : " + xhr.responseText);
+    					console.log("");        				
+    				}    				
+    			}    			
+    		}
+    		xhr.send(null); //post 쿼리 파람 방식일때 null    					    		    		
+									
+    	};
+
+    	
+    	
+    	/* 이벤트 함수 정의 */
+    	function requestPostBodyJson( url, data, cbFunction ){
+    		console.log("");
+    		console.log("[requestPostBodyJson] : [start]");    		
+    		console.log("");
+    		
+    		// url 및 전송 데이터 선언
+    		//var url = "http://jsonplaceholder.typicode.com/posts";
+    		
+    		// 전송 json 데이터 선언
+    		var jsonData = data//{"userId" : 1 , "id" : 1};
+    		    		    		    		debugger;
+    		// XMLHttpRequest 객체 생성 및 요청 수행
+    		var xhr = new XMLHttpRequest();
+    		xhr.open("POST", url, true);
+    		    		
+    		console.log("[request url] : " + url);
+    		console.log("[request data] : " + JSON.stringify(jsonData));
+    		console.log("[request method] : " + "POST");
+    		console.log("");
+    		
+    		//xhr.onreadystatechange = CallbackFunction; //콜백 함수 지정해서 처리 가능    		
+    		xhr.onreadystatechange = function() {
+    			if (xhr.readyState == 4) {
+    				if (xhr.status == 200 || xhr.status == 201){
+    					console.log("[status] : " + xhr.status);
+    					console.log("[response] : " + "[success]");    				   				    				
+    					console.log("[response] : " + xhr.responseText);
+    					console.log("");
+              cbFunction( xhr.responseText )        				
+    				}
+    				else {
+    					console.log("[status] : " + xhr.status);
+    					console.log("[response] : " + "[fail]");    				   				    				
+    					console.log("[response] : " + xhr.responseText);
+    					console.log("");        				 
+    				}						    				
+    			}    			
+    		}
+    		xhr.setRequestHeader("Content-Type", "application/json");    		
+    		xhr.send(JSON.stringify(jsonData)); //post body json 방식 일때    					    		    		
+									
+    	};
         var renderBeforeLogin = function(){
 
           var html = `
@@ -207,8 +332,6 @@
             <div class="ui horizontal divider colorWhite">
               또는
             </div>
-            <div id='message'></div>
-      <div id='button_area'></div>
             <div id="btnEmailLogin" class="ui fluid inverted large submit button">이메일로 로그인</div>
               <div id="btnJoin" class="ui message">
               어카운트가 없나요? <a href="#">Sign Up</a>
@@ -279,15 +402,46 @@
           window.el.btn.logout.addEventListener("click",function(evt){
           
             console.log( "window.el.btn.logout - click!" )
-            window.localStorage.removeItem("email");
-            deleteCookie( 'sid' )
+            window.localStorage.clear();
+            deleteSession();
+            deleteAllCookies();
             renderBeforeLogin();
 
           })
           // }              
         }
         getCookieToObject();
-        if( !window._t.cookie[ "sid" ] ) renderBeforeLogin();
+        function deleteAllCookies() {
+            const cookies = document.cookie.split(";");
+            debugger;
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            }
+        }
+        function checkSession(){
+          var cookies = getCookieToObject();
+          if( cookies.sid ){
+            var isSesstion = requestGet("/api/checksession?sid=" + cookies.sid );
+            console.log( isSesstion );
+            return true
+          }
+          return false;
+        }
+
+        function deleteSession(){
+          var cookies = getCookieToObject();
+          if( cookies.sid ){
+            var isSesstion = requestGet("/api/deletesession?sid=" + cookies.sid );
+            console.log( isSesstion );
+            return true
+          }
+          return false;
+        }
+   
+        if( !checkSession() ) renderBeforeLogin();
         else renderAfterLogin();
 
         //-------------------------------------------------------;

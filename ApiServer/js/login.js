@@ -322,6 +322,105 @@ function randomStr(){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
+	var insertSesstion = function( data, cbFunction ){
+		var _tdbjs_nm = "insertSession";
+		
+		console.log(data);
+		
+		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		try
+		{
+			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		}
+		catch( err )
+		{
+			// console.log( routerNm + " - DBJS File Not Found! - " + err );
+			// res.end("{ sucess : 0, data : null }");
+		}
+		
+		console.log( _tQuery );
+		var query = _tQuery.replace( "<!=SSESION_ID=!>", data.session )
+		.replace( "<!=USER_ID=!>", data.userId );
+		var dbjs_nm = "insertSesstion.dbjs";
+
+		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		console.log( FILE_PATH );
+
+		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		var _r = exec_query_DB( dbjs_nm );
+		
+		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		console.log( r );
+		cbFunction( r );
+	}
+	var checkSesstion = function( sid, cbFunction ){
+		var _tdbjs_nm = "checkSession";
+		
+		console.log(sid);
+		
+		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		try
+		{
+			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		}
+		catch( err )
+		{
+			// console.log( routerNm + " - DBJS File Not Found! - " + err );
+			// res.end("{ sucess : 0, data : null }");
+		}
+		
+		console.log( _tQuery );
+		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
+		//.replace( "<!=USER_ID=!>", data.userId );
+		var dbjs_nm = "checkSesstion.dbjs";
+
+		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		console.log( FILE_PATH );
+
+		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		var _r = exec_query_DB( dbjs_nm );
+		
+		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		console.log( r );
+		cbFunction( r );
+	}
+	var deleteSession = function( sid, cbFunction ){
+		var _tdbjs_nm = "deleteSession";
+		
+		console.log(sid);
+		
+		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		try
+		{
+			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		}
+		catch( err )
+		{
+			// console.log( routerNm + " - DBJS File Not Found! - " + err );
+			// res.end("{ sucess : 0, data : null }");
+		}
+		
+		console.log( _tQuery );
+		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
+		//.replace( "<!=USER_ID=!>", data.userId );
+		var dbjs_nm = "deleteSession.dbjs";
+
+		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		console.log( FILE_PATH );
+
+		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		var _r = exec_query_DB( dbjs_nm );
+		
+		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		console.log( r );
+		cbFunction( r );
+	}
 	global.server.addRouter("/login",function( req, res, data ){
 		/*
 		
@@ -379,13 +478,128 @@ function randomStr(){
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
 		
 		var sid = SHA256( r + randomStr() );
-	
-		console.log("[ E ] - /Login");
 
-		res.end( JSON.stringify( { sid : sid, d : r } ) )	
+		insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+			console.log("[ E ] - /Login");
+
+			res.end( JSON.stringify( { sid : sid, d : r } ) )	
+		});
+	
+
 
 	});
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
 
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8888/find?brand=varihope&page=1
+	* </code>
+	*/
+	global.server.addRouter("/checksession",function( req, res, data ){
+		/*
+		
+		https://lab.cliel.com/entry/nodejs-http
+		여기서 세션처리하는 거 확인하기
+
+		https://www.mongodb.com/docs/manual/tutorial/expire-data/
+		몽고디비에서 세션컬렉션의 문서를 시간이지나면 자동으로 파기하는 방법
+
+		일정시간이 지나고, 브라우저 쿠키가 만료되고, 로그인페이지로 이동시김
+		*/
+		console.log("[ S ] - /checksession");
+
+		console.log( data )
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		//var paramBody = JSON.parse( data )
+
+		//console.log( parseCookie( req.headers.cookie ) );
+
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+		checkSesstion( paramsO.sid, function(r){
+			res.end( r )	
+		})
+	
+		console.log("[ E ] - /checksession");
+
+		
+
+	});
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8888/find?brand=varihope&page=1
+	* </code>
+	*/
+	global.server.addRouter("/deletesession",function( req, res, data ){
+		/*
+		
+		https://lab.cliel.com/entry/nodejs-http
+		여기서 세션처리하는 거 확인하기
+
+		https://www.mongodb.com/docs/manual/tutorial/expire-data/
+		몽고디비에서 세션컬렉션의 문서를 시간이지나면 자동으로 파기하는 방법
+
+		일정시간이 지나고, 브라우저 쿠키가 만료되고, 로그인페이지로 이동시김
+		*/
+		console.log("[ S ] - /deletesession");
+
+		console.log( data )
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		//var paramBody = JSON.parse( data )
+
+		//console.log( parseCookie( req.headers.cookie ) );
+
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+		deleteSession( paramsO.sid, function(r){
+			res.end( r )	
+		})
+	
+		console.log("[ E ] - /deletesession");
+
+		
+
+	});
 	/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function

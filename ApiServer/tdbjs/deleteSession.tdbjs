@@ -1,0 +1,15 @@
+var db_nm = "data";
+var col_nm = "session";
+
+
+var db0 = db.getSiblingDB( db_nm );
+var col0 = db0.getCollection( col_nm );
+
+//collection data all remove;
+//col0.remove({});
+var sid = "<!=SSESION_ID=!>"
+var _q = { _id : sid };
+
+var r = col0.deleteOne(_q)
+
+printjson( r )

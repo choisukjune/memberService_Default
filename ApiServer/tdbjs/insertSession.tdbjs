@@ -1,0 +1,18 @@
+var db_nm = "data";
+var col_nm = "session";
+
+
+var db0 = db.getSiblingDB( db_nm );
+var col0 = db0.getCollection( col_nm );
+
+//collection data all remove;
+//col0.remove({});
+
+var now = new Date();
+var _o = { _id : "<!=SSESION_ID=!>", userId : "<!=USER_ID=!>",creatDate : now }
+
+
+col0.insert( _o );
+
+
+printjson( 1 )
