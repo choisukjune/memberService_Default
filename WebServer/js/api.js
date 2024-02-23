@@ -413,6 +413,34 @@ function httpPostCallback(option,data, cbFunction ) {
 		*/
 		naverGetAccessToken({ code : code, state : state }, function(d){
 			naverGetUserInfo(d, function(r){
+
+				console.log( r );
+				//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
+				// var option = {
+				// 	host: 'localhost',
+				// 	port: '8888',
+				// 	path: '/join',
+				// 	method: 'POST',
+				// 	headers: {
+				// 		"content-type": "application/json",
+				// 		//"Content-Length": Buffer.byteLength(post_data)
+				// 	}
+				// };
+				
+				// //var _d = { email : "12k4@naver.com", pass : "123qwe"}
+				// var _d = { email : data.email, pass : null }
+
+				// httpPostCallback( option, _d, function(d){
+
+					
+				// 	var _d = JSON.parse( d );
+				// 	console.log( "====>", _d );
+				// 	res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
+				// 	//res.statusCode = 301;
+				// 	//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+				// 	res.end( d );
+				// })
+
 				res.writeHead(301, {'Location': '/'});
 				res.end();
 			})

@@ -53,10 +53,6 @@
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="asset/js/semantic.js"></script>
-    <script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <!-- (2) LoginWithNaverId Javscript SDK -->
-	  <script src="asset/js/naveridlogin_js_sdk_2.0.2.js"></script>
     <script type="text/javascript">
 
 
@@ -156,13 +152,25 @@
           return r;
         }
 
+        function getCookieToSid(){
+          var _x = document.cookie.split( "; " );
+          var i = 0,iLen = _x.length,io;
+          var r = {};
+          for(;i<iLen;++i){
+            io = _x[ i ].split("=");
+            r[ io[ 0 ] ] = io[ 1 ];
+          }
+          
+          return r.sid;
+        }
+
         var htmlToElement = function( html ){
           var template = document.createElement('template');
           html = html.trim(); // Never return a text node of whitespace as the result
           template.innerHTML = html;
           return template.content.firstChild;
         }
-        function requestGet( url ){
+        function requestGet( url, cbFunction ){
     		console.log("");
     		console.log("[requestGet] : [start]");    		
     		console.log("");
@@ -187,7 +195,8 @@
     					console.log("[response] : " + xhr.responseText);
     					console.log("");
               console.log("[requestGet] : [finish]");    		
-    		      console.log("");        				
+    		      console.log("");       
+              cbFunction( xhr.responseText ) ;				
     				}
     				else {
     					console.log("[status] : " + xhr.status);
@@ -242,8 +251,6 @@
     		xhr.send(null); //post 쿼리 파람 방식일때 null    					    		    		
 									
     	};
-
-    	
     	
     	/* 이벤트 함수 정의 */
     	function requestPostBodyJson( url, data, cbFunction ){
@@ -256,7 +263,6 @@
     		
     		// 전송 json 데이터 선언
     		var jsonData = data//{"userId" : 1 , "id" : 1};
-    		    		    		    		debugger;
     		// XMLHttpRequest 객체 생성 및 요청 수행
     		var xhr = new XMLHttpRequest();
     		xhr.open("POST", url, true);
@@ -402,18 +408,24 @@
           window.el.btn.logout.addEventListener("click",function(evt){
           
             console.log( "window.el.btn.logout - click!" )
+            
+            //로컬스토리지를 비운다;
             window.localStorage.clear();
+
+            //세션을 삭제한다;
             deleteSession();
+
+            //쿠키를 삭제한다;
             deleteAllCookies();
+
+            //로그인이전 html을 붙인다;
             renderBeforeLogin();
 
           })
           // }              
         }
-        getCookieToObject();
         function deleteAllCookies() {
             const cookies = document.cookie.split(";");
-            debugger;
             for (let i = 0; i < cookies.length; i++) {
                 const cookie = cookies[i];
                 const eqPos = cookie.indexOf("=");
@@ -422,27 +434,48 @@
             }
         }
         function checkSession(){
-          var cookies = getCookieToObject();
-          if( cookies.sid ){
-            var isSesstion = requestGet("/api/checksession?sid=" + cookies.sid );
-            console.log( isSesstion );
-            return true
+          console.log( "[S] - checkSession" )
+          var sid = getCookieToSid();
+          debugger;
+          if( sid  ){
+            requestGet("http://localhost:8888/checksession?sid=" + sid, function(d){
+              if( d ){
+                console.log( "---->",d );
+                renderAfterLogin();
+
+              }
+              else
+              {
+                renderBeforeLogin();
+
+                window.localStorage.clear();
+                deleteSession();
+                deleteAllCookies();
+                
+              }
+            });
           }
-          return false;
+          else
+          {
+            renderBeforeLogin();
+            
+            window.localStorage.clear();
+            deleteSession();
+            deleteAllCookies();
+            
+          }
+          
         }
 
         function deleteSession(){
           var cookies = getCookieToObject();
           if( cookies.sid ){
-            var isSesstion = requestGet("/api/deletesession?sid=" + cookies.sid );
-            console.log( isSesstion );
-            return true
+            var isSesstion = requestGet("/api/deletesession?sid=" + cookies.sid, function(d){
+              console.log( d );
+            });
           }
-          return false;
         }
-   
-        if( !checkSession() ) renderBeforeLogin();
-        else renderAfterLogin();
+        checkSession();
 
         //-------------------------------------------------------;
         //-------------------------------------------------------;

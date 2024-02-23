@@ -9,7 +9,7 @@ var col0 = db0.getCollection( col_nm );
 //col0.remove({});
 
 var now = new Date();
-var _o = { _id : "<!=SSESION_ID=!>", userId : "<!=USER_ID=!>",creatDate : now }
+var _o = { sid : "<!=SSESION_ID=!>", userId : "<!=USER_ID=!>",creatDate : now }
 
 
 col0.insert( _o );

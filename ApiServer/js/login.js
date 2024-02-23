@@ -67,6 +67,8 @@ var exec_query_DB = function( dbjsNm, bResult ){
 	*/
 
 	var command = CP_COMMAND.MONGO + ` "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0" ${FILE_PATH}`
+	//mongosh --host localhost --port 59320 --username tjrwns --password 123qweasdzxc --authenticationDatabase admin --file insert.js
+	//var command = CP_COMMAND.MONGO + ` --port 59320 -u tjrwns -p 123qweasdzxc --authenticationDatabase admin ${FILE_PATH}`
 	console.log( command )
 	var r = cp.execSync( command ).toString();
 		r = deleteLines( r , 4 )
@@ -339,7 +341,7 @@ function randomStr(){
 			// res.end("{ sucess : 0, data : null }");
 		}
 		
-		console.log( _tQuery );
+		//console.log( _tQuery );
 		var query = _tQuery.replace( "<!=SSESION_ID=!>", data.session )
 		.replace( "<!=USER_ID=!>", data.userId );
 		var dbjs_nm = "insertSesstion.dbjs";
@@ -356,6 +358,7 @@ function randomStr(){
 		cbFunction( r );
 	}
 	var checkSesstion = function( sid, cbFunction ){
+		console.log( 2 )
 		var _tdbjs_nm = "checkSession";
 		
 		console.log(sid);
@@ -372,7 +375,7 @@ function randomStr(){
 			// res.end("{ sucess : 0, data : null }");
 		}
 		
-		console.log( _tQuery );
+		//console.log( _tQuery );
 		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
 		//.replace( "<!=USER_ID=!>", data.userId );
 		var dbjs_nm = "checkSesstion.dbjs";
@@ -380,11 +383,12 @@ function randomStr(){
 		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
 		
 		console.log( FILE_PATH );
-
+		console.log( 3 )
 		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
 		var _r = exec_query_DB( dbjs_nm );
-		
+		console.log( 4 )
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		console.log( 5 )
 		console.log( r );
 		cbFunction( r );
 	}
@@ -467,18 +471,18 @@ function randomStr(){
 		var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
 		.replace( "<!=PASSWORD=!>", paramBody.pass );
 		var dbjs_nm = "login_" + paramBody.email + ".dbjs";
-
+		console.log( 1 );
 		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
+		console.log( 2 );
 		console.log( FILE_PATH );
-
+		console.log( 3 );
 		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
 		var _r = exec_query_DB( dbjs_nm );
-		
+		console.log( 4 );
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		
+		console.log( 5 );
 		var sid = SHA256( r + randomStr() );
-
+		console.log( 6 );
 		insertSesstion( { session : sid, userId : paramBody.email }, function(d){
 			console.log("[ E ] - /Login");
 
@@ -534,7 +538,7 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
+		console.log( 1 )
 		checkSesstion( paramsO.sid, function(r){
 			res.end( r )	
 		})

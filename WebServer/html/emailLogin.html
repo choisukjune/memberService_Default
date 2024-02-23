@@ -30,6 +30,7 @@
         text-shadow: none;
         background-image: none;
       }
+     
     </style>
     <link rel="stylesheet" type="text/css" href="asset/css/semantic.css">
     <script
@@ -77,13 +78,14 @@
         //-------------------------------------------------------;
 
         var webStorageSetItem = function( o ){
-          debugger;
+          console.log( "[S] - webStorageSetItem ")
           var s,so;
           for( s in o ){
             so = o[ s ];
             console.log( s );
             window.localStorage.setItem( s , so );
           }
+          console.log( "[E] - webStorageSetItem ")
         }
 
     	/* 
@@ -275,7 +277,9 @@
 
         window.evt = {}
         window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
-          //debugger;
+      
+          
+
           var email = window.el.input.email.value;
           var password = window.el.input.password.value;
 
@@ -295,39 +299,22 @@
           if( password == "" ){
             return alert("비밀번호를 입력해주세요")
           }
+          //window.el.btn.login.textContent = ""
+          window.el.btn.login.classList.add("loading");
+          
           console.log( "window.el.btn.login - click!" );
 
-          // var xhr = new XMLHttpRequest();
-          //   xhr.open("GET" , `/api/login`, {redirect: "follow",});
-          //   xhr.onreadystatechange = function(){
-              
-          //     if( xhr.readyState == 4 && xhr.status == 200)
-          //     {
-          //       var d =  xhr.responseText
-          //       debugger;
-          //       console.log(d)
-          //       location.href="/"
-          //     }
-          //   }
+          var postBody = { email : email, pass : password }
+          requestPostBodyJson('/api/login',postBody , function( d ){
+            console.log( "===========" )
+            console.log( "===========" )
+            console.log( "===========" )
+            console.log( "===========" )
+            var _d = JSON.parse( d );
+            webStorageSetItem( JSON.parse( _d.d ) )
+            location.href="/"
 
-          //   xhr.send();
-            var postBody = { email : email, pass : password }
-            requestPostBodyJson('/api/login',postBody , function( d ){
-              console.log( "===========" )
-              console.log( "===========" )
-              console.log( "===========" )
-              console.log( "===========" )
-              var _d = JSON.parse( d );
-              webStorageSetItem( JSON.parse( _d.d ) )
-              location.href="/"
-
-            })
-           
-
-
-    
-
-          return 
+          })
 
         })        
         window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){

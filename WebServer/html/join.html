@@ -138,6 +138,7 @@
           return regex.test(str)
           
         }
+        
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
@@ -147,7 +148,9 @@
         //-------------------------------------------------------;
         window.evt = {}
         window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
-          //debugger;
+      
+          
+
           var email = window.el.input.email.value;
           var password = window.el.input.password.value;
 
@@ -167,12 +170,24 @@
           if( password == "" ){
             return alert("비밀번호를 입력해주세요")
           }
+          //window.el.btn.login.textContent = ""
+          window.el.btn.login.classList.add("loading");
           
+          console.log( "window.el.btn.login - click!" );
 
+          var postBody = { email : email, pass : password }
+          requestPostBodyJson('/api/login',postBody , function( d ){
+            console.log( "===========" )
+            console.log( "===========" )
+            console.log( "===========" )
+            console.log( "===========" )
+            var _d = JSON.parse( d );
+            webStorageSetItem( JSON.parse( _d.d ) )
+            location.href="/"
 
-          return console.log( "window.el.btn.login - click!" )
+          })
 
-        })        
+         })             
         window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){
           console.log( "window.el.btn.join - click!" )
           window.location.href = "/html/login.html"
