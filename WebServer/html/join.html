@@ -171,19 +171,19 @@
             return alert("비밀번호를 입력해주세요")
           }
           //window.el.btn.login.textContent = ""
-          window.el.btn.login.classList.add("loading");
+          window.el.btn.join.classList.add("loading");
           
           console.log( "window.el.btn.login - click!" );
 
           var postBody = { email : email, pass : password }
-          requestPostBodyJson('/api/login',postBody , function( d ){
+          requestPostBodyJson('/api/join',postBody , function( d ){
             console.log( "===========" )
             console.log( "===========" )
             console.log( "===========" )
             console.log( "===========" )
-            var _d = JSON.parse( d );
-            webStorageSetItem( JSON.parse( _d.d ) )
-            location.href="/"
+            // var _d = JSON.parse( d );
+            // webStorageSetItem( JSON.parse( _d.d ) )
+            // location.href="/"
 
           })
 
