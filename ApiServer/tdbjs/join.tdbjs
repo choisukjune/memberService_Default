@@ -2,6 +2,7 @@ var db_nm = "data";
 var col_nm = "member";
 var userId = "<!=EMAIL=!>"
 var password = "<!=PASSWORD=!>"
+var userInfo = <!=USER_INFO=!>
 
 var db0 = db.getSiblingDB( db_nm );
 var col0 = db0.getCollection( col_nm );
@@ -11,14 +12,15 @@ var col0 = db0.getCollection( col_nm );
 var sort = {}
     sort._id = -1;
 
-var _q = {};
-    _q.userId = userId;
-    _q.password = password;
+var _d = {};
+    _d.userId = userId;
+    _d.password = password;
+    _d.userInfo = userInfo;
 
 //var limit = 30;
 
 //var skip = ( page - 1 ) * 30
  
-var r = col0.findOne( _q )
+var r = col0.insertOne( _d )
 
-print( JSON.stringify(r) )
+printjson( JSON.stringify(_d) )

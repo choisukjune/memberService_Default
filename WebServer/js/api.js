@@ -102,6 +102,49 @@ function httpPostCallback(option,data, cbFunction ) {
 	req.end();
 }
 
+var memberJoin = function( data, cbFunction ){
+	var post_data = JSON.stringify( data );
+	console.log( post_data)
+	// An object of options to indicate where to post to
+	
+	var option = {
+		host: 'localhost',
+		port: '8888',
+		path: '/join',
+		method: 'POST',
+		headers: {
+			"content-type": "application/json",
+			"Content-Length": Buffer.byteLength(post_data)
+		}
+	};
+
+
+	// Set up the request
+	var req = http.request(option, function(res){
+
+		res.setEncoding('utf8');
+
+		var data = "";
+		res.on('data', function (chunk) {
+			data += chunk;
+			console.log('Response: ' + chunk);
+		});
+		res.on('end', function () {
+			//var data = global.api.String.convert_encoding__KR( chunks, characterSet );
+			console.log( data )
+			cbFunction( data );
+		});
+	});
+
+	req.on('error', function(e){
+		console.log(`problem with request: ${e}`);
+	});
+
+	// post the data
+	req.write(post_data);
+	req.end();
+}
+
 //-------------------------;
 //-------------------------;
 //-------------------------;
@@ -204,17 +247,36 @@ function httpPostCallback(option,data, cbFunction ) {
 		var routerNm = req.url.split("?")[0];
 		//var paramsO = paramToObject( req.url );
 		console.log( data )
+
+
 		res.statusCode = 200;
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
 
-		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-		httpGetCallback( "join?user=1&pass=2", function(d){
-			res.setHeader('Set-Cookie', 'sid=' + d + "; max-age=" + 3600 + "; path=/;" );
-			res.statusCode = 301;
-			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
+		var _d = { email : data.email, pass : data.pass }
+
+		var option = {
+			host: 'localhost',
+			port: '8888',
+			path: '/join',
+			method: 'POST',
+			headers: {
+				"content-type": "application/json",
+				//"Content-Length": Buffer.byteLength(post_data)
+			}
+		};
+
+		httpPostCallback( option, _d, function(d){
+
+			
+			var _d = JSON.parse( d );
+			console.log( "====>", _d );
+			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
+			//res.statusCode = 301;
+			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
 			res.end( d );
 		})
 
