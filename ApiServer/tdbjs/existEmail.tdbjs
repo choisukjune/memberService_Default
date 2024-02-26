@@ -1,0 +1,24 @@
+var db_nm = "data";
+var col_nm = "member";
+var userId = "<!=EMAIL=!>"
+//var password = "<!=PASSWORD=!>"
+
+var db0 = db.getSiblingDB( db_nm );
+var col0 = db0.getCollection( col_nm );
+
+//collection data all remove;
+
+var sort = {}
+    sort._id = -1;
+
+var _q = {};
+    _q.userId = userId;
+    //_q.password = password;
+
+//var limit = 30;
+
+//var skip = ( page - 1 ) * 30
+ 
+var r = col0.findOne( _q )
+
+print( JSON.stringify(r) )
