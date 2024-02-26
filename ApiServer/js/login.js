@@ -561,23 +561,32 @@ function randomStr(){
 		var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
 		.replace( "<!=PASSWORD=!>", paramBody.pass );
 		var dbjs_nm = "login_" + paramBody.email + ".dbjs";
-		console.log( 1 );
+		
 		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		console.log( 2 );
+		
 		console.log( FILE_PATH );
-		console.log( 3 );
+		
 		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
 		var _r = exec_query_DB( dbjs_nm );
-		console.log( 4 );
+		
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( 5 );
-		var sid = SHA256( r + randomStr() );
-		console.log( 6 );
-		insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-			console.log("[ E ] - /Login");
 
-			res.end( JSON.stringify( { sid : sid, d : r } ) )	
-		});
+		var _d = JSON.parse( r );
+		if( _d.r == 1 )
+		{
+			res.end( r )
+		}
+		else
+		{
+			var sid = SHA256( r + randomStr() );
+		
+			insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+				console.log("[ E ] - /Login");
+
+				res.end( JSON.stringify( { sid : sid, d : r } ) )	
+			});
+		}
+		
 	
 
 

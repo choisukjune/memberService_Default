@@ -212,9 +212,11 @@ var memberJoin = function( data, cbFunction ){
 			
 			var _d = JSON.parse( d );
 			console.log( "====>", _d );
-			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			//res.statusCode = 301;
-			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+			
+			if( !_d.r ) 
+			{
+				res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
+			}
 			res.end( d );
 		})
 

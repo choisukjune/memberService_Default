@@ -80,6 +80,8 @@
         window.el.btn = {}
         window.el.btn.login = window.document.getElementById("btnLogin");
         window.el.btn.join = window.document.getElementById("btnJoin");
+        window.el.btn.showPassBt = window.document.getElementById("showPassBt");
+        window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
 
         window.el.div = {}
         window.el.div.emailTooltip = window.document.getElementById("toolipEmail");
@@ -215,21 +217,37 @@
 
           var postBody = { email : email, pass : password }
           requestPostBodyJson('/api/login',postBody , function( d ){
-            console.log( "===========" )
-            console.log( "===========" )
-            console.log( "===========" )
-            console.log( "===========" )
             var _d = JSON.parse( d );
-            webStorageSetItem( JSON.parse( _d.d ) )
-            location.href="/"
-
+            if( _d.r == 1 )
+            {
+              window.el.btn.login.classList.remove("loading");
+              alert("패스워드를 확인해주세요");
+            }
+            else
+            {
+              webStorageSetItem( JSON.parse( _d.d ) )
+              location.href="/"
+            }
+            
           })
 
         })        
         window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){
           console.log( "window.el.btn.join - click!" )
           window.location.href = "/html/join.html"
-        })      
+        })
+        //툴팁달기 https://sisiblog.tistory.com/336;
+        window.el.btn.showPassBt.addEventListener("click",function(evt){
+          window.el.btn.hidePassBt.classList.remove("displayNone");
+          window.el.btn.showPassBt.classList.add("displayNone");
+          window.el.input.password.type = "text";
+        })
+        window.el.btn.hidePassBt.addEventListener("click",function(evt){
+          window.el.btn.hidePassBt.classList.add("displayNone");
+          window.el.btn.showPassBt.classList.remove("displayNone");
+          window.el.input.password.type = "password";
+        })
+        
       });
       
     </script>
@@ -258,8 +276,14 @@
               <div class="ui tiny error message">잘못된형식의 이메일입니다.</div>
             </div>
             <div class="field">
-              <div class="ui input">
+              <div class="ui icon input">
                 <input id="inputPassword" type="password" name="password" placeholder="비밀번호">
+                <div id="showPassBt" class="" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M21.8 9.92C20.09 7.99 17.46 6 14 6S7.92 8 6.2 9.92A17.7 17.7 0 0 0 3.44 14a18.56 18.56 0 0 0 2.74 4.08C7.92 20.01 10.55 22 14 22c3.45 0 6.08-2 7.8-3.92 1.11-1.22 2.03-2.6 2.75-4.08a17.82 17.82 0 0 0-2.74-4.08ZM14 21c-3.05 0-5.42-1.76-7.07-3.58A17.13 17.13 0 0 1 4.56 14c.27-.53 1.08-1.98 2.37-3.42C8.58 8.76 10.95 7 14 7c3.05 0 5.42 1.76 7.07 3.58 1.29 1.44 2.1 2.89 2.37 3.42-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21Z"></path><path fill="currentColor" fill-rule="evenodd" d="M10 14a4 4 0 1 1 8 0 4 4 0 0 1-8 0Zm1 0a3 3 0 1 1 6 0 3 3 0 0 1-6 0Z"></path></svg>
+                </div>
+                <div id="hidePassBt"  class="displayNone" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M22.2 6.5 6.5 22.2l-.7-.7L21.5 5.8l.7.7ZM14 6c1.54 0 2.9.4 4.1 1l-.74.75A8 8 0 0 0 14 7c-3.05 0-5.42 1.76-7.07 3.59A17.13 17.13 0 0 0 4.56 14a17.13 17.13 0 0 0 2.77 3.84l-.7.7-.44-.45c-1.1-1.24-2-2.61-2.74-4.09a17.7 17.7 0 0 1 2.74-4.08C7.92 7.99 10.55 6 14 6ZM21.8 9.92l-.41-.45-.7.7.38.42c1.29 1.43 2.1 2.88 2.37 3.41-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21a7.99 7.99 0 0 1-3.35-.75L9.9 21c1.2.6 2.57 1 4.1 1 3.45 0 6.08-2 7.8-3.91 1.11-1.23 2.03-2.6 2.75-4.09a17.82 17.82 0 0 0-2.74-4.08Z"></path><path fill="currentColor" d="M13.01 17.88A4 4 0 0 0 17.87 13l-.87.87V14a3 3 0 0 1-3.11 3l-.88.88ZM10.13 15.02l.87-.88V14a3 3 0 0 1 3.13-3l.87-.87a4 4 0 0 0-4.87 4.89Z"></path></svg>
+                </div>
               </div>
             </div>
             <div id="btnLogin" class="ui fluid large blue submit button">로그인</div>
