@@ -455,7 +455,8 @@ function randomStr(){
 		var _r = exec_query_DB( dbjs_nm );
 		
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
+		console.log( "emailExist is = ",r );
+		
 		cbFunction( r );
 	}
 	/**

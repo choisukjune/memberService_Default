@@ -323,13 +323,6 @@ var memberJoin = function( data, cbFunction ){
 		var url = "existEmail?email=" + paramsO.email
 
 		httpGetCallback( url, function(d){
-
-			
-			var _d = JSON.parse( d );
-			console.log( "====>", _d );
-			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			//res.statusCode = 301;
-			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
 			res.end( d );
 		})
 

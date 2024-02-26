@@ -163,7 +163,14 @@
             evt.target.classList.remove( "inputerror" );
             requestGet("/api/existEmail?email=" + email, function(d){
               var r = JSON.parse(d)
-              console.log( "email exist : " + r.userId )
+              if( !r.r ) console.log( "email exist : " + r.userId )
+              else
+              {
+                window.el.div.emailTooltip.classList.remove( "displayNone" );
+                window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
+                console.log( "email exist : " + r.m )
+              }
+              
             })
           }
 

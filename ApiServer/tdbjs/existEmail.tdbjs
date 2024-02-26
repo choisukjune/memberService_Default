@@ -21,4 +21,6 @@ var _q = {};
  
 var r = col0.findOne( _q )
 
+if( !r ) r = { r : 1, m : "email not exist!" }
+
 print( JSON.stringify(r) )
