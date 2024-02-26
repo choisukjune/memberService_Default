@@ -148,11 +148,16 @@
         window.evt = {}
         window.el.input.email.addEventListener("change",function(evt){
           debugger;
+          var emailInputLoader = window.document.getElementById("emailInputLoader");
           var email = evt.target.value;
+
+          emailInputLoader.classList.remove("displayNone");
+
           if( !checkEmail(email) )
           {
             evt.target.classList.add( "inputerror" );
             window.el.div.emailTooltip.classList.remove( "displayNone" );
+            emailInputLoader.classList.add("displayNone");
             return;
             //return alert("이메일을 입력해주세요");
 
@@ -161,12 +166,19 @@
           {
             if( !window.el.div.emailTooltip.classList.contains( "displayNone" ) ) window.el.div.emailTooltip.classList.add( "displayNone" );
             evt.target.classList.remove( "inputerror" );
+            // emailInputLoader.classList.add("displayNone");
             requestGet("/api/existEmail?email=" + email, function(d){
               var r = JSON.parse(d)
-              if( !r.r ) console.log( "email exist : " + r.userId )
+              if( !r.r )
+              {
+                console.log( "email exist : " + r.userId )
+                emailInputLoader.classList.add("displayNone");
+              }
               else
               {
                 window.el.div.emailTooltip.classList.remove( "displayNone" );
+                emailInputLoader.classList.add("displayNone");
+                evt.target.classList.add( "inputerror" );
                 window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
                 console.log( "email exist : " + r.m )
               }
@@ -236,9 +248,9 @@
         <form class="ui large form">
          
             <div class="field">
-              <div class="ui input">
-
+              <div class="ui icon input loading">
                 <input id="inputEmail" type="text" name="email" placeholder="이메일">
+                <i id="emailInputLoader" class="search icon displayNone"></i>
               </div>
               <div id="toolipEmail" class="ui pointing red basic label displayNone">
                 잘못된형식의 이메일입니다.
