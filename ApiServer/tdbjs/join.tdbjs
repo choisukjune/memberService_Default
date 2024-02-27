@@ -2,6 +2,7 @@ var db_nm = "data";
 var col_nm = "member";
 var userId = "<!=EMAIL=!>"
 var password = "<!=PASSWORD=!>"
+var salt = "<!=SALT=!>"
 var userInfo = <!=USER_INFO=!>
 
 var db0 = db.getSiblingDB( db_nm );
@@ -15,6 +16,7 @@ var sort = {}
 var _d = {};
     _d.userId = userId;
     _d.password = password;
+    _d.salt = salt;
     _d.userInfo = userInfo;
 
 //var limit = 30;

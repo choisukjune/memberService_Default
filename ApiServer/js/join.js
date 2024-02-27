@@ -6,9 +6,10 @@ if( console ) console.log( "[ S ] - " + fileNm + "----------" );
 //-------------------------------------------------------;
 // REQUIRE;
 //-------------------------------------------------------;
-
 var fs = require( "fs" );
 var url = require('url');
+var crypto = require("crypto");
+var util = require("util");
 
 //-------------------------------------------------------;
 // VARIABLE;
@@ -43,6 +44,35 @@ var _tDbjs_PATH = ROOT_PATH + "/tdbjs/";
 //-------------------------;
 //-------------------------;
 //-------------------------;
+
+
+
+var randomBytesPromise = util.promisify(crypto.randomBytes);
+var pbkdf2Promise = util.promisify(crypto.pbkdf2);
+
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+var createSalt = async () => {
+  const buf = await randomBytesPromise(64);
+
+  return buf.toString("base64");
+};
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+var createHashedPassword = async (password, cbFunction) => {
+  const salt = await createSalt();
+  const key = await pbkdf2Promise(password, salt, 104906, 64, "sha512");
+  const hashedPassword = key.toString("base64");
+  cbFunction({ hashedPassword, salt }) ;
+};
 
 /*
  * @function
@@ -468,23 +498,24 @@ function randomStr(){
 			res.end("{ sucess : 0, data : null }");
 		}
 		
-		var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
-		.replace( "<!=PASSWORD=!>", paramBody.pass )
-		.replace( "<!=USER_INFO=!>", "{}" );
-		
-		var dbjs_nm = "join.dbjs";
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		console.log( FILE_PATH );
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		var sid = SHA256( r + randomStr() );
-		insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-			console.log("[ E ] - /Join");
-			res.end( JSON.stringify( { sid : sid, d : r } ) )	
-		});
-	
-
+		createHashedPassword(paramBody.pass, function(result){
+			var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
+			.replace( "<!=PASSWORD=!>", result.hashedPassword )
+			.replace( "<!=SALT=!>", result.salt )
+			.replace( "<!=USER_INFO=!>", "{}" );
+			
+			var dbjs_nm = "join.dbjs";
+			var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+			console.log( FILE_PATH );
+			fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+			var _r = exec_query_DB( dbjs_nm );
+			var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+			var sid = SHA256( r + randomStr() );
+			insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+				console.log("[ E ] - /Join");
+				res.end( JSON.stringify( { sid : sid, d : r } ) )	
+			});
+		})
 
 	});
 	/**

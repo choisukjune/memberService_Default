@@ -12,7 +12,7 @@ var _q = {};
 var r = {}
 var d = col0.findOne( _q )
 
-if( r.password == password ) r = { r : 0, d : d }
-else r = { r : 1, d : null, m : "password not collect!" }
+//if( d.password == password ) r = { r : 0, d : d }
+//else r = { r : 1, d : null, m : "password not collect!" }
 
-print( JSON.stringify(r) )
+print( JSON.stringify(d) )

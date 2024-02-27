@@ -36,6 +36,19 @@
             color: #FFFFFF;
             text-shadow: none !important;
         }
+        .inputerror {
+      border-color: red!important;
+      /* background: border-box; */
+      box-shadow: 0 0 10px #d6a8e9!important;
+      outline: none!important;
+      border-width: thin!important;
+     }
+     .displayNone {
+      display: none!important;
+     }
+     .displayBlock {
+      display: block!important;
+     }
         </style>
     <link rel="stylesheet" type="text/css" href="asset/css/semantic.css">
     <script
@@ -43,6 +56,7 @@
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
     <script src="asset/js/semantic.js"></script>
+    <script src="asset/js/util.js"></script>
     <script type="text/javascript">
 
 
@@ -68,12 +82,17 @@
         window.el.input = {};
         window.el.input.email = window.document.getElementById("inputEmail");
         window.el.input.password = window.document.getElementById("inputPassword");
+        window.el.input.passwordCheck = window.document.getElementById("inputPasswordCheck");
 
         window.el.btn = {}
         window.el.btn.login = window.document.getElementById("btnLogin");
         window.el.btn.join = window.document.getElementById("btnJoin");
-
-
+        window.el.btn.showPassBt = window.document.getElementById("showPassBt");
+        window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
+        window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
+        window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
+        window.el.div = {}
+        window.el.div.emailTooltip = window.document.getElementById("toolipEmail");
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
@@ -91,152 +110,6 @@
           }
           console.log( "[E] - webStorageSetItem ")
         }
-        /* 
-    	[요약 설명]
-    	1. XMLHttpRequest : 비동기식 통신 방식 객체이며, 서버와 데이터를 교환할 때 사용됩니다
-    	2. xhr.open : 서버로 보낼 Ajax 요청의 형식을 설정합니다
-    	3. xhr.send : Ajax 요청을 서버로 전달합니다
-    	
-    	4. xhr.onreadystatechange : XMLHttpRequest 객체의 현재 상태를 나타냅니다    	
-    	5. readyState 프로퍼티 : 
-    		- UNSENT (숫자 0) : XMLHttpRequest 객체가 생성됨
-    		- OPENED (숫자 1) : open() 메소드가 성공적으로 실행됨
-    		- HEADERS_RECEIVED (숫자 2) : 모든 요청에 대한 응답이 도착함
-    		- LOADING (숫자 3) : 요청한 데이터를 처리 중
-    		- DONE (숫자 4) : 요청한 데이터의 처리가 완료되어 응답할 준비가 완료됨
-    		
-    	6. xhr.status : 서버로부터 응답받은 상태 및 리턴 메시지를 확인합니다
-    	7. status 프로퍼티 :
-    		- 200 ~ 201 : 요청이 성공적 상태
-    		- 그외 상태 : 인터넷에서 http 응답 상태를 검색해서 확인
-    	*/
-
-    	
-    	
-    	/* 이벤트 함수 정의 */
-    	function requestGet(){
-    		console.log("");
-    		console.log("[requestGet] : [start]");    		
-    		console.log("");
-    		
-    		// url 및 전송 데이터 선언
-    		var url = "http://jsonplaceholder.typicode.com/posts?userId=1&id=1";
-    		    		    		    		
-    		// XMLHttpRequest 객체 생성 및 요청 수행
-    		var xhr = new XMLHttpRequest();
-    		xhr.open("GET", url, true);
-    		    		
-    		console.log("[request url] : " + url);    		    	
-    		console.log("[request method] : " + "GET");
-    		console.log("");
-    		
-    		//xhr.onreadystatechange = CallbackFunction; //콜백 함수 지정해서 처리 가능    		
-    		xhr.onreadystatechange = function() {
-    			if (xhr.readyState == 4) { 
-    				if (xhr.status == 200 || xhr.status == 201){
-    					console.log("[status] : " + xhr.status);
-    					console.log("[response] : " + "[success]");    				   				    				
-    					console.log("[response] : " + xhr.responseText);
-    					console.log("");        				
-    				}
-    				else {
-    					console.log("[status] : " + xhr.status);
-    					console.log("[response] : " + "[fail]");    				   				    				
-    					console.log("[response] : " + xhr.responseText);
-    					console.log("");        				
-    				}					
-    			}    			
-    		}
-    		xhr.send(null); //get 쿼리 파람 방식일때 null    					    		    		
-									
-    	};
-
-    	
-    	
-    	/* 이벤트 함수 정의 */
-    	function requestPost(){
-    		console.log("");
-    		console.log("[requestPost] : [start]");    		
-    		console.log("");
-    		
-    		// url 및 전송 데이터 선언
-    		var url = "http://jsonplaceholder.typicode.com/posts?userId=1&id=1";
-    		    		    		    		
-    		// XMLHttpRequest 객체 생성 및 요청 수행
-    		var xhr = new XMLHttpRequest();
-    		xhr.open("POST", url, true);
-    		    		
-    		console.log("[request url] : " + url);    		    	
-    		console.log("[request method] : " + "POST");
-    		console.log("");
-    		
-    		//xhr.onreadystatechange = CallbackFunction; //콜백 함수 지정해서 처리 가능    		
-    		xhr.onreadystatechange = function() {
-    			if (xhr.readyState == 4) {
-    				if (xhr.status == 200 || xhr.status == 201){
-    					console.log("[status] : " + xhr.status);
-    					console.log("[response] : " + "[success]");    				   				    				
-    					console.log("[response] : " + xhr.responseText);
-    					console.log("");        				
-    				}
-    				else {
-    					console.log("[status] : " + xhr.status);
-    					console.log("[response] : " + "[fail]");    				   				    				
-    					console.log("[response] : " + xhr.responseText);
-    					console.log("");        				
-    				}    				
-    			}    			
-    		}
-    		xhr.send(null); //post 쿼리 파람 방식일때 null    					    		    		
-									
-    	};
-
-    	
-    	
-    	/* 이벤트 함수 정의 */
-    	function requestPostBodyJson( url, data, cbFunction ){
-    		debugger;
-        console.log("");
-    		console.log("[requestPostBodyJson] : [start]");    		
-    		console.log("");
-    		
-    		// url 및 전송 데이터 선언
-    		//var url = "http://jsonplaceholder.typicode.com/posts";
-    		
-    		// 전송 json 데이터 선언
-    		var jsonData = data//{"userId" : 1 , "id" : 1};
-    		    		    		    		debugger;
-    		// XMLHttpRequest 객체 생성 및 요청 수행
-    		var xhr = new XMLHttpRequest();
-    		xhr.open("POST", url, true);
-    		    		
-    		console.log("[request url] : " + url);
-    		console.log("[request data] : " + JSON.stringify(jsonData));
-    		console.log("[request method] : " + "POST");
-    		console.log("");
-    		
-    		//xhr.onreadystatechange = CallbackFunction; //콜백 함수 지정해서 처리 가능    		
-    		xhr.onreadystatechange = function() {
-    			if (xhr.readyState == 4) {
-    				if (xhr.status == 200 || xhr.status == 201){
-    					console.log("[status] : " + xhr.status);
-    					console.log("[response] : " + "[success]");    				   				    				
-    					console.log("[response] : " + xhr.responseText);
-    					console.log("");
-              cbFunction( xhr.responseText )        				
-    				}
-    				else {
-    					console.log("[status] : " + xhr.status);
-    					console.log("[response] : " + "[fail]");    				   				    				
-    					console.log("[response] : " + xhr.responseText);
-    					console.log("");        				 
-    				}						    				
-    			}    			
-    		}
-    		xhr.setRequestHeader("Content-Type", "application/json");    		
-    		xhr.send(JSON.stringify(jsonData)); //post body json 방식 일때    					    		    		
-									
-    	};
 
         function showClock(){
           var currentDate = new Date();
@@ -271,6 +144,30 @@
           return regex.test(str)
           
         }
+        var checkPass = function(str){
+
+          let regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)          
+          console.log(regex.test(str));
+
+          //*/
+          return true;
+          /*/
+          return regex.test(str)
+          //*/
+        }
+
+        var loginBtCheck = function(){
+          var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+          var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+          if( checkEmailInputData != "false" && checkPassInputData != "false" )
+          {
+            window.el.btn.login.classList.remove( "disabled" );
+          }
+          else
+          {
+            window.el.btn.login.classList.add( "disabled" );
+          }
+        }
         
         //-------------------------------------------------------;
         //-------------------------------------------------------;
@@ -280,9 +177,95 @@
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         window.evt = {}
+        window.el.btn.showPassBt.addEventListener("click",function(evt){
+          window.el.btn.hidePassBt.classList.remove("displayNone");
+          window.el.btn.showPassBt.classList.add("displayNone");
+          window.el.input.password.type = "text";
+        })
+        window.el.btn.hidePassBt.addEventListener("click",function(evt){
+          window.el.btn.hidePassBt.classList.add("displayNone");
+          window.el.btn.showPassBt.classList.remove("displayNone");
+          window.el.input.password.type = "password";
+        })
+        window.el.btn.showPassBt1.addEventListener("click",function(evt){
+          window.el.btn.hidePassBt1.classList.remove("displayNone");
+          window.el.btn.showPassBt1.classList.add("displayNone");
+          window.el.input.passwordCheck.type = "text";
+        })
+        window.el.btn.hidePassBt1.addEventListener("click",function(evt){
+          window.el.btn.hidePassBt1.classList.add("displayNone");
+          window.el.btn.showPassBt1.classList.remove("displayNone");
+          window.el.input.passwordCheck.type = "password";
+        })
+
+        window.el.input.password.addEventListener("keypress",function(evt){
+          
+          //var emailInputLoader = window.document.getElementById("emailInputLoader");
+          var pass = evt.target.value;
+          var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+          var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+
+          if( checkPass(pass) )
+          {
+            window.el.input.password.attributes[ "data-validate" ].value = "true";
+          }
+          else
+          {
+            window.el.input.password.attributes[ "data-validate" ].value = "false";
+          }
+          loginBtCheck();
+        })
+
+        window.el.input.email.addEventListener("change",function(evt){
+          
+          var emailInputLoader = window.document.getElementById("emailInputLoader");
+          var email = evt.target.value;
+          
+          var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+          var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+
+
+          emailInputLoader.classList.remove("displayNone");
+
+          if( !checkEmail(email) )
+          {
+            evt.target.classList.add( "inputerror" );
+            window.el.div.emailTooltip.classList.remove( "displayNone" );
+            emailInputLoader.classList.add("displayNone");
+            window.el.input.email.attributes[ "data-validate" ].value = "false";
+            return;
+            //return alert("이메일을 입력해주세요");
+
+          }
+          else
+          {
+            if( !window.el.div.emailTooltip.classList.contains( "displayNone" ) ) window.el.div.emailTooltip.classList.add( "displayNone" );
+            evt.target.classList.remove( "inputerror" );
+            // emailInputLoader.classList.add("displayNone");
+            requestGet("/api/existEmail?email=" + email, function(d){
+              var r = JSON.parse(d)
+              if( r.r )
+              {
+                console.log( "email exist : " + r.userId )
+                emailInputLoader.classList.add("displayNone");
+                window.el.input.email.attributes[ "data-validate" ].value = "true";
+              }
+              else
+              {
+                window.el.div.emailTooltip.classList.remove( "displayNone" );
+                emailInputLoader.classList.add("displayNone");
+                evt.target.classList.add( "inputerror" );
+                window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
+                console.log( "email exist : " + r.m )
+                window.el.input.email.attributes[ "data-validate" ].value = "false";
+              }
+              loginBtCheck();
+            })
+          }
+
+        });
         window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
       
-          
 
           var email = window.el.input.email.value;
           var password = window.el.input.password.value;
@@ -342,23 +325,38 @@
         </h2>
         <!-- <form class="ui large form"> -->
          
+              <div class="field" style="margin-bottom: 20px;">
+                <div class="ui icon fluid action input loading">
+                  <input id="inputEmail" data-validate="false" type="text" name="email" placeholder="이메일">
+                  <i id="emailInputLoader" class="search icon displayNone" style="right: 70px!important;"></i>
+                  <div class="ui button" style="border-radius: 0px 3px 3px 0px!important;">인증</div>
+                </div>
+                <div id="toolipEmail" class="ui pointing red basic label displayNone">
+                  잘못된형식의 이메일입니다.
+                </div>
+                <div class="ui tiny error message displayNone">잘못된형식의 이메일입니다.</div>
+              </div>
             <div class="field" style="margin-bottom: 20px;">
-              <div class="ui fluid action input">
-                <input id="inputEmail" type="text" name="email" placeholder="이메일">
-                <button class="ui button">인증</button>
-            
-              </div>
-              </div>
-
-            <div class="field" style="margin-bottom: 20px;">
-              <div class="ui fluid input">
-                <input id="inputPassword" type="password" name="password" placeholder="비밀번호">
-              </div>
+                <div class="ui icon fluid input">
+                  <input id="inputPassword" data-validate="false" type="password" name="password" placeholder="비밀번호">
+                  <div id="showPassBt" class="" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M21.8 9.92C20.09 7.99 17.46 6 14 6S7.92 8 6.2 9.92A17.7 17.7 0 0 0 3.44 14a18.56 18.56 0 0 0 2.74 4.08C7.92 20.01 10.55 22 14 22c3.45 0 6.08-2 7.8-3.92 1.11-1.22 2.03-2.6 2.75-4.08a17.82 17.82 0 0 0-2.74-4.08ZM14 21c-3.05 0-5.42-1.76-7.07-3.58A17.13 17.13 0 0 1 4.56 14c.27-.53 1.08-1.98 2.37-3.42C8.58 8.76 10.95 7 14 7c3.05 0 5.42 1.76 7.07 3.58 1.29 1.44 2.1 2.89 2.37 3.42-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21Z"></path><path fill="currentColor" fill-rule="evenodd" d="M10 14a4 4 0 1 1 8 0 4 4 0 0 1-8 0Zm1 0a3 3 0 1 1 6 0 3 3 0 0 1-6 0Z"></path></svg>
+                  </div>
+                  <div id="hidePassBt"  class="displayNone" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M22.2 6.5 6.5 22.2l-.7-.7L21.5 5.8l.7.7ZM14 6c1.54 0 2.9.4 4.1 1l-.74.75A8 8 0 0 0 14 7c-3.05 0-5.42 1.76-7.07 3.59A17.13 17.13 0 0 0 4.56 14a17.13 17.13 0 0 0 2.77 3.84l-.7.7-.44-.45c-1.1-1.24-2-2.61-2.74-4.09a17.7 17.7 0 0 1 2.74-4.08C7.92 7.99 10.55 6 14 6ZM21.8 9.92l-.41-.45-.7.7.38.42c1.29 1.43 2.1 2.88 2.37 3.41-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21a7.99 7.99 0 0 1-3.35-.75L9.9 21c1.2.6 2.57 1 4.1 1 3.45 0 6.08-2 7.8-3.91 1.11-1.23 2.03-2.6 2.75-4.09a17.82 17.82 0 0 0-2.74-4.08Z"></path><path fill="currentColor" d="M13.01 17.88A4 4 0 0 0 17.87 13l-.87.87V14a3 3 0 0 1-3.11 3l-.88.88ZM10.13 15.02l.87-.88V14a3 3 0 0 1 3.13-3l.87-.87a4 4 0 0 0-4.87 4.89Z"></path></svg>
+                  </div>
+                </div>
             </div>
 
             <div class="field" style="margin-bottom: 20px;">
-              <div class="ui fluid input">
-                <input id="inputPasswordCheck" type="password" name="password" placeholder="비밀번호확인">
+              <div class="ui icon fluid input">
+                <input id="inputPasswordCheck" data-validate="false" type="password" name="password" placeholder="비밀번호확인">
+                <div id="showPassBt1" class="" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M21.8 9.92C20.09 7.99 17.46 6 14 6S7.92 8 6.2 9.92A17.7 17.7 0 0 0 3.44 14a18.56 18.56 0 0 0 2.74 4.08C7.92 20.01 10.55 22 14 22c3.45 0 6.08-2 7.8-3.92 1.11-1.22 2.03-2.6 2.75-4.08a17.82 17.82 0 0 0-2.74-4.08ZM14 21c-3.05 0-5.42-1.76-7.07-3.58A17.13 17.13 0 0 1 4.56 14c.27-.53 1.08-1.98 2.37-3.42C8.58 8.76 10.95 7 14 7c3.05 0 5.42 1.76 7.07 3.58 1.29 1.44 2.1 2.89 2.37 3.42-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21Z"></path><path fill="currentColor" fill-rule="evenodd" d="M10 14a4 4 0 1 1 8 0 4 4 0 0 1-8 0Zm1 0a3 3 0 1 1 6 0 3 3 0 0 1-6 0Z"></path></svg>
+                </div>
+                <div id="hidePassBt1"  class="displayNone" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M22.2 6.5 6.5 22.2l-.7-.7L21.5 5.8l.7.7ZM14 6c1.54 0 2.9.4 4.1 1l-.74.75A8 8 0 0 0 14 7c-3.05 0-5.42 1.76-7.07 3.59A17.13 17.13 0 0 0 4.56 14a17.13 17.13 0 0 0 2.77 3.84l-.7.7-.44-.45c-1.1-1.24-2-2.61-2.74-4.09a17.7 17.7 0 0 1 2.74-4.08C7.92 7.99 10.55 6 14 6ZM21.8 9.92l-.41-.45-.7.7.38.42c1.29 1.43 2.1 2.88 2.37 3.41-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21a7.99 7.99 0 0 1-3.35-.75L9.9 21c1.2.6 2.57 1 4.1 1 3.45 0 6.08-2 7.8-3.91 1.11-1.23 2.03-2.6 2.75-4.09a17.82 17.82 0 0 0-2.74-4.08Z"></path><path fill="currentColor" d="M13.01 17.88A4 4 0 0 0 17.87 13l-.87.87V14a3 3 0 0 1-3.11 3l-.88.88ZM10.13 15.02l.87-.88V14a3 3 0 0 1 3.13-3l.87-.87a4 4 0 0 0-4.87 4.89Z"></path></svg>
+                </div>
               </div>
             </div>
 

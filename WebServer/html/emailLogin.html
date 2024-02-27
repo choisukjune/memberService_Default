@@ -139,6 +139,30 @@
           return regex.test(str)
           
         }
+        var checkPass = function(str){
+
+          let regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)          
+          console.log(regex.test(str));
+
+          //*/
+          return true;
+          /*/
+          return regex.test(str)
+          //*/
+        }
+
+        var loginBtCheck = function(){
+          var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+          var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+          if( checkEmailInputData != "false" && checkPassInputData != "false" )
+          {
+            window.el.btn.login.classList.remove( "disabled" );
+          }
+          else
+          {
+            window.el.btn.login.classList.add( "disabled" );
+          }
+        }
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
@@ -148,10 +172,32 @@
         //-------------------------------------------------------;
 
         window.evt = {}
+        window.el.input.password.addEventListener("keypress",function(evt){
+          
+          //var emailInputLoader = window.document.getElementById("emailInputLoader");
+          var pass = evt.target.value;
+          var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+          var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+
+          if( checkPass(pass) )
+          {
+            window.el.input.password.attributes[ "data-validate" ].value = "true";
+          }
+          else
+          {
+            window.el.input.password.attributes[ "data-validate" ].value = "false";
+          }
+          loginBtCheck();
+        })
+
         window.el.input.email.addEventListener("change",function(evt){
-          debugger;
+          
           var emailInputLoader = window.document.getElementById("emailInputLoader");
           var email = evt.target.value;
+          
+          var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+          var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+
 
           emailInputLoader.classList.remove("displayNone");
 
@@ -160,6 +206,7 @@
             evt.target.classList.add( "inputerror" );
             window.el.div.emailTooltip.classList.remove( "displayNone" );
             emailInputLoader.classList.add("displayNone");
+            window.el.input.email.attributes[ "data-validate" ].value = "false";
             return;
             //return alert("이메일을 입력해주세요");
 
@@ -175,6 +222,7 @@
               {
                 console.log( "email exist : " + r.userId )
                 emailInputLoader.classList.add("displayNone");
+                window.el.input.email.attributes[ "data-validate" ].value = "true";
               }
               else
               {
@@ -183,8 +231,9 @@
                 evt.target.classList.add( "inputerror" );
                 window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
                 console.log( "email exist : " + r.m )
+                window.el.input.email.attributes[ "data-validate" ].value = "false";
               }
-              
+              loginBtCheck();
             })
           }
 
@@ -225,7 +274,10 @@
             }
             else
             {
-              webStorageSetItem( JSON.parse( _d.d ) )
+              debugger;
+              var userInfo = JSON.parse( _d.d );
+              
+              webStorageSetItem( userInfo );
               location.href="/"
             }
             
@@ -267,7 +319,7 @@
          
             <div class="field">
               <div class="ui icon input loading">
-                <input id="inputEmail" type="text" name="email" placeholder="이메일">
+                <input id="inputEmail" data-validate="false" type="text" name="email" placeholder="이메일">
                 <i id="emailInputLoader" class="search icon displayNone"></i>
               </div>
               <div id="toolipEmail" class="ui pointing red basic label displayNone">
@@ -277,7 +329,7 @@
             </div>
             <div class="field">
               <div class="ui icon input">
-                <input id="inputPassword" type="password" name="password" placeholder="비밀번호">
+                <input id="inputPassword" data-validate="false" type="password" name="password" placeholder="비밀번호">
                 <div id="showPassBt" class="" style="position: absolute;right: 7px;top: 6px;cursor: pointer;">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28"><path fill="currentColor" d="M21.8 9.92C20.09 7.99 17.46 6 14 6S7.92 8 6.2 9.92A17.7 17.7 0 0 0 3.44 14a18.56 18.56 0 0 0 2.74 4.08C7.92 20.01 10.55 22 14 22c3.45 0 6.08-2 7.8-3.92 1.11-1.22 2.03-2.6 2.75-4.08a17.82 17.82 0 0 0-2.74-4.08ZM14 21c-3.05 0-5.42-1.76-7.07-3.58A17.13 17.13 0 0 1 4.56 14c.27-.53 1.08-1.98 2.37-3.42C8.58 8.76 10.95 7 14 7c3.05 0 5.42 1.76 7.07 3.58 1.29 1.44 2.1 2.89 2.37 3.42-.27.53-1.08 1.98-2.37 3.42C19.42 19.24 17.05 21 14 21Z"></path><path fill="currentColor" fill-rule="evenodd" d="M10 14a4 4 0 1 1 8 0 4 4 0 0 1-8 0Zm1 0a3 3 0 1 1 6 0 3 3 0 0 1-6 0Z"></path></svg>
                 </div>
@@ -286,7 +338,7 @@
                 </div>
               </div>
             </div>
-            <div id="btnLogin" class="ui fluid large blue submit button">로그인</div>
+            <div id="btnLogin" class="ui fluid large blue submit button disabled">로그인</div>
     
     
           <div class="ui error message"></div>

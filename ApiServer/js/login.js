@@ -9,19 +9,17 @@ if( console ) console.log( "[ S ] - " + fileNm + "----------" );
 
 var fs = require( "fs" );
 var url = require('url');
+var crypto = require("crypto");
+var util = require("util");
 
 //-------------------------------------------------------;
 // VARIABLE;
 //-------------------------------------------------------;
 /*
-
 Client ID
 M8iKRLr_1Ld0T3nVxeV_
-
 Client Secret
 fiKA87hc1K
-
-
 */
 var ROOT_PATH = process.cwd();
 
@@ -44,6 +42,70 @@ var _tDbjs_PATH = ROOT_PATH + "/tdbjs/";
 //-------------------------;
 //-------------------------;
 
+
+
+var randomBytesPromise = util.promisify(crypto.randomBytes);
+var pbkdf2Promise = util.promisify(crypto.pbkdf2);
+
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+var createSalt = async () => {
+  const buf = await randomBytesPromise(64);
+
+  return buf.toString("base64");
+};
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+var createHashedPassword = async (password, cbFunction) => {
+  const salt = await createSalt();
+  const key = await pbkdf2Promise(password, salt, 104906, 64, "sha512");
+  const hashedPassword = key.toString("base64");
+  cbFunction({ hashedPassword, salt }) ;
+};
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+const verifyPassword = async (password, userSalt, userPassword, cbFunction ) => {
+	const key = await pbkdf2Promise(password, userSalt, 104906, 64, "sha512");
+	const hashedPassword = key.toString("base64");
+  	
+	console.log("password : ", password)
+	console.log("userPassword:", userPassword)
+	console.log("hashedPassword:", hashedPassword)
+	
+	var r = false
+	if (hashedPassword === userPassword)
+	{
+		console.log(true);
+		r = true;
+	}
+	else
+	{
+		console.log(false);
+		r = false;
+	}
+	cbFunction( r )
+  };
+
+/*
+var _a = {
+	hashedPassword:'JHGDnmlx5bzBn2jjgqQddRq5xwErkd3KVXoZT80Y31Xd5X8xknjP55waKCU5/HhfuCZJT175kqAJLtKrNzuqAw==',
+	salt:'u4EniTRCUVZsSjG0SgGEqYJ8gHCqUUMU9Y7y3gonBMeaswlyGXZIubVBhc5yOT3oibyWpfxToS9Cbo63PD4r+w=='
+}
+verifyPassword("1234",_a.salt,_a.hashedPassword)
+*/
+//createHashedPassword("1234", function(d){console.log(d);})
 /*
  * @function
  * @param {String} dbjsNm
@@ -66,7 +128,7 @@ var exec_query_DB = function( dbjsNm, bResult ){
 		.replace( "<!=FILE_PATH=!>", FILE_PATH );
 	*/
 
-	var command = CP_COMMAND.MONGO + ` "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0" ${FILE_PATH}`
+	var command = CP_COMMAND.MONGO + ` "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0&readPreference=secondary" ${FILE_PATH}`
 	//mongosh --host localhost --port 59320 --username tjrwns --password 123qweasdzxc --authenticationDatabase admin --file insert.js
 	//var command = CP_COMMAND.MONGO + ` --port 59320 -u tjrwns -p 123qweasdzxc --authenticationDatabase admin ${FILE_PATH}`
 	console.log( command )
@@ -324,6 +386,19 @@ function randomStr(){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
+
+	// 세션 시크릿 키 생성 함수
+	function generateSessionSecret() {
+	const secretBytes = crypto.randomBytes(32); // 32바이트 랜덤 데이터 생성
+	const sessionSecret = secretBytes.toString('base64'); // base64로 인코딩
+
+	return sessionSecret;
+	}
+
+	// 생성된 세션 시크릿 키 출력
+	// const sessionSecret = generateSessionSecret();
+	// console.log('Generated Session Secret:', sessionSecret);
+
 	var insertSesstion = function( data, cbFunction ){
 		var _tdbjs_nm = "insertSession";
 		
@@ -572,23 +647,27 @@ function randomStr(){
 		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
 
 		var _d = JSON.parse( r );
-		if( _d.r == 1 )
-		{
-			res.end( r )
-		}
-		else
-		{
-			var sid = SHA256( r + randomStr() );
-		
-			insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-				console.log("[ E ] - /Login");
 
-				res.end( JSON.stringify( { sid : sid, d : r } ) )	
-			});
-		}
-		
+		verifyPassword(paramBody.pass,_d.salt,_d.password, function(d){
+			//if( d.password == password ) r = { r : 0, d : d }
+			//else r = 
+			if( !d )
+			{
+				res.end( JSON.stringify({ r : 1, d : null, m : "password not collect!" }) )
+			}
+			else
+			{
+				//var sid = SHA256( r + randomStr() );
+				
+				var sid = generateSessionSecret();
+
+				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+					console.log("[ E ] - /Login");
 	
-
+					res.end( JSON.stringify( { sid : sid, d : r } ) )	
+				});
+			}
+		});
 
 	});
 	/**
