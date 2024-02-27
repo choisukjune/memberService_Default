@@ -524,35 +524,43 @@ var memberJoin = function( data, cbFunction ){
 		naverGetAccessToken({ code : code, state : state }, function(d){
 			naverGetUserInfo(d, function(r){
 
+				console.log( "naver sso sucesss!" );
 				console.log( r );
+				var _d = JSON.parse( r );
 				//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-				// var option = {
-				// 	host: 'localhost',
-				// 	port: '8888',
-				// 	path: '/join',
-				// 	method: 'POST',
-				// 	headers: {
-				// 		"content-type": "application/json",
-				// 		//"Content-Length": Buffer.byteLength(post_data)
-				// 	}
-				// };
+				var option = {
+					host: 'localhost',
+					port: '8888',
+					path: '/naverLogin',
+					method: 'POST',
+					headers: {
+						"content-type": "application/json",
+						//"Content-Length": Buffer.byteLength(post_data)
+					}
+				};
 				
 				// //var _d = { email : "12k4@naver.com", pass : "123qwe"}
-				// var _d = { email : data.email, pass : null }
+				var _d = { email : _d.response.email, pass : null }
 
-				// httpPostCallback( option, _d, function(d){
+				httpPostCallback( option, _d, function(d){
 
-					
-				// 	var _d = JSON.parse( d );
-				// 	console.log( "====>", _d );
-				// 	res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-				// 	//res.statusCode = 301;
-				// 	//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-				// 	res.end( d );
-				// })
-
-				res.writeHead(301, {'Location': '/'});
+					/*/
+					res.writeHead(301, {'Location': '/'});
 				res.end();
+					/*/
+					console.log("------------")
+					console.log(d)
+					var _d = JSON.parse( d );
+					console.log( "====>", _d );
+					res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
+					res.writeHead(301, {'Location': '/'});
+					//res.end("<a href='"+ api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>");
+					res.end()
+					//*/
+				
+				})
+
+				
 			})
 		})
 		// res.statusCode = 200;
@@ -610,6 +618,7 @@ var memberJoin = function( data, cbFunction ){
 
 		var client_id = 'M8iKRLr_1Ld0T3nVxeV_';
 		var client_secret = 'fiKA87hc1K';
+
 		var state = "RANDOM_STATE";
 		var redirectURI = encodeURI("http://localhost:8889/api/oauth/naver/callback");
 		var api_url = "";

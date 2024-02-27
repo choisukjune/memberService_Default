@@ -190,3 +190,48 @@ var checkEmail = function(str){
     return regex.test(str)
     
   }
+  var checkPass = function(str){
+
+    let regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)          
+    console.log(regex.test(str));
+
+    //*/
+    return true;
+    /*/
+    return regex.test(str)
+    //*/
+  }
+
+  var webStorageSetItem = function( o ){
+    console.log( "[S] - webStorageSetItem ")
+    var s,so;
+    for( s in o ){
+      so = o[ s ];
+      console.log( s );
+      window.localStorage.setItem( s , so );
+    }
+    console.log( "[E] - webStorageSetItem ")
+  }
+  function showClock(){
+    var currentDate = new Date();
+    var divClock = document.getElementById('divClock');
+    var msg = "현재 시간 : ";
+    if(currentDate.getHours()>12){      //시간이 12보다 크다면 오후 아니면 오전
+      msg += "오후 ";
+      msg += currentDate.getHours()-12+"시 ";
+  }
+  else {
+    msg += "오전 ";
+    msg += currentDate.getHours()+"시 ";
+  }
+
+    msg += currentDate.getMinutes()+"분 ";
+    msg += currentDate.getSeconds()+"초";
+
+    divClock.innerText = msg;
+
+    if (currentDate.getMinutes()>58) {    //정각 1분전부터 빨강색으로 출력
+      divClock.style.color="red";
+    }
+    setTimeout(showClock,1000);  //1초마다 갱신
+  }

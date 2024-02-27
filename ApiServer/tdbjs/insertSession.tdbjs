@@ -12,7 +12,7 @@ var now = new Date();
 var _o = { sid : "<!=SSESION_ID=!>", userId : "<!=USER_ID=!>",creatDate : now }
 
 
-col0.insert( _o );
+col0.insertOne( _o );
 
 
 printjson( 1 )

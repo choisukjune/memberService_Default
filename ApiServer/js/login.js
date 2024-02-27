@@ -670,6 +670,86 @@ function randomStr(){
 		});
 
 	});
+	global.server.addRouter("/naverLogin",function( req, res, data ){
+		/*
+		
+		https://lab.cliel.com/entry/nodejs-http
+		여기서 세션처리하는 거 확인하기
+
+		https://www.mongodb.com/docs/manual/tutorial/expire-data/
+		몽고디비에서 세션컬렉션의 문서를 시간이지나면 자동으로 파기하는 방법
+
+		일정시간이 지나고, 브라우저 쿠키가 만료되고, 로그인페이지로 이동시김
+		*/
+		console.log("[ S ] - /naverLogin");
+
+		console.log( data )
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		var paramBody = JSON.parse( data )
+		var _tdbjs_nm = "naverLogin";
+		
+		console.log( routerNm )
+		console.log( paramsO )
+		console.log( paramBody )
+		console.log( req.headers.cookie )
+
+		//console.log( parseCookie( req.headers.cookie ) );
+
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+		// console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		// try
+		// {
+		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		// }
+		// catch( err )
+		// {
+		// 	console.log( routerNm + " - DBJS File Not Found! - " + err );
+		// 	res.end("{ sucess : 0, data : null }");
+		// }
+		
+		// var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
+		// .replace( "<!=PASSWORD=!>", paramBody.pass );
+		// var dbjs_nm = "login_" + paramBody.email + ".dbjs";
+		
+		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		// console.log( FILE_PATH );
+		
+		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		// var _r = exec_query_DB( dbjs_nm );
+		
+		// var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+
+		// var _d = JSON.parse( r );
+
+		// verifyPassword(paramBody.pass,_d.salt,_d.password, function(d){
+		// 	//if( d.password == password ) r = { r : 0, d : d }
+		// 	//else r = 
+		// 	if( !d )
+		// 	{
+		// 		res.end( JSON.stringify({ r : 1, d : null, m : "password not collect!" }) )
+		// 	}
+		// 	else
+		// 	{
+				//var sid = SHA256( r + randomStr() );
+				
+				var sid = generateSessionSecret();
+
+				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+					console.log("[ E ] - /naverLogin");
+	
+					res.end( JSON.stringify( { sid : sid, d : {userId : paramBody.email } } ) )	
+				});
+		//	}
+		// });
+
+	});
 	/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function
