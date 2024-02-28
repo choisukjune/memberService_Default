@@ -500,12 +500,17 @@ function randomStr(){
 		console.log( r );
 		cbFunction( r );
 	}
-	var createUser = function( data, ssoType,cbFunction ){
+	var createUser = function( data, password, salt, ssoType, isSSO, cbFunction ){
 		console.log( "[S] - createUser" );
 
 		console.log( "data - ", data );
 		console.log( "ssoType - ", ssoType );
-		
+		console.log( "password - ", password );
+		console.log( "salt - ", salt );
+		console.log( "ssoType - ", ssoType );
+		console.log( "isSSO - ", isSSO );
+
+		password = password || null;
 
 		/*
 		{
@@ -540,6 +545,9 @@ function randomStr(){
 		console.log( _tQuery );
 		var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
 		.replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
+		.replace( "<!=PASSWORD=!>", password )
+		.replace( "<!=SALT=!>", salt )
+		.replace( "<!=IS_SSO=!>", isSSO )
 		.replace( "<!=SSO_TYPE=!>", ssoType );
 		var dbjs_nm = "createUser.dbjs";
 
@@ -768,13 +776,13 @@ function randomStr(){
 
 			if( _d.r )
 			{
-				createUser( paramBody, "naver", function(d){
+				createUser( paramBody, null, null, "naver", true, function(d){
 					var sid = generateSessionSecret();
 			
 					insertSesstion( { session : sid, userId : paramBody.email }, function(d){
 						console.log("[ E ] - /naverLogin");
 
-						res.end( JSON.stringify( { sid : sid, d : {userId : paramBody.email } } ) )	
+						res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
 					});
 				})
 			}
@@ -785,7 +793,7 @@ function randomStr(){
 				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
 					console.log("[ E ] - /naverLogin");
 
-					res.end( JSON.stringify( { sid : sid, d : {userId : paramBody.email } } ) )	
+					res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
 				});
 			}
 

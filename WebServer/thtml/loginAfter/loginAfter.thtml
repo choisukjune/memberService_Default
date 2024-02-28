@@ -8,8 +8,7 @@
     </h2>
     <div class="content">
         <div>회원정보</div>
-        <div id="userInfoEmail"></div>
-        <div id="userInfoName"></div>
+        <div id="profile"></div>
     </div>
     <div class="ui horizontal divider colorWhite">로그아웃할거에요~</div>
     <div id="logout" class="ui fluid inverted large submit button">로그아웃</div>

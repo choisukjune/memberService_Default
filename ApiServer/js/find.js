@@ -9,16 +9,27 @@ if( console ) console.log( "[ S ] - " + fileNm + "----------" );
 
 var fs = require( "fs" );
 var url = require('url');
+var crypto = require("crypto");
+var util = require("util");
+var querystring = require('querystring');
 
 //-------------------------------------------------------;
 // VARIABLE;
 //-------------------------------------------------------;
-
+/*
+Client ID
+M8iKRLr_1Ld0T3nVxeV_
+Client Secret
+fiKA87hc1K
+*/
 var ROOT_PATH = process.cwd();
+
+//mongosh command 
+//mongosh "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0"
 
 var CP_COMMAND = {};
 	//CP_COMMAND.MONGO = "..\\Binary\\Mongodb\\mongodb-win32-x86_64-windows-4.4.3\\bin\\mongo";
-	CP_COMMAND.MONGO = "mongo";
+	CP_COMMAND.MONGO = "mongosh";
 
 var DBJS_DIRECTORY_PATH = ROOT_PATH + "/dbjs/";
 var _tDbjs_PATH = ROOT_PATH + "/tdbjs/";
@@ -32,6 +43,70 @@ var _tDbjs_PATH = ROOT_PATH + "/tdbjs/";
 //-------------------------;
 //-------------------------;
 
+
+
+var randomBytesPromise = util.promisify(crypto.randomBytes);
+var pbkdf2Promise = util.promisify(crypto.pbkdf2);
+
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+var createSalt = async () => {
+  const buf = await randomBytesPromise(64);
+
+  return buf.toString("base64");
+};
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+var createHashedPassword = async (password, cbFunction) => {
+  const salt = await createSalt();
+  const key = await pbkdf2Promise(password, salt, 104906, 64, "sha512");
+  const hashedPassword = key.toString("base64");
+  cbFunction({ hashedPassword, salt }) ;
+};
+/*
+ * @function
+ * @param {String} dbjsNm
+ * @param {boolean} bResult
+ * @return {String} r
+ */
+const verifyPassword = async (password, userSalt, userPassword, cbFunction ) => {
+	const key = await pbkdf2Promise(password, userSalt, 104906, 64, "sha512");
+	const hashedPassword = key.toString("base64");
+  	
+	console.log("password : ", password)
+	console.log("userPassword:", userPassword)
+	console.log("hashedPassword:", hashedPassword)
+	
+	var r = false
+	if (hashedPassword === userPassword)
+	{
+		console.log(true);
+		r = true;
+	}
+	else
+	{
+		console.log(false);
+		r = false;
+	}
+	cbFunction( r )
+  };
+
+/*
+var _a = {
+	hashedPassword:'JHGDnmlx5bzBn2jjgqQddRq5xwErkd3KVXoZT80Y31Xd5X8xknjP55waKCU5/HhfuCZJT175kqAJLtKrNzuqAw==',
+	salt:'u4EniTRCUVZsSjG0SgGEqYJ8gHCqUUMU9Y7y3gonBMeaswlyGXZIubVBhc5yOT3oibyWpfxToS9Cbo63PD4r+w=='
+}
+verifyPassword("1234",_a.salt,_a.hashedPassword)
+*/
+//createHashedPassword("1234", function(d){console.log(d);})
 /*
  * @function
  * @param {String} dbjsNm
@@ -43,6 +118,7 @@ var exec_query_DB = function( dbjsNm, bResult ){
 	var DBJS_NM = dbjsNm;
 	var FILE_PATH = ROOT_PATH + "/dbjs/" + DBJS_NM;
 
+	/*
 	var _t_command = CP_COMMAND.MONGO + " --username <!=ID=!> --password <!=PWD=!> --authenticationDatabase admin --host <!=HOST=!> --port <!=PORT=!> admin \"<!=FILE_PATH=!>\"";
 	if( bResult ) _t_command = _t_command + " > " + dbjsNm + "__" + Date.now() + ".result";
 	
@@ -51,9 +127,14 @@ var exec_query_DB = function( dbjsNm, bResult ){
 		.replace( "<!=HOST=!>", global.CONST.MongoDB.OPTIONS.self.HOST )
 		.replace( "<!=PORT=!>", global.CONST.MongoDB.OPTIONS.self.PORT )
 		.replace( "<!=FILE_PATH=!>", FILE_PATH );
+	*/
+
+	var command = CP_COMMAND.MONGO + ` "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/Cluster0&readPreference=secondary" ${FILE_PATH}`
+	//mongosh --host localhost --port 59320 --username tjrwns --password 123qweasdzxc --authenticationDatabase admin --file insert.js
+	//var command = CP_COMMAND.MONGO + ` --port 59320 -u tjrwns -p 123qweasdzxc --authenticationDatabase admin ${FILE_PATH}`
 	console.log( command )
 	var r = cp.execSync( command ).toString();
-		r = deleteLines( r , 4 )
+		//r = deleteLines( r , 8 )
 	return r;
 };
 
@@ -71,7 +152,7 @@ var exec_query_DB = function( dbjsNm, bResult ){
 var deleteLines = function( str, n ){
 	var i = 0,iLen = n,io;
 	for(;i<iLen;++i){ str = str.slice(str.indexOf("\n") + 1, str.length ); }
-	//str = str.replace( /\t/g, '' );
+	//]]str = str.replace( /\t/g, '' );
 	//str = str.replace( /\r\n/g, '' );
 	return str;
 };
@@ -101,6 +182,15 @@ var paramToObject = function( _url ){
 	var queryData = url.parse( _url, true).query;
 	return queryData;
 };
+
+/**
+*  SID를 생성하기 위한 문자열 인코딩 함수
+*  Secure Hash Algorithm (SHA256)
+*  http://www.webtoolkit.info/
+*
+*  Original code by Angel Marin, Paul Johnston.
+*
+**/
 //-------------------------;
 //-------------------------;
 //-------------------------;
@@ -258,11 +348,13 @@ var paramToObject = function( _url ){
 		http://localhost:8888/findContentsAll?page=1
 	* </code>
 	*/
-	global.server.addRouter("/findContentsAll",function( req, res ){
+	global.server.addRouter("/getUerInfoBySession",function( req, res, data ){
 		debugger;
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "findContentsAll";
+		var paramBody = JSON.parse( data )
+		console.log( paramsO )
+		var _tdbjs_nm = "getUerInfoBySession";
 				
 		var _tag = decodeURIComponent( paramsO.tag )
 
@@ -282,15 +374,14 @@ var paramToObject = function( _url ){
 			res.end("{ sucess : 0, data : null }");
 		}
 		
-		var query = _tQuery.replace( "<!=PAGE=!>", paramsO.page );
+		console.log(_tQuery)
+		var query = _tQuery.replace( "<!=SSESION_ID=!>", paramBody.sid );
 		var dbjs_nm = _tdbjs_nm + ".dbjs";
-
 		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
 		
-		console.log( FILE_PATH )
-
 		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
 		var r = exec_query_DB( dbjs_nm )
+		r = deleteLines( r , 8 )
 		res.end( r )	
 
 	});

@@ -1,0 +1,20 @@
+var db_nm = "data";
+var col_nm = "session";
+var col_nm0 = "member";
+
+
+var db0 = db.getSiblingDB( db_nm );
+var col0 = db0.getCollection( col_nm );
+var col1 = db0.getCollection( col_nm0 );
+
+
+var sid = "<!=SSESION_ID=!>"
+var _q = { sid : sid };
+
+var r = col0.findOne(_q)
+var userId = r.userId;
+
+var r = col1.findOne({ userId : userId });
+
+
+printjson( JSON.stringify( r.userInfo ) )

@@ -330,6 +330,82 @@ var memberJoin = function( data, cbFunction ){
 
 		
 	});
+		/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8889/html/test.html
+	* </code>
+	*/
+	global.server.addRouter("/api/getUerInfoBySession",function( req, res, data ){
+		console.log(1)
+		var routerNm = req.url.split("?")[0];
+		//var paramsO = paramToObject( req.url );
+		var paramBody = data
+		console.log( "paramBody", paramBody )
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		console.log(1)
+		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
+		var option = {
+			host: 'localhost',
+			port: '8888',
+			path: '/getUerInfoBySession',
+			method: 'POST',
+			headers: {
+				"content-type": "application/json",
+				//"Content-Length": Buffer.byteLength(post_data)
+			}
+		};
+		console.log(1)
+		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
+		var _d = { sid : paramBody.sid }
+
+		httpPostCallback( option, _d, function(d){
+
+			var _d = JSON.parse( d );
+			
+			if( !_d.r ) 
+			{
+				console.log("---1")
+					//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+					res.end( d );
+			}
+			else
+			{
+				console.log("---2")
+				//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+				res.end(d);
+			}
+			
+		})
+		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
+		// httpGetCallback( "getUerInfoBySession?sid=" + paramsO.sid, function(d){
+		// 	// res.setHeader('Set-Cookie', 'sid=' + d + "; max-age=" + 3600 + "; path=/;" );
+		// 	// res.statusCode = 301;
+		// 	res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+		// 	res.end( d );
+		// })
+
+		
+	});
 	/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function
@@ -497,6 +573,7 @@ var memberJoin = function( data, cbFunction ){
 		
 		});
 	}
+	
 	global.server.addRouter("/api/oauth/naver/callback",function( req, res ){
 
 		var routerNm = req.url.split("?")[0];
@@ -546,7 +623,7 @@ var memberJoin = function( data, cbFunction ){
 
 					/*/
 					res.writeHead(301, {'Location': '/'});
-				res.end();
+					res.end();
 					/*/
 					console.log("------------")
 					console.log(d)
@@ -555,7 +632,7 @@ var memberJoin = function( data, cbFunction ){
 					res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
 					res.writeHead(301, {'Location': '/'});
 					//res.end("<a href='"+ api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>");
-					res.end()
+					res.end(d);
 					//*/
 				
 				})

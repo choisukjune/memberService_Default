@@ -2,12 +2,20 @@
     var userInfo = getMemberInfo();
 
     //DOM;
-    window.el.div.userInfoEmail = window.document.getElementById("userInfoEmail");
-    window.el.div.userInfoName = window.document.getElementById("userInfoName");
+    window.el.div.profile = window.document.getElementById("profile");
     window.el.btn.logout = window.document.getElementById("logout");
     debugger;
-    window.el.div.userInfoEmail.innerText = userInfo.userId;
-    window.el.div.userInfoName.innerText = userInfo.name;
+    getUerInfoBySession(function(d){
+        var html = ""
+        var s,so;
+        var _d = JSON.parse( d );
+        for( s in _d ){
+            so = _d[ s ];
+            html += `<div>${s} - ${so}</div>\n`
+        }
+        window.el.div.profile.innerHTML = html 
+
+    })
     
     
     //EVENT;

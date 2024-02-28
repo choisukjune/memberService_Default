@@ -2,16 +2,25 @@ var db_nm = "data";
 var col_nm = "member";
 var userId = "<!=EMAIL=!>"
 var userInfo = <!=USER_INFO=!>
-var isSso = true;
+var isSso = <!=IS_SSO=!>;
 var ssoType = "<!=SSO_TYPE=!>"
+var password = "<!=PASSWORD=!>"
+var salt = "<!=SALT=!>"
 
+if( !isSso )
+{
+    ssoType = null;
+}
 var db0 = db.getSiblingDB( db_nm );
 var col0 = db0.getCollection( col_nm );
 
 var _d = {};
     _d.userId = userId;
+    _d.password = password
+    _d.salt = salt;
+    _d.isSso = isSso
     _d.ssoType = ssoType;
-    _d.userInfo = userInfo
+    _d.userInfo = userInfo;
  
 var r = {}
 var d = col0.insertOne( _d )

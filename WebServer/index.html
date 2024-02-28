@@ -55,47 +55,30 @@
     <script src="asset/js/semantic.js"></script>
     <script src="asset/js/util.js"></script>
     <script type="text/javascript">
+var getCookie = function(name) {      
+  var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');     
+   return value? value[2] : null;  
+};
+function getUerInfoBySession( cbfunction ){
+      debugger;
+      var sid = getCookie("sid");
+      if(!sid) return;
 
-
-      window.addEventListener('DOMContentLoaded', function()
-      {
-
-        //https://tyrannocoding.tistory.com/51 <-- SSO 로그인 구현방법 읽어보기!
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //REGEX;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //DOM element;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-
-        window.el = {};
-        window.el.input = {};
-
-        window.el.btn = {}
-		window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
-        window.el.div = {}
-        window.el.div.container = window.document.getElementById("container");
-
-        
-
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //Functions;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-
-		function renderBeforeLogin(){
+      var url = "/api/getUerInfoBySession"
+      var data = { sid : sid };
+      requestPostBodyJson( url, data, function(d){
+        console.log( d );
+        cbfunction(d);
+      })
+			// ("/api/getUerInfoBySession?sid=" + sid,function(d){
+			// 	// window.document.getElementById("container").innerHTML = d;
+			// 	// requestGet("/getJs?fileNm=loginBefore",function(d){
+			// 	// 	eval(d);
+			// 	// })
+      //   console.log( d );
+			// })
+		}
+    function renderBeforeLogin(){
 			requestGet("/getHtml?fileNm=loginBefore",function(d){
 				window.document.getElementById("container").innerHTML = d;
 				requestGet("/getJs?fileNm=loginBefore",function(d){
@@ -111,7 +94,7 @@
 				})
 			})
 		}
-		
+
         function showClock(){
           var currentDate = new Date();
           var divClock = document.getElementById('divClock');
@@ -203,7 +186,8 @@
           if( sid  ){
             requestGet("http://localhost:8888/checksession?sid=" + sid, function(d){
               if( d ){
-                console.log( "---->",d );
+                console.log( "session check complete!")
+                console.log( "[response] : ",d );
                 renderAfterLogin();
               }
               else
@@ -234,9 +218,48 @@
           }
         }
 
-        function initPage(){
-			//checkSession();
+    function initPage(){
+			checkSession();
 		}
+      window.addEventListener('DOMContentLoaded', function()
+      {
+
+        //https://tyrannocoding.tistory.com/51 <-- SSO 로그인 구현방법 읽어보기!
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //REGEX;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //DOM element;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+
+        window.el = {};
+        window.el.input = {};
+
+        window.el.btn = {}
+		    window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
+        window.el.div = {}
+        window.el.div.container = window.document.getElementById("container");
+
+        
+
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //Functions;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+
+		
 
 		initPage();
         //-------------------------------------------------------;

@@ -317,7 +317,12 @@ function parseCookie( reqCookie ){
 function randomStr(){
 	return Math.random().toString(36).substr(2,11)
 }
+function generateSessionSecret() {
+	const secretBytes = crypto.randomBytes(32); // 32바이트 랜덤 데이터 생성
+	const sessionSecret = secretBytes.toString('base64'); // base64로 인코딩
 
+	return sessionSecret;
+}
 //-------------------------;
 //-------------------------;
 //-------------------------;
@@ -455,6 +460,66 @@ function randomStr(){
 		console.log( r );
 		cbFunction( r );
 	}
+	var createUser = function( data, password, salt, ssoType, isSSO,cbFunction ){
+		console.log( "[S] - createUser" );
+
+		console.log( "data - ", data );
+		console.log( "ssoType - ", ssoType );
+		
+		password = password || null;
+
+		/*
+		{
+			"resultcode": "00",
+			"message": "success",
+			"response": {
+				"id": "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
+				"nickname": "최석준",
+				"profile_image": "https://phinf.pstatic.net/contact/20231115_39/17000369280735pXRv_PNG/02_icon.png",
+				"email": "jun@b2link.co.kr",
+				"mobile": "010-6863-6311",
+				"mobile_e164": "+821068636311",
+				"name": "최석준"
+			}
+		}
+		*/
+
+		var _tdbjs_nm = "createUser";
+		
+		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		try
+		{
+			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		}
+		catch( err )
+		{
+			// console.log( routerNm + " - DBJS File Not Found! - " + err );
+			// res.end("{ sucess : 0, data : null }");
+		}
+		
+		console.log( _tQuery );
+		var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
+		.replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
+		.replace( "<!=PASSWORD=!>", password )
+		.replace( "<!=SALT=!>", salt )
+		.replace( "<!=IS_SSO=!>", isSSO )
+		.replace( "<!=SSO_TYPE=!>", ssoType );
+		var dbjs_nm = "createUser.dbjs";
+
+		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		console.log( FILE_PATH );
+
+		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		var _r = exec_query_DB( dbjs_nm );
+		
+		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		console.log( r );
+		console.log( "[E] - createUser" );
+		cbFunction( r );
+	}
+
 	global.server.addRouter("/join",function( req, res, data ){
 		/*
 		
@@ -486,6 +551,9 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
+
+
+
 		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
 		
 		try
@@ -499,22 +567,20 @@ function randomStr(){
 		}
 		
 		createHashedPassword(paramBody.pass, function(result){
-			var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
-			.replace( "<!=PASSWORD=!>", result.hashedPassword )
-			.replace( "<!=SALT=!>", result.salt )
-			.replace( "<!=USER_INFO=!>", "{}" );
+			console.log( result )
+			createUser(paramBody, result.hashedPassword, result.salt, null, false,function(d){
+
+				var sid = generateSessionSecret();
+
+				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+					var sid = generateSessionSecret();
+					console.log("[ E ] - /Join");
+					res.end( JSON.stringify( { sid : sid, d : d } ) )	
+				});
+			})
+
 			
-			var dbjs_nm = "join.dbjs";
-			var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-			console.log( FILE_PATH );
-			fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-			var _r = exec_query_DB( dbjs_nm );
-			var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-			var sid = SHA256( r + randomStr() );
-			insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-				console.log("[ E ] - /Join");
-				res.end( JSON.stringify( { sid : sid, d : r } ) )	
-			});
+
 		})
 
 	});
