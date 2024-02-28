@@ -1,16 +1,20 @@
 var db_nm = "data";
 var col_nm = "member";
 var userId = "<!=EMAIL=!>"
-var password = "<!=PASSWORD=!>"
+var userInfo = <!=USER_INFO=!>
+var isSso = true;
+var ssoType = "<!=SSO_TYPE=!>"
 
 var db0 = db.getSiblingDB( db_nm );
 var col0 = db0.getCollection( col_nm );
 
-var _q = {};
-    _q.userId = userId;
+var _d = {};
+    _d.userId = userId;
+    _d.ssoType = ssoType;
+    _d.userInfo = userInfo
  
 var r = {}
-var d = col0.findOne( _q )
+var d = col0.insertOne( _d )
 
 //if( d.password == password ) r = { r : 0, d : d }
 //else r = { r : 1, d : null, m : "password not collect!" }

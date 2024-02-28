@@ -500,6 +500,61 @@ function randomStr(){
 		console.log( r );
 		cbFunction( r );
 	}
+	var createUser = function( data, ssoType,cbFunction ){
+		console.log( "[S] - createUser" );
+
+		console.log( "data - ", data );
+		console.log( "ssoType - ", ssoType );
+		
+
+		/*
+		{
+			"resultcode": "00",
+			"message": "success",
+			"response": {
+				"id": "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
+				"nickname": "최석준",
+				"profile_image": "https://phinf.pstatic.net/contact/20231115_39/17000369280735pXRv_PNG/02_icon.png",
+				"email": "jun@b2link.co.kr",
+				"mobile": "010-6863-6311",
+				"mobile_e164": "+821068636311",
+				"name": "최석준"
+			}
+		}
+		*/
+
+		var _tdbjs_nm = "createUser";
+		
+		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		try
+		{
+			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		}
+		catch( err )
+		{
+			// console.log( routerNm + " - DBJS File Not Found! - " + err );
+			// res.end("{ sucess : 0, data : null }");
+		}
+		
+		console.log( _tQuery );
+		var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
+		.replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
+		.replace( "<!=SSO_TYPE=!>", ssoType );
+		var dbjs_nm = "createUser.dbjs";
+
+		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		console.log( FILE_PATH );
+
+		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		var _r = exec_query_DB( dbjs_nm );
+		
+		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		console.log( r );
+		console.log( "[E] - createUser" );
+		cbFunction( r );
+	}
 	var existEmail = function( email, cbFunction ){
 		var _tdbjs_nm = "existEmail";
 		
@@ -670,6 +725,7 @@ function randomStr(){
 		});
 
 	});
+
 	global.server.addRouter("/naverLogin",function( req, res, data ){
 		/*
 		
@@ -701,53 +757,40 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
-		// console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		// try
-		// {
-		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		// }
-		// catch( err )
-		// {
-		// 	console.log( routerNm + " - DBJS File Not Found! - " + err );
-		// 	res.end("{ sucess : 0, data : null }");
-		// }
-		
-		// var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
-		// .replace( "<!=PASSWORD=!>", paramBody.pass );
-		// var dbjs_nm = "login_" + paramBody.email + ".dbjs";
-		
-		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		// console.log( FILE_PATH );
-		
-		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		// var _r = exec_query_DB( dbjs_nm );
-		
-		// var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		existEmail( paramBody.email, function(d){
 
-		// var _d = JSON.parse( r );
+			var _d = JSON.parse( d );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			console.log( d );
 
-		// verifyPassword(paramBody.pass,_d.salt,_d.password, function(d){
-		// 	//if( d.password == password ) r = { r : 0, d : d }
-		// 	//else r = 
-		// 	if( !d )
-		// 	{
-		// 		res.end( JSON.stringify({ r : 1, d : null, m : "password not collect!" }) )
-		// 	}
-		// 	else
-		// 	{
-				//var sid = SHA256( r + randomStr() );
-				
+			if( _d.r )
+			{
+				createUser( paramBody, "naver", function(d){
+					var sid = generateSessionSecret();
+			
+					insertSesstion( { session : sid, userId : paramBody.email }, function(d){
+						console.log("[ E ] - /naverLogin");
+
+						res.end( JSON.stringify( { sid : sid, d : {userId : paramBody.email } } ) )	
+					});
+				})
+			}
+			else
+			{
 				var sid = generateSessionSecret();
-
+			
 				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
 					console.log("[ E ] - /naverLogin");
-	
+
 					res.end( JSON.stringify( { sid : sid, d : {userId : paramBody.email } } ) )	
 				});
-		//	}
-		// });
+			}
+
+			
+		})
 
 	});
 	/**

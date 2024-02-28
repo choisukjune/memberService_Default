@@ -540,9 +540,9 @@ var memberJoin = function( data, cbFunction ){
 				};
 				
 				// //var _d = { email : "12k4@naver.com", pass : "123qwe"}
-				var _d = { email : _d.response.email, pass : null }
+				//var _d = { email : _d.response.email, pass : null }
 
-				httpPostCallback( option, _d, function(d){
+				httpPostCallback( option, _d.response, function(d){
 
 					/*/
 					res.writeHead(301, {'Location': '/'});
@@ -563,33 +563,6 @@ var memberJoin = function( data, cbFunction ){
 				
 			})
 		})
-		// res.statusCode = 200;
-		// res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		// res.setHeader( "Access-Control-Allow-Origin", "*" );
-		// res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		//console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		// try
-		// {
-		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		// }
-		// catch( err )
-		// {
-		// 	console.log( routerNm + " - DBJS File Not Found! - " + err );
-		// 	res.end("{ sucess : 0, data : null }");
-		// }
-		
-		// var query = _tQuery
-		// var dbjs_nm = "insert.dbjs";
-
-		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		// console.log( FILE_PATH )
-
-		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		// var r = exec_query_DB( dbjs_nm )
-		// var r = "OK"
-		// res.end( r )	
 
 	});
 	/**
@@ -626,60 +599,6 @@ var memberJoin = function( data, cbFunction ){
 		   res.writeHead(301, {'Location': 'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=M8iKRLr_1Ld0T3nVxeV_&redirect_uri=http://localhost:8889/api/oauth/naver/callback&state=RANDOM_STATE'});
 		   //res.end("<a href='"+ api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>");
 		   res.end()
-		// var routerNm = req.url.split("?")[0];
-		// var paramsO = paramToObject( req.url );
-		// var _tdbjs_nm = "insert";
-				
-		// http://localhost:8889/api/oauth/naver/callback
-		// access_token=AAAANIakoru1eaMtUztkh1sZxkWI25DJcMxlTl7nuPaPi7zDc5JlC5qs_kMUTl3yWdD7LS2pdVCJ_U81LCQ0IkT688c&state=740b5e9c-e505-4c8e-8952-e508124ea695
-		// token_type=bearer&expires_in=3600
-
-		// code = req.query.code;
-		// state = req.query.state;
-		// api_url = 'https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id='
-		//  + client_id + '&client_secret=' + client_secret + '&redirect_uri=' + redirectURI + '&code=' + code + '&state=' + state;
-		// var request = require('request');
-		// var options = {
-		// 	url: api_url,
-		// 	headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret}
-		//  };
-		// request.get(options, function (error, response, body) {
-		//   if (!error && response.statusCode == 200) {
-		// 	res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-		// 	res.end(body);
-		//   } else {
-		// 	res.status(response.statusCode).end();
-		// 	console.log('error = ' + response.statusCode);
-		//   }
-		// });
-
-		// res.statusCode = 200;
-		// res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		// res.setHeader( "Access-Control-Allow-Origin", "*" );
-		// res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		//console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		// try
-		// {
-		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		// }
-		// catch( err )
-		// {
-		// 	console.log( routerNm + " - DBJS File Not Found! - " + err );
-		// 	res.end("{ sucess : 0, data : null }");
-		// }
-		
-		// var query = _tQuery
-		// var dbjs_nm = "insert.dbjs";
-
-		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		// console.log( FILE_PATH )
-
-		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		// var r = exec_query_DB( dbjs_nm )
-		// var r = "OK"
-		// res.end( r )	
 
 	});
 })();
