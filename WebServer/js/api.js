@@ -211,11 +211,11 @@ var memberJoin = function( data, cbFunction ){
 
 			
 			var _d = JSON.parse( d );
-			console.log( "====>", _d );
+			console.log( "====>",_d.d.sid );
 			
-			if( !_d.r ) 
+			if( !_d.success ) 
 			{
-				res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
+				res.setHeader('Set-Cookie', 'sid=' + _d.d.sid + "; max-age=" + 3600 + "; path=/;" );
 			}
 			res.end( d );
 		})

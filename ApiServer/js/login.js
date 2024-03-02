@@ -13,6 +13,34 @@ var crypto = require("crypto");
 var util = require("util");
 
 //-------------------------------------------------------;
+// MongoDB Driver Test;
+//-------------------------------------------------------;
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+
+//-------------------------------------------------------;
 // VARIABLE;
 //-------------------------------------------------------;
 /*
@@ -95,7 +123,8 @@ const verifyPassword = async (password, userSalt, userPassword, cbFunction ) => 
 		console.log(false);
 		r = false;
 	}
-	cbFunction( r )
+	if( cbFunction ) cbFunction( r )
+	else return r;
   };
 
 /*
@@ -389,118 +418,119 @@ function randomStr(){
 
 	// 세션 시크릿 키 생성 함수
 	function generateSessionSecret() {
-	const secretBytes = crypto.randomBytes(32); // 32바이트 랜덤 데이터 생성
-	const sessionSecret = secretBytes.toString('base64'); // base64로 인코딩
+		const secretBytes = crypto.randomBytes(32); // 32바이트 랜덤 데이터 생성
+		const sessionSecret = secretBytes.toString('base64'); // base64로 인코딩
 
-	return sessionSecret;
+		return sessionSecret;
 	}
 
 	// 생성된 세션 시크릿 키 출력
 	// const sessionSecret = generateSessionSecret();
 	// console.log('Generated Session Secret:', sessionSecret);
 
-	var insertSesstion = function( data, cbFunction ){
-		var _tdbjs_nm = "insertSession";
+	var insertSesstion = async function( data, cbFunction ){
+
+		try {
+			console.log( "[S] - insertSession" );
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("session");
+			// Query for a movie that has the title 'The Room'
+			var doc = {
+				sid : data.sid,
+				userId : data.userId,
+				creatDate :  new Date()
+			}
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+			var options = {};
+			// Execute query
+			const r = await col0.insertOne( doc );
+			console.log( r )
+			console.log( "[E] - insertSession" );
+			return r;
+			
+		  } finally {
+			await client.close();
+		  }
+		  
+	}
+	var checkSesstion = async function( sid, cbFunction ){
 		
-		console.log(data);
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
 		
 		try
 		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("session");
+			// Query for a movie that has the title 'The Room'
+			const _q = { 
+				sid : sid 
+			};
+			
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+
+			var options = {};
+			
+			// Execute query
+			const r = await col0.findOne(_q, options);
+			console.log( r )
+
+			return r;
+			
 		}
-		catch( err )
+		finally
 		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
+			await client.close();
 		}
 		
-		//console.log( _tQuery );
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", data.session )
-		.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "insertSesstion.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
-		cbFunction( r );
+		  
 	}
-	var checkSesstion = function( sid, cbFunction ){
-		console.log( 2 )
-		var _tdbjs_nm = "checkSession";
-		
-		console.log(sid);
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+	var deleteSession = async function( sid ){
 		
 		try
 		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
+			console.log( "[S] - deleteSession" );
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("session");
+			// Query for a movie that has the title 'The Room'
+			var _q = {
+				sid : sid
+			}
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+			var options = {};
+			// Execute query
+			const r = await col0.deleteOne( _q );
+			console.log( r )
+			console.log( "[E] - deleteSession" );
+			return r;
+			
+		} 
+		finally
 		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
+			await client.close();
 		}
-		
-		//console.log( _tQuery );
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
-		//.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "checkSesstion.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-		console.log( 3 )
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		console.log( 4 )
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( 5 )
-		console.log( r );
-		cbFunction( r );
 	}
-	var deleteSession = function( sid, cbFunction ){
-		var _tdbjs_nm = "deleteSession";
-		
-		console.log(sid);
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
-		}
-		
-		console.log( _tQuery );
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
-		//.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "deleteSession.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
-		cbFunction( r );
-	}
-	var createUser = function( data, password, salt, ssoType, isSSO, cbFunction ){
+	var createUser = async function( data, password, salt, ssoType, isSSO, cbFunction ){
 		console.log( "[S] - createUser" );
 
 		console.log( "data - ", data );
@@ -511,91 +541,125 @@ function randomStr(){
 		console.log( "isSSO - ", isSSO );
 
 		password = password || null;
+		
+		// var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
+		// .replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
+		// .replace( "<!=PASSWORD=!>", password )
+		// .replace( "<!=SALT=!>", salt )
+		// .replace( "<!=IS_SSO=!>", isSSO )
+		// .replace( "<!=SSO_TYPE=!>", ssoType );
 
-		/*
-		{
-			"resultcode": "00",
-			"message": "success",
-			"response": {
-				"id": "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
-				"nickname": "최석준",
-				"profile_image": "https://phinf.pstatic.net/contact/20231115_39/17000369280735pXRv_PNG/02_icon.png",
-				"email": "jun@b2link.co.kr",
-				"mobile": "010-6863-6311",
-				"mobile_e164": "+821068636311",
-				"name": "최석준"
+
+		try {
+			console.log( "[S] - insertSession" );
+			
+			await client.connect();
+			
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("member");
+
+			// Query for a movie that has the title 'The Room'
+			var doc = {
+				userId : data.email,
+				password : password,
+				salt : salt,
+				isSso : isSSO,
+				ssoType : ssoType,
+				userInfo : data
 			}
-		}
-		*/
-
-		var _tdbjs_nm = "createUser";
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
-		}
-		
-		console.log( _tQuery );
-		var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
-		.replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
-		.replace( "<!=PASSWORD=!>", password )
-		.replace( "<!=SALT=!>", salt )
-		.replace( "<!=IS_SSO=!>", isSSO )
-		.replace( "<!=SSO_TYPE=!>", ssoType );
-		var dbjs_nm = "createUser.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
-		console.log( "[E] - createUser" );
-		cbFunction( r );
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+			var options = {};
+			// Execute query
+			const r = await col0.insertOne( doc );
+			console.log( r )
+			console.log( "[E] - createUser" );
+			return r;
+			
+		  } finally {
+			await client.close();
+		  }
 	}
-	var existEmail = function( email, cbFunction ){
-		var _tdbjs_nm = "existEmail";
+	var existEmail = async function( email, cbFunction ){
+		// var _tdbjs_nm = "existEmail";
 		
-		console.log("existCheckEmail = ",email);
+		// console.log("existCheckEmail = ",email);
 		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		// console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
 		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
-		}
+		// try
+		// {
+		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		// }
+		// catch( err )
+		// {
+		// 	// console.log( routerNm + " - DBJS File Not Found! - " + err );
+		// 	// res.end("{ sucess : 0, data : null }");
+		// }
 		
-		console.log( _tQuery );
-		var query = _tQuery.replace( "<!=EMAIL=!>", email )
-		//.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "existEmail.dbjs";
+		// console.log( _tQuery );
+		// var query = _tQuery.replace( "<!=EMAIL=!>", email )
+		// //.replace( "<!=USER_ID=!>", data.userId );
+		// var dbjs_nm = "existEmail.dbjs";
 
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
 		
-		console.log( FILE_PATH );
+		// console.log( FILE_PATH );
 
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
+		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		// var _r = exec_query_DB( dbjs_nm );
 		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( "emailExist is = ",r );
+		// var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
+		// console.log( "emailExist is = ",r );
 		
-		cbFunction( r );
+		try {
+    
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("member");
+			
+			// Query for a movie that has the title 'The Room'
+
+			const query = { userId :email};//{ title: "The Room" };
+			/*
+			const options = {
+			  // Sort matched documents in descending order by rating
+			  sort: { "imdb.rating": -1 },
+			  // Include only the `title` and `imdb` fields in the returned document
+			  projection: { _id: 0, title: 1, imdb: 1 },
+			};
+			*/
+			
+			var options = {};
+
+			// Execute query
+			var result = await col0.findOne(query, options);
+			
+			console.log( "query result : ", result )
+			
+			if( result )
+			{
+				var r = "{ \"success\" : 0 }"
+			
+			}
+			else
+			{
+				var r = "{ \"success\" : 1 }"
+			
+			}
+			console.log("isExistEmail : ", r)
+			return r;			
+		  } finally {
+			await client.close();
+		  }
+
+		// if( cbFunction ) cbFunction( r );
 	}
 	/**
 	 * 쿼리파일을 실행하는 라우터
@@ -619,7 +683,7 @@ function randomStr(){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	global.server.addRouter("/existEmail",function( req, res ){
+	global.server.addRouter("/existEmail",async function( req, res ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -643,14 +707,12 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( 1 )
-		existEmail( paramsO.email, function(r){
-			res.end( r )	
-		})
-	
-		console.log("[ E ] - /existEmail");
-
 		
+		var t = await existEmail( paramsO.email );
+		console.log( t )
+		res.end( t )
+
+		console.log("[ E ] - /existEmail");
 
 	});
 	global.server.addRouter("/login",function( req, res, data ){
@@ -670,12 +732,12 @@ function randomStr(){
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
 		var paramBody = JSON.parse( data )
-		var _tdbjs_nm = "login";
+		// var _tdbjs_nm = "login";
 		
-		console.log( routerNm )
-		console.log( paramsO )
-		console.log( paramBody )
-		console.log( req.headers.cookie )
+		// console.log( routerNm )
+		// console.log( paramsO )
+		// console.log( paramBody )
+		// console.log( req.headers.cookie )
 
 		//console.log( parseCookie( req.headers.cookie ) );
 
@@ -683,58 +745,67 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=EMAIL=!>", paramBody.email )
-		.replace( "<!=PASSWORD=!>", paramBody.pass );
-		var dbjs_nm = "login_" + paramBody.email + ".dbjs";
-		
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-		
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
 
-		var _d = JSON.parse( r );
+		async function run() {
+			try {
+    
+				await client.connect();
+				// Get the database and collection on which to run the operation
+				const db = client.db("data");
+				const col0 = db.collection("member");
+				// Query for a movie that has the title 'The Room'
+				const query = { userId :paramBody.email};//{ title: "The Room" };
+				// const options = {
+				//   // Sort matched documents in descending order by rating
+				//   sort: { "imdb.rating": -1 },
+				//   // Include only the `title` and `imdb` fields in the returned document
+				//   projection: { _id: 0, title: 1, imdb: 1 },
+				// };
+				var options = {};
+				// Execute query
+				const r = await col0.findOne(query, options);
+				console.log( r )
+				console.log( "-----------------------------------" )
+				//var password = "123"
+				console.log( "r.password : ", r.password)
+				var isPass = await verifyPassword(paramBody.pass,r.salt,r.password, null);
+				console.log( "isPass : ",isPass )
 
-		verifyPassword(paramBody.pass,_d.salt,_d.password, function(d){
-			//if( d.password == password ) r = { r : 0, d : d }
-			//else r = 
-			if( !d )
-			{
-				res.end( JSON.stringify({ r : 1, d : null, m : "password not collect!" }) )
-			}
-			else
-			{
-				//var sid = SHA256( r + randomStr() );
+				if( isPass )
+				{
+					const db = client.db("data");
+					const col1 = db.collection("session");
+
+					var doc = {
+						sid : generateSessionSecret(),
+						userId : paramBody.email,
+						creatDate :  new Date()
+					}
+
+					var result = await col1.insertOne(doc);
+					console.log( result )
+					var result = { success : 0, d : { sid : doc.sid, userInfo : r.userInfo } }
+					res.end( JSON.stringify( result ) );
+
+				}
+				else
+				{
+					//비밀번호가 일치하지 않을시 처리;
+					var result = { success : 1, d : {} }
+					res.end( JSON.stringify( result ) );
+				}
+				//const verifyPassword = async (password, userSalt, userPassword, cbFunction ) => {
+				// Print the document returned by findOne()
 				
-				var sid = generateSessionSecret();
-
-				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-					console.log("[ E ] - /Login");
-	
-					res.end( JSON.stringify( { sid : sid, d : r } ) )	
-				});
-			}
-		});
+			  } finally {
+				await client.close();
+			  }
+		  }
+		  run().catch(console.dir);
 
 	});
 
-	global.server.addRouter("/naverLogin",function( req, res, data ){
+	global.server.addRouter("/naverLogin",async function( req, res, data ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -765,40 +836,46 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
-		existEmail( paramBody.email, function(d){
+		var t = await existEmail( paramBody.email );
+		console.log( paramBody.email + "- 이메일 체크결과 -" + t )
+		console.log( typeof(t) )
+		var _t = JSON.parse( t );
 
-			var _d = JSON.parse( d );
+		console.log( "t.success ", t.success );
+
+		if( _t.success )
+		{
+			console.log( 1111 );
 			console.log( "-------------------------" );
 			console.log( "-------------------------" );
 			console.log( "-------------------------" );
+			var _t00 = await createUser( paramBody, null, null, "naver", true )
+
+			var sid = generateSessionSecret();
+			console.log( "new sid : ", sid );
+			await insertSesstion( { sid : sid, userId : paramBody.email } )
+
+			console.log("[ E ] - /naverLogin");
+
+			res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
+
+		}
+		else
+		{
+			console.log( 2222 );
 			console.log( "-------------------------" );
-			console.log( d );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			var sid = generateSessionSecret();
+			await insertSesstion( { sid : sid, userId : paramBody.email } )
 
-			if( _d.r )
-			{
-				createUser( paramBody, null, null, "naver", true, function(d){
-					var sid = generateSessionSecret();
-			
-					insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-						console.log("[ E ] - /naverLogin");
+			console.log("[ E ] - /naverLogin");
 
-						res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
-					});
-				})
-			}
-			else
-			{
-				var sid = generateSessionSecret();
-			
-				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-					console.log("[ E ] - /naverLogin");
+			res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
+		}
+		//res.end( t )
 
-					res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
-				});
-			}
-
-			
-		})
+		console.log("[ E ] - /existEmail");
 
 	});
 	/**
@@ -848,9 +925,18 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		console.log( 1 )
-		checkSesstion( paramsO.sid, function(r){
-			res.end( r )	
-		})
+
+		var isSession = checkSesstion( paramsO.sid );
+		if( isSession )
+		{
+			var r = "{ success : 0 }"
+			res.end( r )
+		}
+		else
+		{
+			var r = "{ success : 1 }"
+			res.end( r )
+		}
 	
 		console.log("[ E ] - /checksession");
 

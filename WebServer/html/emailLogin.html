@@ -170,9 +170,9 @@
             // emailInputLoader.classList.add("displayNone");
             requestGet("/api/existEmail?email=" + email, function(d){
               var r = JSON.parse(d)
-              if( !r.r )
+              if( !r.success )
               {
-                console.log( "email exist : " + r.userId )
+                //console.log( "email exist : " + r.userId )
                 emailInputLoader.classList.add("displayNone");
                 window.el.input.email.attributes[ "data-validate" ].value = "true";
               }
@@ -182,7 +182,7 @@
                 emailInputLoader.classList.add("displayNone");
                 evt.target.classList.add( "inputerror" );
                 window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
-                console.log( "email exist : " + r.m )
+                //console.log( "email exist : " + r.m )
                 window.el.input.email.attributes[ "data-validate" ].value = "false";
               }
               loginBtCheck();
@@ -219,7 +219,7 @@
           var postBody = { email : email, pass : password }
           requestPostBodyJson('/api/login',postBody , function( d ){
             var _d = JSON.parse( d );
-            if( _d.r == 1 )
+            if( _d.success )
             {
               window.el.btn.login.classList.remove("loading");
               alert("패스워드를 확인해주세요");
@@ -227,7 +227,7 @@
             else
             {
               debugger;
-              var userInfo = JSON.parse( _d.d );
+              var userInfo = _d.d.userInfo;
               
               webStorageSetItem( userInfo );
               location.href="/"

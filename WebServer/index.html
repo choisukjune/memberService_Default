@@ -3,51 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>Login</title>
-    <style>
-      #divClock{
-        font-size: 12px;
-        color: rgb(255, 255, 255);
-      }
-      html,body {
-          background: #131722!important;
-          color: #fff!important;
-          margin: 0px!important;
-      }
-      .ui.grid {
-        margin-top: 0rem!important;
-        margin-bottom: 0rem!important;
-        margin-left: 0rem!important;
-        margin-right: 0rem!important;
-      }
-      body > .grid {
-        height: 100%;
-      }
-      /* .image {
-        margin-top: -100px;
-      } */
-      /* .column {
-        max-width: 450px;
-      } */
-      .colorWhite {
-        color : white!important;
-      }
-      .ui.basic.black.mini.button {
-        box-shadow: 0px 0px 0px 1px #515151!important;
-        color: #ffffff !important
-      }
-      .ui.fluid.inverted.large.submit.button {
-        box-shadow: 0px 0px 0px 1px #FFFFFF inset !important;
-        background: transparent none;
-        color: #FFFFFF;
-        text-shadow: none !important;
-      }
-      .ui.fluid.inverted.large.submit.button:hover {
-        background: #FFFFFF;
-        box-shadow: 0px 0px 0px 2px #FFFFFF inset !important;
-        color: rgba(0, 0, 0, 0.8);
-      }
-    </style>
     <link rel="stylesheet" type="text/css" href="asset/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="asset/css/common.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
@@ -86,14 +43,49 @@ function getUerInfoBySession( cbfunction ){
 				})
 			})
 		}
+
 		function renderAfterLogin(){
 			requestGet("/getHtml?fileNm=loginAfter",function(d){
-				window.document.getElementById("container").innerHTML = d;
-				requestGet("/getJs?fileNm=loginAfter",function(d){
-					eval(d);
-				})
+
+        var _thtml = d;
+        var html = "";
+        getUerInfoBySession(function(d){
+        
+          var _d = JSON.parse(d);
+
+          if( _d.userInfo.profile_image ) var imgsrc = _d.userInfo.profile_image
+          else var imgsrc = "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg";
+
+          if( _d.userInfo.name ) var name = _d.userInfo.name
+          else var name = " - ";
+
+          if( _d.userInfo.nickname ) var nickname = _d.userInfo.nickname
+          else var nickname = " - ";
+
+          if( _d.userInfo.email ) var email = _d.userInfo.email
+          else var email = " - ";
+          
+          if( _d.userInfo.mobile ) var mobile = _d.userInfo.mobile
+          else var mobile = " - ";
+
+         
+          html = _thtml.replace("{IMG_SRC}",imgsrc)
+          .replace("{USER_NAME}",name)
+          .replace("{NICK_NAME}",nickname)
+          .replace("{EMAIL}",email)
+          .replace("{MOBILE}", mobile);
+
+          window.document.getElementById("container").innerHTML = html;
+          requestGet("/getJs?fileNm=loginAfter",function(d){
+					  eval(d);
+				  })
+
+        })
+        
 			})
 		}
+
+
 
         function showClock(){
           var currentDate = new Date();
@@ -181,9 +173,20 @@ function getUerInfoBySession( cbfunction ){
 
         function checkSession(){
           console.log( "[S] - checkSession" )
-          var sid = getCookieToSid();
+          var sid = getCookie( "sid" );
+          
           debugger;
-          if( sid  ){
+          if( !sid || sid == "undefined" )
+          { 
+            console.log( "sid : " + sid )
+            renderBeforeLogin();
+            window.localStorage.clear();
+            deleteSession();
+            deleteAllCookies();
+            //location.href = "/";
+          }
+          else
+          {
             requestGet("http://localhost:8888/checksession?sid=" + sid, function(d){
               if( d ){
                 console.log( "session check complete!")
@@ -192,19 +195,13 @@ function getUerInfoBySession( cbfunction ){
               }
               else
               {
-                renderBeforeLogin();
+                //renderBeforeLogin();
                 window.localStorage.clear();
                 deleteSession();
                 deleteAllCookies();
+                location.href = "/";
               }
             });
-          }
-          else
-          {
-            renderBeforeLogin();
-            window.localStorage.clear();
-            deleteSession();
-            deleteAllCookies();
           }
           console.log( "[E] - checkSession" )
         }
@@ -219,7 +216,34 @@ function getUerInfoBySession( cbfunction ){
         }
 
     function initPage(){
-			checkSession();
+			
+
+      var html = `
+      <div class="column" style="max-width: 450px;">
+				<h2 class="ui white header">
+					<div class="content">
+						<!-- <div>🔑</div> -->
+						<!-- <div class="colorWhite"> ✈️ 안녕하세요! 반갑습니다~</div> -->
+						<button id="badgeLoginBt" class="circular ui icon inverted button" style="padding: 10px;">
+							<svg width="30" height="30" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" >
+								<path fill-rule="evenodd" d="M17.5 9c0 1.14-.3 1.99-.79 2.54-.46.52-1.27.96-2.71.96s-2.25-.44-2.71-.96A3.74 3.74 0 0 1 10.5 9c0-1.14.3-1.99.79-2.54.46-.52 1.27-.96 2.71-.96s2.25.44 2.71.96c.5.55.79 1.4.79 2.54zM19 9c0 2.76-1.45 5-5 5s-5-2.24-5-5 1.45-5 5-5 5 2.24 5 5zm-8 8.5h6c2.04 0 3.1.5 3.76 1.1.69.63 1.11 1.55 1.5 2.8.13.42.04.95-.29 1.4-.33.46-.8.7-1.22.7H7.25c-.43 0-.89-.24-1.22-.7a1.61 1.61 0 0 1-.3-1.4 6.08 6.08 0 0 1 1.51-2.8c.65-.6 1.72-1.1 3.76-1.1zm6-1.5h-6c-4.6 0-5.88 2.33-6.7 4.96-.58 1.89.97 4.04 2.95 4.04h13.5c1.98 0 3.53-2.15 2.95-4.04C22.88 18.33 21.6 16 17 16z" fill="currentColor"></path>
+							</svg>
+						</button>
+
+					</div>
+				</h2>
+				<!-- <div style="margin-bottom: 10px;">
+					<div style="font-size: 1.3rem">Sign in</div>
+				  </div> -->
+				<!-- <div id="logout" class="ui fluid inverted large submit button">로그인</div> -->
+			</div>
+      `;
+      window.el.div.container.innerHTML = html;
+      window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
+      window.el.btn.badgeLoginBt.addEventListener("click",function(evt){
+      checkSession();
+			//renderBeforeLogin();
+		  })
 		}
       window.addEventListener('DOMContentLoaded', function()
       {
@@ -245,7 +269,7 @@ function getUerInfoBySession( cbfunction ){
         window.el.input = {};
 
         window.el.btn = {}
-		    window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
+		    
         window.el.div = {}
         window.el.div.container = window.document.getElementById("container");
 
@@ -267,18 +291,21 @@ function getUerInfoBySession( cbfunction ){
         //-------------------------------------------------------;
         //Event;
 		window.evt = {}
-		window.el.btn.badgeLoginBt.addEventListener("click",function(evt){
-			renderBeforeLogin();
-		})
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
 
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        //-------------------------------------------------------;
+        $('.custom.button')
+  .popup({
+    popup : $('.custom.popup'),
+    on    : 'click'
+  })
+;
       });
       
     </script>
     <script>
-      //
+
     </script>
   </head>
   <body>
@@ -289,26 +316,15 @@ function getUerInfoBySession( cbfunction ){
       <div class="column"> -->
         <!-- <div id="naverIdLogin"><a id="naverIdLogin_loginButton" href="#" role="button"><img src="https://static.nid.naver.com/oauth/big_g.PNG" width=320></a></div> -->
         <div id="container" class="ui middle aligned center aligned grid" style="height: 100%;">
-			<div class="column" style="max-width: 450px;">
-				<h2 class="ui white header">
-					<div class="content">
-						<!-- <div>🔑</div> -->
-						<!-- <div class="colorWhite"> ✈️ 안녕하세요! 반갑습니다~</div> -->
-						<button id="badgeLoginBt" class="circular ui icon inverted button" style="padding: 10px;">
-							<svg width="30" height="30" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" >
-								<path fill-rule="evenodd" d="M17.5 9c0 1.14-.3 1.99-.79 2.54-.46.52-1.27.96-2.71.96s-2.25-.44-2.71-.96A3.74 3.74 0 0 1 10.5 9c0-1.14.3-1.99.79-2.54.46-.52 1.27-.96 2.71-.96s2.25.44 2.71.96c.5.55.79 1.4.79 2.54zM19 9c0 2.76-1.45 5-5 5s-5-2.24-5-5 1.45-5 5-5 5 2.24 5 5zm-8 8.5h6c2.04 0 3.1.5 3.76 1.1.69.63 1.11 1.55 1.5 2.8.13.42.04.95-.29 1.4-.33.46-.8.7-1.22.7H7.25c-.43 0-.89-.24-1.22-.7a1.61 1.61 0 0 1-.3-1.4 6.08 6.08 0 0 1 1.51-2.8c.65-.6 1.72-1.1 3.76-1.1zm6-1.5h-6c-4.6 0-5.88 2.33-6.7 4.96-.58 1.89.97 4.04 2.95 4.04h13.5c1.98 0 3.53-2.15 2.95-4.04C22.88 18.33 21.6 16 17 16z" fill="currentColor"></path>
-							</svg>
-						  </button>
 
-					</div>
-				</h2>
-				<!-- <div style="margin-bottom: 10px;">
-					<div style="font-size: 1.3rem">Sign in</div>
-				  </div> -->
-				<!-- <div id="logout" class="ui fluid inverted large submit button">로그인</div> -->
-			</div>
 			
 		</div>
+    <div class="some-wrapping-div">
+      <div class="ui custom button">Show custom popup</div>
+    </div>
+    <div class="ui custom popup top left transition hidden"  data-content="Bottom Center" data-position="bottom center">
+      I'm not on the same level as the button, but i can still be found.
+    </div>
       <!-- </div> -->
     <!-- </div> -->
   </body>

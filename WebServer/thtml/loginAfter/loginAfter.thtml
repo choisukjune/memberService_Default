@@ -1,15 +1,22 @@
-<div class="column" style="max-width: 450px;">
-    <h2 class="ui white header">
+<div class="row">
+    <div class="column" style="max-width: 450px;">
+        <h2 class="ui white header">
+            <div class="content">
+                <div style="margin:10px">
+                    <img id="profileImage" class="ui centered tiny circular image" src="{IMG_SRC}">
+                </div>
+                <div class="colorWhite"> ✈️ {USER_NAME}안녕하세요!</div>
+            </div>
+        </h2>
         <div class="content">
-            <!-- <div>🔑</div> -->
-            <div class="colorWhite"> ✈️ 안녕하세요! 반갑습니다~</div>
-            <div id="divClock" class="clock"></div>
+            <div>회원정보</div>
+            <div>
+            name : {NICK_NAME}<br/>
+            email : {EMAIL}<br/>
+            mobile : {MOBILE}
+            </div>
         </div>
-    </h2>
-    <div class="content">
-        <div>회원정보</div>
-        <div id="profile"></div>
+        <div class="ui horizontal divider colorWhite">로그아웃할거에요~</div>
+        <div id="logout" class="ui fluid inverted large submit button">로그아웃</div>
     </div>
-    <div class="ui horizontal divider colorWhite">로그아웃할거에요~</div>
-    <div id="logout" class="ui fluid inverted large submit button">로그아웃</div>
 </div>

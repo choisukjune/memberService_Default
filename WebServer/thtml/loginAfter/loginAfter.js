@@ -3,19 +3,21 @@
 
     //DOM;
     window.el.div.profile = window.document.getElementById("profile");
+    window.el.div.profileImg = window.document.getElementById("profileImage");
     window.el.btn.logout = window.document.getElementById("logout");
-    debugger;
-    getUerInfoBySession(function(d){
-        var html = ""
-        var s,so;
-        var _d = JSON.parse( d );
-        for( s in _d ){
-            so = _d[ s ];
-            html += `<div>${s} - ${so}</div>\n`
-        }
-        window.el.div.profile.innerHTML = html 
+    // debugger;
+    // getUerInfoBySession(function(d){
+    //     var html = ""
+    //     var s,so;
+    //     var _d = JSON.parse( d );
+    //     for( s in _d ){
+    //         so = _d[ s ];
+    //         if( s == "profile_image" ) window.el.div.profileImg.src = so;
+    //         else html += `<div>${s} - ${so}</div>\n`
+    //     }
+    //     window.el.div.profile.innerHTML = html 
 
-    })
+    // })
     
     
     //EVENT;

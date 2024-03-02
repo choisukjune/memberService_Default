@@ -1,0 +1,42 @@
+#divClock{
+    font-size: 12px;
+    color: rgb(255, 255, 255);
+  }
+  html,body {
+      background: #131722!important;
+      color: #fff!important;
+      margin: 0px!important;
+  }
+  .ui.grid {
+    margin-top: 0rem!important;
+    margin-bottom: 0rem!important;
+    margin-left: 0rem!important;
+    margin-right: 0rem!important;
+  }
+  body > .grid {
+    height: 100%;
+  }
+  /* .image {
+    margin-top: -100px;
+  } */
+  /* .column {
+    max-width: 450px;
+  } */
+  .colorWhite {
+    color : white!important;
+  }
+  .ui.basic.black.mini.button {
+    box-shadow: 0px 0px 0px 1px #515151!important;
+    color: #ffffff !important
+  }
+  .ui.fluid.inverted.large.submit.button {
+    box-shadow: 0px 0px 0px 1px #FFFFFF inset !important;
+    background: transparent none;
+    color: #FFFFFF;
+    text-shadow: none !important;
+  }
+  .ui.fluid.inverted.large.submit.button:hover {
+    background: #FFFFFF;
+    box-shadow: 0px 0px 0px 2px #FFFFFF inset !important;
+    color: rgba(0, 0, 0, 0.8);
+  }

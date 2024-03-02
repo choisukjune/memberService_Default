@@ -13,6 +13,41 @@ var crypto = require("crypto");
 var util = require("util");
 var querystring = require('querystring');
 
+
+
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+
+
 //-------------------------------------------------------;
 // VARIABLE;
 //-------------------------------------------------------;
@@ -43,6 +78,63 @@ var _tDbjs_PATH = ROOT_PATH + "/tdbjs/";
 //-------------------------;
 //-------------------------;
 
+var getUerInfoBySession = async function( sid, cbFunction ){
+		
+	
+	console.log( "-------------------------" );
+	console.log( "-------------------------" );
+	console.log( "--- sid ---  " + sid  )
+	console.log( "-------------------------" );
+	console.log( "-------------------------" );
+
+	try
+	{
+
+		await client.connect();
+		// Get the database and collection on which to run the operation
+		const db = client.db("data");
+		const col0 = db.collection("session");
+		const col1 = db.collection("member");
+		// Query for a movie that has the title 'The Room'
+		const _q = { 
+			sid : sid 
+		};
+		
+		// const options = {
+		//   // Sort matched documents in descending order by rating
+		//   sort: { "imdb.rating": -1 },
+		//   // Include only the `title` and `imdb` fields in the returned document
+		//   projection: { _id: 0, title: 1, imdb: 1 },
+		// };
+
+		var options = {};
+		
+		// Execute query
+		const r = await col0.findOne(_q, options);
+		
+
+		if( !r )
+		{
+			return "{ \"sucess\" : 1 }";
+		}
+		else
+		{
+			console.log( r.userId );
+			const userInfo = await col1.findOne({ userId : r.userId });
+
+			return userInfo;
+		}
+
+		
+		
+	}
+	finally
+	{
+		await client.close();
+	}
+	
+	  
+}
 
 
 var randomBytesPromise = util.promisify(crypto.randomBytes);
@@ -229,38 +321,67 @@ var paramToObject = function( _url ){
 	*/
 	global.server.addRouter("/find",function( req, res ){
 
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "find";
+		// var routerNm = req.url.split("?")[0];
+		// var paramsO = paramToObject( req.url );
+		// var _tdbjs_nm = "find";
 				
 
 		res.statusCode = 200;
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=BRAND_NM=!>", paramsO.brandNm )
-		.replace( "<!=PAGE=!>", paramsO.page );
-		var dbjs_nm = "find_" + paramsO.brandNm + ".dbjs";
 
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
+		async function run() {
+			try {
+    
+				await client.connect();
+				// Get the database and collection on which to run the operation
+				const db = client.db("data");
+				const col0 = db.collection("member");
+				// Query for a movie that has the title 'The Room'
+				const query = {};//{ title: "The Room" };
+				// const options = {
+				//   // Sort matched documents in descending order by rating
+				//   sort: { "imdb.rating": -1 },
+				//   // Include only the `title` and `imdb` fields in the returned document
+				//   projection: { _id: 0, title: 1, imdb: 1 },
+				// };
+				var options = {};
+				// Execute query
+				const r = await col0.findOne(query, options);
+				// Print the document returned by findOne()
+				console.log(r);
+				res.end( JSON.stringify( r ) )
+			  } finally {
+				await client.close();
+			  }
+		  }
+		  run().catch(console.dir);
 
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		res.end( r )	
+
+		// console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+		
+		// try
+		// {
+		// 	var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+		// }
+		// catch( err )
+		// {
+		// 	console.log( routerNm + " - DBJS File Not Found! - " + err );
+		// 	res.end("{ sucess : 0, data : null }");
+		// }
+		
+		// var query = _tQuery.replace( "<!=BRAND_NM=!>", paramsO.brandNm )
+		// .replace( "<!=PAGE=!>", paramsO.page );
+		// var dbjs_nm = "find_" + paramsO.brandNm + ".dbjs";
+
+		// var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
+		
+		// console.log( FILE_PATH )
+
+		// fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
+		// var r = exec_query_DB( dbjs_nm )
+		
 
 	});
 	/**
@@ -348,41 +469,18 @@ var paramToObject = function( _url ){
 		http://localhost:8888/findContentsAll?page=1
 	* </code>
 	*/
-	global.server.addRouter("/getUerInfoBySession",function( req, res, data ){
-		debugger;
+	global.server.addRouter("/getUerInfoBySession",async function( req, res, data ){
+		
+		console.log( "[S] - getUerInfoBySession " )
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
 		var paramBody = JSON.parse( data )
 		console.log( paramsO )
-		var _tdbjs_nm = "getUerInfoBySession";
-				
-		var _tag = decodeURIComponent( paramsO.tag )
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
 		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		console.log(_tQuery)
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", paramBody.sid );
-		var dbjs_nm = _tdbjs_nm + ".dbjs";
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		r = deleteLines( r , 8 )
-		res.end( r )	
+		var r = await getUerInfoBySession( paramBody.sid );
+		console.log( r )
+		console.log( "[E] - getUerInfoBySession " )
+		res.end( JSON.stringify(r) )	
 
 	});
 
