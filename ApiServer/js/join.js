@@ -134,18 +134,6 @@ var deleteLines = function( str, n ){
  * @return {Object} o
  */
 var paramToObject = function( _url ){
-	
-//	var r =  url.split("?")[ 1 ];
-//	var a = r.split("&");
-//	var o = {};
-//	var i = 0,iLen = a.length,io;
-//	
-//	for(;i<iLen;++i){
-//		io = a[ i ];
-//		var _ta = io.split( "=" );
-//		o[ _ta[0] ] = _ta[ 1 ];
-//	}
-//	console.log( o )
 	var queryData = url.parse( _url, true).query;
 	return queryData;
 };

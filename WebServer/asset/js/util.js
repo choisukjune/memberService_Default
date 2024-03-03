@@ -25,6 +25,36 @@
     - 그외 상태 : 인터넷에서 http 응답 상태를 검색해서 확인
 */
 
+var getCookie = function(name) {      
+	var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');     
+	return value? value[2] : null;  
+};
+
+var asyncFetch_POST_JSONDATA = async function(url,data){
+	var option = {
+		method : "POST",
+		headers : {
+			"Content-Type" : "application/json"
+		},
+		body : JSON.stringify( data )
+	}
+
+	const res = await fetch( url, option );
+	const resText = await res.json();
+	console.log( "asyncFetch_POST_JSONDATA - resText : ", resText )
+	return resText;
+}
+var asyncFetch_GET = async function( url ){
+	const response = await fetch(url,
+	{
+		method: 'GET',
+	});
+	const data = await response.text();
+	console.log(data)
+	return data;
+}
+
+
 /* 이벤트 함수 정의 */
 function requestGet( url, cbFunction ){
     console.log("");
@@ -50,7 +80,8 @@ function requestGet( url, cbFunction ){
                 console.log("[response] : " + "[success]");    				   				    				
                 console.log("[response] : " + xhr.responseText);
                 console.log("");
-                cbFunction( xhr.responseText );  				
+                if( cbFunction ) cbFunction( xhr.responseText );  				
+                return xhr.responseText;
             }
             else {
                 console.log("[status] : " + xhr.status);
@@ -184,54 +215,61 @@ function num2han(num) {
     return result.join('');
 }
 var checkEmail = function(str){
+
+	console.log( "[S] - checkEmail" );
     let regex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)          
     console.log(regex.test(str));
 
+	console.log( "[E] - checkEmail" );
     return regex.test(str)
     
   }
-  var checkPass = function(str){
+var checkPass = function(str){
+	console.log( "[S] - checkPass" );
+	let regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)          
+	console.log(regex.test(str));
+	console.log( "[E] - checkPass" );
+	//*/
+	return true;
+	/*/
+	return regex.test(str)
+	//*/
+}
 
-    let regex = new RegExp(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/)          
-    console.log(regex.test(str));
+var webStorageSetItem = function( o ){
+	console.log( "[S] - webStorageSetItem ")
+	var s,so;
+	for( s in o ){
+		so = o[ s ];
+		console.log( s );
+		window.localStorage.setItem( s , so );
+	}
+	console.log( "[E] - webStorageSetItem ")
+}
 
-    //*/
-    return true;
-    /*/
-    return regex.test(str)
-    //*/
-  }
-
-  var webStorageSetItem = function( o ){
-    console.log( "[S] - webStorageSetItem ")
-    var s,so;
-    for( s in o ){
-      so = o[ s ];
-      console.log( s );
-      window.localStorage.setItem( s , so );
-    }
-    console.log( "[E] - webStorageSetItem ")
-  }
-  function showClock(){
+var showClock = function(){
     var currentDate = new Date();
     var divClock = document.getElementById('divClock');
     var msg = "현재 시간 : ";
     if(currentDate.getHours()>12){      //시간이 12보다 크다면 오후 아니면 오전
-      msg += "오후 ";
-      msg += currentDate.getHours()-12+"시 ";
-  }
-  else {
-    msg += "오전 ";
-    msg += currentDate.getHours()+"시 ";
-  }
+        msg += "오후 ";
+        msg += currentDate.getHours()-12+"시 ";
+    }
+    else
+    {
+        msg += "오전 ";
+        msg += currentDate.getHours()+"시 ";
+    }
 
     msg += currentDate.getMinutes()+"분 ";
     msg += currentDate.getSeconds()+"초";
 
     divClock.innerText = msg;
 
-    if (currentDate.getMinutes()>58) {    //정각 1분전부터 빨강색으로 출력
-      divClock.style.color="red";
+    if (currentDate.getMinutes()>58)
+    {   
+        //정각 1분전부터 빨강색으로 출력
+        divClock.style.color="red";
     }
     setTimeout(showClock,1000);  //1초마다 갱신
-  }
+}

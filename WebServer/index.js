@@ -60,6 +60,12 @@ var ROUTER_DIRECTORY_PATH = CWD + "/js/";
 // LOGIC;
 //-------------------------------------------------------;
 
+var getCookie = function(name) {      
+	var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');     
+	 return value? value[2] : null;  
+  };
+
+
 global.server = http.createServer(function(req, res){
 	
     req.on('error', function( err ){

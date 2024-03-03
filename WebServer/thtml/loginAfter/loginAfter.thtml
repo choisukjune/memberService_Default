@@ -1,22 +1,28 @@
 <div class="row">
     <div class="column" style="max-width: 450px;">
-        <h2 class="ui white header">
+
+
+        <div class="ui fluid card">
             <div class="content">
-                <div style="margin:10px">
-                    <img id="profileImage" class="ui centered tiny circular image" src="{IMG_SRC}">
+                
+               <div class="center aligned header">
+               <div style="margin : 10px;"><img class="ui tiny circular image" src="{IMG_SRC}"></div>
+               <div>{USER_NAME}</div>
+               </div>
+               <div class="center aligned description">
+                        name : {NICK_NAME}<br/>
+                        email : {EMAIL}<br/>
+                        mobile : {MOBILE}
                 </div>
-                <div class="colorWhite"> ✈️ {USER_NAME}안녕하세요!</div>
-            </div>
-        </h2>
-        <div class="content">
-            <div>회원정보</div>
-            <div>
-            name : {NICK_NAME}<br/>
-            email : {EMAIL}<br/>
-            mobile : {MOBILE}
+             </div>
+            <div class="extra content">
+<div id="logout" class="ui  mini violet button">로그아웃</div>
+<div id="logout" class="ui  mini violet button">비밀번호 변경</div>
             </div>
         </div>
-        <div class="ui horizontal divider colorWhite">로그아웃할거에요~</div>
-        <div id="logout" class="ui fluid inverted large submit button">로그아웃</div>
+        <div class="ui horizontal divider colorWhite"></div>
+        
+
     </div>
+
 </div>

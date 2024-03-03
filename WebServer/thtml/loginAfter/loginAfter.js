@@ -1,5 +1,34 @@
 (function(){
-    var userInfo = getMemberInfo();
+    requestGet("/getHtml?fileNm=loginAfter",function(d){
+    var _thtml = d;
+    var html = "";
+    getUerInfoBySession(function(d){
+    
+      var _d = JSON.parse(d);
+
+      if( _d.userInfo.profile_image ) var imgsrc = _d.userInfo.profile_image
+      else var imgsrc = "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg";
+
+      if( _d.userInfo.name ) var name = _d.userInfo.name
+      else var name = " - ";
+
+      if( _d.userInfo.nickname ) var nickname = _d.userInfo.nickname
+      else var nickname = " - ";
+
+      if( _d.userInfo.email ) var email = _d.userInfo.email
+      else var email = " - ";
+      
+      if( _d.userInfo.mobile ) var mobile = _d.userInfo.mobile
+      else var mobile = " - ";
+
+      
+      html = _thtml.replace("{IMG_SRC}",imgsrc)
+      .replace(/{USER_NAME}/gi,name)
+      .replace("{NICK_NAME}",nickname)
+      .replace("{EMAIL}",email)
+      .replace("{MOBILE}", mobile);
+
+      window.document.getElementById("container").innerHTML = html;
 
     //DOM;
     window.el.div.profile = window.document.getElementById("profile");
@@ -38,4 +67,6 @@
         renderBeforeLogin();
     
     })
+})
+})
 })()

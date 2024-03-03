@@ -356,6 +356,26 @@ var memberJoin = function( data, cbFunction ){
 		console.log(1)
 		var routerNm = req.url.split("?")[0];
 		//var paramsO = paramToObject( req.url );
+
+		var paramsO = paramToObject( req.url );
+		// var paramBody = JSON.parse( data )
+		// console.log( paramsO )
+		var a = req.headers.cookie.split(";");
+		var cookieObject = {}
+		var i=0,iLen=a.length,io;
+		for(;i<iLen;++i){
+
+			io = a[ i ].trim();
+			var _t = io.split( "=" );
+
+			var key = _t.shift();
+			cookieObject[ key ] = io.replace(key+"=","");
+
+		}
+
+		console.log( cookieObject );
+
+		
 		var paramBody = data
 		console.log( "paramBody", paramBody )
 		res.statusCode = 200;
@@ -376,7 +396,7 @@ var memberJoin = function( data, cbFunction ){
 		};
 		console.log(1)
 		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		var _d = { sid : paramBody.sid }
+		var _d = { sid : cookieObject.sid }
 
 		httpPostCallback( option, _d, function(d){
 
