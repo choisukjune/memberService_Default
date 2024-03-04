@@ -37,6 +37,7 @@ var ROOT_PATH = process.cwd();
  * @return {Object} o
  */
 var paramToObject = function( _url ){
+
 	var queryData = url.parse( _url, true).query;
 	return queryData;
 };
@@ -158,131 +159,7 @@ var memberJoin = function( data, cbFunction ){
 //-------------------------;
 //-------------------------;
 //-------------------------;
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/login",function( req, res, data ){
-
-		var routerNm = req.url.split("?")[0];
-		//var paramsO = paramToObject( req.url );
-		console.log( data )
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-
-		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-		var option = {
-			host: 'localhost',
-			port: '8888',
-			path: '/login',
-			method: 'POST',
-			headers: {
-				"content-type": "application/json",
-				//"Content-Length": Buffer.byteLength(post_data)
-			}
-		};
-		
-		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		var _d = { email : data.email, pass : data.pass }
-
-		httpPostCallback( option, _d, function(d){
-
-			
-			var _d = JSON.parse( d );
-			console.log( "====>",_d.d.sid );
-			
-			if( !_d.success ) 
-			{
-				res.setHeader('Set-Cookie', 'sid=' + _d.d.sid + "; max-age=" + 3600 + "; path=/;" );
-			}
-			res.end( d );
-		})
-
-		
-	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/join",function( req, res, data ){
-
-		var routerNm = req.url.split("?")[0];
-		//var paramsO = paramToObject( req.url );
-		console.log( data )
-
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-
-		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		var _d = { email : data.email, pass : data.pass }
-
-		var option = {
-			host: 'localhost',
-			port: '8888',
-			path: '/join',
-			method: 'POST',
-			headers: {
-				"content-type": "application/json",
-				//"Content-Length": Buffer.byteLength(post_data)
-			}
-		};
-
-		httpPostCallback( option, _d, function(d){
-
-			
-			var _d = JSON.parse( d );
-			console.log( "====>", _d );
-			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			//res.statusCode = 301;
-			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-			res.end( d );
-		})
-
-		
-	});
+	
 	/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function
@@ -355,26 +232,6 @@ var memberJoin = function( data, cbFunction ){
 		console.log(1)
 		var routerNm = req.url.split("?")[0];
 		//var paramsO = paramToObject( req.url );
-
-		var paramsO = paramToObject( req.url );
-		// var paramBody = JSON.parse( data )
-		// console.log( paramsO )
-		var a = req.headers.cookie.split(";");
-		var cookieObject = {}
-		var i=0,iLen=a.length,io;
-		for(;i<iLen;++i){
-
-			io = a[ i ].trim();
-			var _t = io.split( "=" );
-
-			var key = _t.shift();
-			cookieObject[ key ] = io.replace(key+"=","");
-
-		}
-
-		console.log( cookieObject );
-
-		
 		var paramBody = data
 		console.log( "paramBody", paramBody )
 		res.statusCode = 200;
@@ -395,12 +252,12 @@ var memberJoin = function( data, cbFunction ){
 		};
 		console.log(1)
 		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		var _d = { sid : cookieObject.sid }
+		var _d = { sid : paramBody.sid }
 
 		httpPostCallback( option, _d, function(d){
 
 			var _d = JSON.parse( d );
-			
+			console.log( _d )
 			if( !_d.r ) 
 			{
 				console.log("---1")
@@ -508,7 +365,6 @@ var memberJoin = function( data, cbFunction ){
 			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
 			res.end( d );
 		})
-
 		
 	});
 	/**
@@ -533,67 +389,50 @@ var memberJoin = function( data, cbFunction ){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	var naverGetAccessToken = function( params, cbFunction ){
+	var kakaoGetAccessToken = async function( params, cbFunction ){
 
-		var client_id = 'M8iKRLr_1Ld0T3nVxeV_';
-		var client_secret = 'fiKA87hc1K';
+		var client_id = 'b801a7fdeca26fbc4c1d690d911ca0b0';
+		var client_secret = 'tCVZvUx2JGENA8p7aUw43ZvIpRsn66HQ';
 		var code = params.code;
     	var state = params.state;
-		var redirectURI = encodeURI("http://localhost:8889/api/oauth/naver/callback");
+		var redirectURI = encodeURI("http://localhost:8889/api/oauth/kakao/callback");
     	
-
-		var options = {
-			hostname: 'nid.naver.com',
-			path: '/oauth2.0/token?grant_type=authorization_code&client_id=' + client_id + '&client_secret=' + client_secret + '&redirect_uri=' + redirectURI + '&code=' + code + '&state=' + state,
-			headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret}
-		}
-		
-		https.get(options, (response) => {
-		
-			var result = ''
-			response.on('data', function (chunk) {
-				result += chunk;
-			});
-		
-			response.on('end', function () {
-
-				var _d = JSON.parse( result );
-				cbFunction( _d );
-				
-
-			});
-		
+		const baseUrl = "https://kauth.kakao.com/oauth/token";
+		const config = {
+		  client_id: client_id,
+		  client_secret: client_secret,
+		  grant_type: "authorization_code",
+		  redirect_uri: redirectURI,
+		  code: code,
+		};
+		var _params = new URLSearchParams(config).toString();
+		var finalUrl = `${baseUrl}?${_params}`;
+		var kakaoTokenRequest = await fetch(finalUrl, {
+		  method: "POST",
+		  headers: {
+			"Content-type": "application/json", // 이 부분을 명시하지않으면 text로 응답을 받게됨
+		  },
 		});
+		const json = await kakaoTokenRequest.json();
+		console.log(json);
+		return json;
 
 	}
 
-	var naverGetUserInfo = function( d, cbFunction ){
+	var kakaoGetUserInfo = async function( access_token, cbFunction ){
 
-		var header = "Bearer " + d.access_token; // Bearer 다음에 공백 추가
-
-		var options = {
-			hostname: 'openapi.naver.com',
-			path: '/v1/nid/me',
-			headers: {'Authorization': header}
-		}
-
-		https.get(options, (response) => {
-
-			var result = ''
-			response.on('data', function (chunk) {
-				result += chunk;
-			});
-		
-			response.on('end', function () {
-				// res.writeHead(200, {'Content-Type': 'text/json;charset=utf-8'});
-				// res.end(result);
-				cbFunction( result );
-			});
-		
-		});
+		var userRequest = await fetch("https://kapi.kakao.com/v2/user/me", {
+			headers: {
+			  Authorization: `Bearer ${access_token}`,
+			  "Content-type": "application/json",
+			},
+		  })
+		  const json = await userRequest.json();
+		  console.log(json);
+		  return json;
 	}
 	
-	global.server.addRouter("/api/oauth/naver/callback",function( req, res ){
+	global.server.addRouter("/api/oauth/kakao/callback",async function( req, res ){
 
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
@@ -603,62 +442,73 @@ var memberJoin = function( data, cbFunction ){
     	var state = paramsO.state;
 		
 		/*
+		//get access_token;
 		{
-			"resultcode": "00",
-			"message": "success",
-			"response": {
-				"id": "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
-				"nickname": "최석준",
-				"profile_image": "https://phinf.pstatic.net/contact/20231115_39/17000369280735pXRv_PNG/02_icon.png",
-				"email": "jun@b2link.co.kr",
-				"mobile": "010-6863-6311",
-				"mobile_e164": "+821068636311",
-				"name": "최석준"
+			access_token: 'uOFuNp7-dHGfhEXoJtV3W_lG1mXapujr3yoKPXPrAAABjghvw51APV-WDrAHcw',
+			token_type: 'bearer',
+			refresh_token: 'kBU22C656-WjGw68wa0dUmMwkiufIOBUiwkKPXPrAAABjghvw5pAPV-WDrAHcw',
+			expires_in: 21599,
+			scope: 'profile_image profile_nickname',
+			refresh_token_expires_in: 5183999
+		}
+		//userInfo;
+		{
+			id: 3373811719,
+			connected_at: '2024-03-04T07:36:24Z',
+			properties: {
+				nickname: '최석준',
+				profile_image: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_640x640.jpg',
+				thumbnail_image: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_110x110.jpg'
+			},
+			kakao_account: {
+				profile_nickname_needs_agreement: false,
+				profile_image_needs_agreement: false,
+				profile: {
+					nickname: '최석준',
+					thumbnail_image_url: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_110x110.jpg',
+					profile_image_url: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_640x640.jpg',
+					is_default_image: false
+				}
 			}
 		}
 		*/
-		naverGetAccessToken({ code : code, state : state }, function(d){
-			naverGetUserInfo(d, function(r){
 
-				console.log( "naver sso sucesss!" );
-				console.log( r );
-				var _d = JSON.parse( r );
-				//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-				var option = {
-					host: 'localhost',
-					port: '8888',
-					path: '/naverLogin',
-					method: 'POST',
-					headers: {
-						"content-type": "application/json",
-						//"Content-Length": Buffer.byteLength(post_data)
-					}
-				};
-				
-				// //var _d = { email : "12k4@naver.com", pass : "123qwe"}
-				//var _d = { email : _d.response.email, pass : null }
+		//get Access Token;
+		var a = await kakaoGetAccessToken({ code : code, state : state })
+		console.log( a );
+		
+		//get UserInfo;
+		var b = await kakaoGetUserInfo(a.access_token);
+		console.log( b );
 
-				httpPostCallback( option, _d.response, function(d){
+		console.log( "kakao sso sucesss!" );
+		
+		// res.end(JSON.stringify(b));
+		
+		var options = {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify( b )
 
-					/*/
-					res.writeHead(301, {'Location': '/'});
-					res.end();
-					/*/
-					console.log("------------")
-					console.log(d)
-					var _d = JSON.parse( d );
-					console.log( "====>", _d );
-					res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-					res.writeHead(301, {'Location': '/'});
-					//res.end("<a href='"+ api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>");
-					res.end(d);
-					//*/
-				
-				})
-
-				
-			})
-		})
+		};
+		
+		try {
+			var c = await fetch('http://localhost:8888/kakaoLogin', options )
+			const data = await c.json();
+			console.log( data )
+			//res.end( JSON.stringify(data) );
+			// api 서버 디비등록하고 세션발급하는 로직 생성후 만들기;
+				res.setHeader('Set-Cookie', 'sid=' + data.sid + "; max-age=" + 3600 + "; path=/;" );
+				res.writeHead(301, {'Location': '/'});
+				res.end(data);
+			//return data;
+		} catch (e) {
+			//return e;
+			res.end( JSON.stringify(e) );
+		}    
 
 	});
 	/**
@@ -683,16 +533,16 @@ var memberJoin = function( data, cbFunction ){
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	global.server.addRouter("/api/oauth/naver",function( req, res ){
+	global.server.addRouter("/api/oauth/kakao",function( req, res ){
 
-		var client_id = 'M8iKRLr_1Ld0T3nVxeV_';
-		var client_secret = 'fiKA87hc1K';
+		var client_id = 'b801a7fdeca26fbc4c1d690d911ca0b0';
+		var client_secret = 'tCVZvUx2JGENA8p7aUw43ZvIpRsn66HQ';
 
 		var state = "RANDOM_STATE";
-		var redirectURI = encodeURI("http://localhost:8889/api/oauth/naver/callback");
+		var redirectURI = encodeURI("http://localhost:8889/api/oauth/kakao/callback");
 		var api_url = "";
-		  api_url = 'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=' + client_id + '&redirect_uri=' + redirectURI + '&state=' + state;
-		   res.writeHead(301, {'Location': 'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=M8iKRLr_1Ld0T3nVxeV_&redirect_uri=http://localhost:8889/api/oauth/naver/callback&state=RANDOM_STATE'});
+		  api_url = 'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=' + client_id + '&redirect_uri=' + redirectURI + '&state=' + state;
+		   res.writeHead(301, {'Location': api_url});
 		   //res.end("<a href='"+ api_url + "'><img height='50' src='http://static.nid.naver.com/oauth/small_g_in.PNG'/></a>");
 		   res.end()
 
