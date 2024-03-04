@@ -257,7 +257,7 @@ var memberJoin = function( data, cbFunction ){
 		httpPostCallback( option, _d, function(d){
 
 			var _d = JSON.parse( d );
-			
+			console.log( _d )
 			if( !_d.r ) 
 			{
 				console.log("---1")
@@ -498,11 +498,12 @@ var memberJoin = function( data, cbFunction ){
 		try {
 			var c = await fetch('http://localhost:8888/kakaoLogin', options )
 			const data = await c.json();
-			res.end( JSON.stringify(data) );
-			//  api 서버 디비등록하고 세션발급하는 로직 생성후 만들기;
-			// 	res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			// 	res.writeHead(301, {'Location': '/'});
-			// 	res.end(d);
+			console.log( data )
+			//res.end( JSON.stringify(data) );
+			// api 서버 디비등록하고 세션발급하는 로직 생성후 만들기;
+				res.setHeader('Set-Cookie', 'sid=' + data.sid + "; max-age=" + 3600 + "; path=/;" );
+				res.writeHead(301, {'Location': '/'});
+				res.end(d);
 			//return data;
 		} catch (e) {
 			//return e;

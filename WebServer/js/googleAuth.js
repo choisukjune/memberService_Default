@@ -588,7 +588,7 @@ var memberJoin = function( data, cbFunction ){
 				res.setHeader('Set-Cookie', 'sid=' + data.sid + "; max-age=" + 3600 + "; path=/;" );
 				res.writeHead(301, {'Location': '/'});
 				res.end(d);
-			r//eturn data;
+			//return data;
 		} catch (e) {
 			//return e;
 			res.end( JSON.stringify(e) );

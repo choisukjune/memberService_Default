@@ -549,6 +549,33 @@ function randomStr(){
 		// .replace( "<!=IS_SSO=!>", isSSO )
 		// .replace( "<!=SSO_TYPE=!>", ssoType );
 
+		/*
+		{
+			id: 3373811719,
+			connected_at: '2024-03-04T07:36:24Z',
+			properties: {
+				nickname: '최석준',
+				profile_image: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_640x640.jpg',
+				thumbnail_image: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_110x110.jpg'
+			},
+			kakao_account: {
+				profile_nickname_needs_agreement: false,
+				profile_image_needs_agreement: false,
+				profile: {
+					nickname: '최석준',
+					thumbnail_image_url: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_110x110.jpg',
+					profile_image_url: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_640x640.jpg',
+					is_default_image: false
+				},
+				has_email: true,
+				email_needs_agreement: false,
+				is_email_valid: true,
+				is_email_verified: true,
+				email: 'sukjune.choi@gmail.com'
+			}
+		}
+		
+		*/
 
 		try {
 			console.log( "[S] - insertSession" );
@@ -561,12 +588,20 @@ function randomStr(){
 
 			// Query for a movie that has the title 'The Room'
 			var doc = {
-				userId : data.email,
+				userId : data.kakao_account.email,
 				password : password,
 				salt : salt,
 				isSso : isSSO,
 				ssoType : ssoType,
-				userInfo : data
+				userInfo : {
+					// "id" : "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
+					"nickname" : data.kakao_account.profile.nickname,
+					"profile_image" : data.kakao_account.profile.thumbnail_image_url,
+					"email" : data.kakao_account.email,
+					"mobile" : null,
+					"mobile_e164" : null,
+					"name" : data.kakao_account.profile.nickname,
+				}
 			}
 			// const options = {
 			//   // Sort matched documents in descending order by rating
@@ -836,45 +871,50 @@ function randomStr(){
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
-		// var t = await existEmail( paramBody.email );
-		// console.log( paramBody.email + "- 이메일 체크결과 -" + t )
-		// console.log( typeof(t) )
-		// var _t = JSON.parse( t );
+		//*/
 
-		// console.log( "t.success ", t.success );
+		var t = await existEmail( paramBody.email );
+		console.log( paramBody.email + "- 이메일 체크결과 -" + t )
+		console.log( typeof(t) )
+		var _t = JSON.parse( t );
 
-		// if( _t.success )
-		// {
-		// 	console.log( 1111 );
-		// 	console.log( "-------------------------" );
-		// 	console.log( "-------------------------" );
-		// 	console.log( "-------------------------" );
-		// 	var _t00 = await createUser( paramBody, null, null, "naver", true )
+		console.log( "t.success ", t.success );
 
-		// 	var sid = generateSessionSecret();
-		// 	console.log( "new sid : ", sid );
-		// 	await insertSesstion( { sid : sid, userId : paramBody.email } )
+		if( _t.success )
+		{
+			console.log( 1111 );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			var _t00 = await createUser( paramBody, null, null, "google", true )
 
-		// 	console.log("[ E ] - /naverLogin");
+			var sid = generateSessionSecret();
+			console.log( "new sid : ", sid );
+			await insertSesstion( { sid : sid, userId : paramBody.kakao_account.email } )
 
-		// 	res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
+			console.log("[ E ] - /googleLogin");
 
-		// }
-		// else
-		// {
-		// 	console.log( 2222 );
-		// 	console.log( "-------------------------" );
-		// 	console.log( "-------------------------" );
-		// 	console.log( "-------------------------" );
-		// 	var sid = generateSessionSecret();
-		// 	await insertSesstion( { sid : sid, userId : paramBody.email } )
+			res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
 
-		// 	console.log("[ E ] - /naverLogin");
+		}
+		else
+		{
+			console.log( 2222 );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			console.log( "-------------------------" );
+			var sid = generateSessionSecret();
+			await insertSesstion( { sid : sid, userId : paramBody.email } )
 
-		// 	res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
-		// }
-		//res.end( t )
+			console.log("[ E ] - /naverLogin");
+
+			res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
+		}
+		res.end( t )
+		/*/
 		res.end( JSON.stringify( paramBody ) )
+		//*/
+
 		console.log("[ E ] - /existEmail");
 
 	});

@@ -566,8 +566,29 @@ function randomStr(){
 				salt : salt,
 				isSso : isSSO,
 				ssoType : ssoType,
-				userInfo : data
+				userInfo : {
+					// "id" : "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
+					"nickname" : data.name,
+					"profile_image" : data.picture,
+					"email" : data.email,
+					"mobile" : null,
+					"mobile_e164" : null,
+					"name" : data.name,
+				}
 			}
+			/*
+			{
+				id: '114521993641336835103',
+				email: 'sukjune.choi@gmail.com',
+				verified_email: true,
+				name: 'suk june Choi',
+				given_name: 'suk june',
+				family_name: 'Choi',
+				picture: 'https://lh3.googleusercontent.com/a/ACg8ocKr7hLlmyvcHvYUz3s15TgfygAE_SoW7KuRgBERWKFmK5o=s96-c',
+				locale: 'ko'
+			}
+			*/
+
 			// const options = {
 			//   // Sort matched documents in descending order by rating
 			//   sort: { "imdb.rating": -1 },
