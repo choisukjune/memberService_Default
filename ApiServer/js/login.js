@@ -475,7 +475,7 @@ function randomStr(){
 			
 			// Query for a movie that has the title 'The Room'
 
-			const query = { userId :email};//{ title: "The Room" };
+			const query = { userId :email };//{ title: "The Room" };
 			/*
 			const options = {
 			  // Sort matched documents in descending order by rating
@@ -491,10 +491,12 @@ function randomStr(){
 			var result = await col0.findOne(query, options);
 			
 			console.log( "query result : ", result )
-			
+			console.log( typeof result )
 			if( result )
 			{
-				var r = "{ \"success\" : 0 }"
+				console.log( result.isSso )
+				if( result.isSso ) var r = "{ \"success\" : 2, \"m\" : \"'"+ result.ssoType +"'로 가입된 메일입니다.\" }"
+				else var r = "{ \"success\" : 0 }"
 			
 			}
 			else
@@ -603,7 +605,7 @@ function randomStr(){
 				const db = client.db("data");
 				const col0 = db.collection("member");
 				// Query for a movie that has the title 'The Room'
-				const query = { userId :paramBody.email};//{ title: "The Room" };
+				const query = { userId :paramBody.email, isSso : false};//{ title: "The Room" };
 				// const options = {
 				//   // Sort matched documents in descending order by rating
 				//   sort: { "imdb.rating": -1 },

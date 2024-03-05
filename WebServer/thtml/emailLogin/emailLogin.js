@@ -133,23 +133,28 @@ window.el.input.email.addEventListener("change",async function(evt){
 	}
 	else
 	{
+		debugger;
 		if( !window.el.div.emailTooltip.classList.contains( "displayNone" ) ) window.el.div.emailTooltip.classList.add( "displayNone" );
 		evt.target.classList.remove( "inputerror" );
 		// emailInputLoader.classList.add("displayNone");
 		var d = await asyncFetch_GET( "/api/existEmail?email=" + email )
-		var r = JSON.parse(d)
+		let r = JSON.parse(d)
+		console.log( r );
 		if( !r.success )
 		{
+			debugger;
 			//console.log( "email exist : " + r.userId )
 			emailInputLoader.classList.add("displayNone");
 			window.el.input.email.attributes[ "data-validate" ].value = "true";
+			alert(r.m)
 		}
 		else
 		{
 			window.el.div.emailTooltip.classList.remove( "displayNone" );
 			emailInputLoader.classList.add("displayNone");
 			evt.target.classList.add( "inputerror" );
-			window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
+			if(r.success == 2 ) window.el.div.emailTooltip.innerText = r.m;
+			else window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
 			//console.log( "email exist : " + r.m )
 			window.el.input.email.attributes[ "data-validate" ].value = "false";
 		}
