@@ -228,7 +228,20 @@ global.server = http.createServer(function(req, res){
 
 })
 
-
+//소켓으로 전송된 내용을 실행한다.
+global.wsFuncs = {};
+global.wsFuncs.checksession = async function( sid ){
+	//test checkSession;
+	
+	try {
+		var c = await (await fetch('http://localhost:8888/checksession?sid=' + sid )).text()
+		console.log( c )
+		return c;
+	} catch (e) {
+		//return e;
+		return e;
+	}    
+}
 //--------------------------------------------------;
 //--------------------------------------------------;
 //--------------------------------------------------;
@@ -241,14 +254,34 @@ global.ws = {};
 global.ws.clients = {};
 global.wss.on('connection', function connection( ws ) {
 
-  ws.on('message', function incoming( message ){
-	console.log('received: %s', message);
-  });
-   ws.on('close', function close() {
-    console.log('disconnected SOCKET - PORT : 5000');
-  });
-  //var r = {	type : "connection", data : id };
-  //global.ws.send( JSON.stringify( r ) );
+	ws.on('message', async function incoming( message ){
+		
+		console.log('received: %s', message);
+		console.log( typeof message );
+
+		var a = JSON.parse( message );
+		if( a.type == "func" )
+		{
+			var r = await global.wsFuncs[a.nm]( a.param );
+			ws.send(r);
+
+		}
+	});
+	ws.on('close', function close() {
+		console.log('disconnected SOCKET - PORT : 8889');
+	});
+	//var r = {	type : "connection", data : id };
+	//global.ws.send( JSON.stringify( r ) );
+
+	// ws.interval = setInterval(() => {
+	// 	//! 웹소켓은 비동기이기 때문에 삑 날 수 있어, 웹소켓이 클라이언트랑 연결이 되었는지 검사하는 안전 장치
+	// 	if (ws.readyState !== ws.OPEN) {
+	// 		return;
+	// 	}
+
+	// 	ws.send('서버에서 클라이언트로 메시지를 보냅니다.');
+	// }, 3000);
+
 });
 //--------------------------------------------------;
 //--------------------------------------------------;
