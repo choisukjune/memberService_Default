@@ -43,8 +43,14 @@
     }
 
     var renderAfterLogin = async function(){
+        console.log( "[S] - renderAfterLogin" );
+        // var html = await asyncFetch_GET("/getHtml?fileNm=loginAfter");
+        // console.log( html );
+        // window.document.getElementById("container").innerHTML = html;
+
         var jsStr = await asyncFetch_GET("/getJs?fileNm=loginAfter" )
         eval(jsStr);
+        console.log( "[E] - renderAfterLogin" );
     }
 
 
@@ -146,6 +152,16 @@
             </div>
             `;
             window.el.div.container.innerHTML = html;
+            debugger;
+            window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
+                window.el.btn.badgeLoginBt.addEventListener("click",function(e){
+                    debugger;
+                    // console.log("remove");
+                    // //window.el.btn.badgeLoginBt.removeEventListener("click",function(e){
+                    //     console.log("add");
+                         renderAfterLogin();
+                    // //})
+                })
             return;
         }
         else
@@ -176,6 +192,7 @@
         window.el.div.container.innerHTML = html;
         
         window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
+
         window.el.btn.badgeLoginBt.addEventListener("click", async function(evt){
 
             var a =  await checkSession();
@@ -187,6 +204,8 @@
                 ${s.userInfo.nickname }
                 `;
                 window.el.btn.badgeLoginBt.innerHTML = html;
+
+
                 return;
             }
             else
@@ -264,6 +283,26 @@
     //-------------------------------------------------------;
     //-------------------------------------------------------;
     
+    var blobToText = function( blob ){
+        return new Promise((resolve,reject) => {
+            var reader = new FileReader();
+		    reader.onload = function() {
+
+			try
+			{
+                resolve(reader.result);
+			}
+			catch( er )
+			{
+                debugger;
+                reject(er);
+			}
+			reader.onerror = reject;
+		}
+		reader.readAsText(blob);
+        }) 
+    }
+
     const webSocketHost = "localhost";
     const webSocketPort = 8889;
 
@@ -272,8 +311,11 @@
         console.log("WebSocket is open");
         //socket.send( "TEST" );
     };
-    socket.onmessage = (event) => {
+    socket.onmessage = async (event) => {
         console.log("Message from server:", event.data);
+        var r = await blobToText( event.data );
+        console.log( r );
+        
     };
     socket.onclose = () => {
         console.log("WebSocket is closed");
@@ -282,19 +324,15 @@
     socket.close();
         console.log("WebSocket connection is closed due to:", error);
     };
-    socket.interval = setInterval(() => {
-        //! 웹소켓은 비동기이기 때문에 삑 날 수 있어, 웹소켓이 클라이언트랑 연결이 되었는지 검사하는 안전 장치
-        if (socket.readyState !== socket.OPEN) {
-            return;
-        }
-        var sid = getCookie("sid");
-        var data = {
-            type : "func",
-            nm : "checksession",
-            param : sid
-        }
-        socket.send( JSON.stringify(data));
-    }, 5000);
+    // socket.interval = setInterval(() => {
+    //     //! 웹소켓은 비동기이기 때문에 삑 날 수 있어, 웹소켓이 클라이언트랑 연결이 되었는지 검사하는 안전 장치
+    //     if (socket.readyState !== socket.OPEN) {
+    //         return;
+    //     }
+    //     // var sid = getCookie("sid");
+    //     // var data = { type : "func", nm : "checksession", param : sid };
+    //     // socket.send( JSON.stringify(data));
+    // }, 5000);
     
     </script>
   </head>

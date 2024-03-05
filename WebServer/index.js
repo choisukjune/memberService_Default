@@ -263,7 +263,7 @@ global.wss.on('connection', function connection( ws ) {
 		if( a.type == "func" )
 		{
 			var r = await global.wsFuncs[a.nm]( a.param );
-			ws.send(r);
+			ws.send(r,{ binary : true });
 
 		}
 	});
