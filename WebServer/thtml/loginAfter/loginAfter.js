@@ -5,26 +5,26 @@
 		var html = "";
 		var _d = await getUerInfoBySession();
 
-
-		if( _d.userInfo.profile_image ) var imgsrc = _d.userInfo.profile_image
+		debugger;
+		if( _d.profile_image ) var imgsrc = _d.profile_image;
 		else var imgsrc = "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg";
 
-		if( _d.userInfo.name ) var name = _d.userInfo.name
+		if( _d.name ) var name = _d.name;
 		else var name = " - ";
 
-		if( _d.userInfo.nickname ) var nickname = _d.userInfo.nickname
-		else var nickname = " - ";
+		if( _d.username ) var username = _d.username;
+		else var username = " - ";
 
-		if( _d.userInfo.email ) var email = _d.userInfo.email
+		if( _d.userId ) var email = _d.userId
 		else var email = " - ";
 		
-		if( _d.userInfo.mobile ) var mobile = _d.userInfo.mobile
+		if( _d.mobile ) var mobile = _d.mobile
 		else var mobile = " - ";
 
 		
 		html = _thtml.replace("{IMG_SRC}",imgsrc)
 		.replace(/{USER_NAME}/gi,name)
-		.replace("{NICK_NAME}",nickname)
+		.replace("{NICK_NAME}",username)
 		.replace("{EMAIL}",email)
 		.replace("{MOBILE}", mobile);
 

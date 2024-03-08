@@ -541,78 +541,55 @@ function randomStr(){
 		console.log( "isSSO - ", isSSO );
 
 		password = password || null;
-		
-		// var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
-		// .replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
-		// .replace( "<!=PASSWORD=!>", password )
-		// .replace( "<!=SALT=!>", salt )
-		// .replace( "<!=IS_SSO=!>", isSSO )
-		// .replace( "<!=SSO_TYPE=!>", ssoType );
-
-		/*
-		{
-			id: 3373811719,
-			connected_at: '2024-03-04T07:36:24Z',
-			properties: {
-				nickname: '최석준',
-				profile_image: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_640x640.jpg',
-				thumbnail_image: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_110x110.jpg'
-			},
-			kakao_account: {
-				profile_nickname_needs_agreement: false,
-				profile_image_needs_agreement: false,
-				profile: {
-					nickname: '최석준',
-					thumbnail_image_url: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_110x110.jpg',
-					profile_image_url: 'http://k.kakaocdn.net/dn/E0dO4/btssgJED9lM/8QUudZT0N0jd3XIkePsUw0/img_640x640.jpg',
-					is_default_image: false
-				},
-				has_email: true,
-				email_needs_agreement: false,
-				is_email_valid: true,
-				is_email_verified: true,
-				email: 'sukjune.choi@gmail.com'
-			}
-		}
-		
-		*/
 
 		try {
 			console.log( "[S] - insertSession" );
 			
 			await client.connect();
 			
-			// Get the database and collection on which to run the operation
 			const db = client.db("data");
 			const col0 = db.collection("member");
+			const col1 = db.collection("memberInfo");
 
 			// Query for a movie that has the title 'The Room'
 			var doc = {
-				userId : data.kakao_account.email,
+				userId : data.email,
 				password : password,
 				salt : salt,
 				isSso : isSSO,
 				ssoType : ssoType,
-				userInfo : {
-					// "id" : "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
-					"nickname" : data.kakao_account.profile.nickname,
-					"profile_image" : data.kakao_account.profile.thumbnail_image_url,
-					"email" : data.kakao_account.email,
-					"mobile" : null,
-					"mobile_e164" : null,
-					"name" : data.kakao_account.profile.nickname,
-				}
+			};
+
+			var userInfo = {
+				userId : data.email,
+				isSso : isSSO,
+				ssoType : ssoType,
+				ssoId : data.id,
+				username :data.name,
+				profile_image : data.picture,
+				mobile : null,
+				name : data.name,
+			};
+			/*
+			{
+				id: '114521993641336835103',
+				email: 'sukjune.choi@gmail.com',
+				verified_email: true,
+				name: 'suk june Choi',
+				given_name: 'suk june',
+				family_name: 'Choi',
+				picture: 'https://lh3.googleusercontent.com/a/ACg8ocKr7hLlmyvcHvYUz3s15TgfygAE_SoW7KuRgBERWKFmK5o=s96-c',
+				locale: 'ko'
 			}
-			// const options = {
-			//   // Sort matched documents in descending order by rating
-			//   sort: { "imdb.rating": -1 },
-			//   // Include only the `title` and `imdb` fields in the returned document
-			//   projection: { _id: 0, title: 1, imdb: 1 },
-			// };
+			*/
+
 			var options = {};
 			// Execute query
 			const r = await col0.insertOne( doc );
 			console.log( r )
+			
+			let r0 = await col1.insertOne( userInfo );
+			console.log( r0 )
 			console.log( "[E] - createUser" );
 			return r;
 			
@@ -840,7 +817,7 @@ function randomStr(){
 
 	});
 
-	global.server.addRouter("/kakaoLogin",async function( req, res, data ){
+	global.server.addRouter("/googleLogin",async function( req, res, data ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -851,13 +828,13 @@ function randomStr(){
 
 		일정시간이 지나고, 브라우저 쿠키가 만료되고, 로그인페이지로 이동시김
 		*/
-		console.log("[ S ] - /naverLogin");
+		console.log("[ S ] - /googleLogin");
 
 		console.log( data )
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
 		var paramBody = JSON.parse( data )
-		var _tdbjs_nm = "naverLogin";
+		var _tdbjs_nm = "googleLogin";
 		
 		console.log( routerNm )
 		console.log( paramsO )
@@ -890,7 +867,7 @@ function randomStr(){
 
 			var sid = generateSessionSecret();
 			console.log( "new sid : ", sid );
-			await insertSesstion( { sid : sid, userId : paramBody.kakao_account.email } )
+			await insertSesstion( { sid : sid, userId : paramBody.email } )
 
 			console.log("[ E ] - /googleLogin");
 
@@ -914,7 +891,6 @@ function randomStr(){
 		/*/
 		res.end( JSON.stringify( paramBody ) )
 		//*/
-
 		console.log("[ E ] - /existEmail");
 
 	});

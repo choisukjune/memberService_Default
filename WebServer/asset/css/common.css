@@ -50,9 +50,10 @@
  .inputerror {
   border-color: red!important;
   /* background: border-box; */
-  box-shadow: 0 0 10px #d6a8e9!important;
+  /* box-shadow: 0 0 10px #d6a8e9!important; */
   outline: none!important;
   border-width: thin!important;
+  background-color: #ffdfdf !important;
  }
  .displayNone {
   display: none!important;

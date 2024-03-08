@@ -94,7 +94,7 @@ var getUerInfoBySession = async function( sid, cbFunction ){
 		// Get the database and collection on which to run the operation
 		const db = client.db("data");
 		const col0 = db.collection("session");
-		const col1 = db.collection("member");
+		const col1 = db.collection("memberInfo");
 		// Query for a movie that has the title 'The Room'
 		const _q = { 
 			sid : sid 
