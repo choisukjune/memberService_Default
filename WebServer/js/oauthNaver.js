@@ -222,68 +222,7 @@ var memberJoin = function( data, cbFunction ){
 
 		
 	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/join",function( req, res, data ){
-
-		var routerNm = req.url.split("?")[0];
-		//var paramsO = paramToObject( req.url );
-		console.log( data )
-
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-
-		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		var _d = { email : data.email, pass : data.pass }
-
-		var option = {
-			host: 'localhost',
-			port: '8888',
-			path: '/join',
-			method: 'POST',
-			headers: {
-				"content-type": "application/json",
-				//"Content-Length": Buffer.byteLength(post_data)
-			}
-		};
-
-		httpPostCallback( option, _d, function(d){
-
-			
-			var _d = JSON.parse( d );
-			console.log( "====>", _d );
-			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			//res.statusCode = 301;
-			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-			res.end( d );
-		})
-
-		
-	});
+	
 	/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function

@@ -244,21 +244,18 @@ var memberJoin = function( data, cbFunction ){
 	* </code>
 	*/
 	global.server.addRouter("/api/join",function( req, res, data ){
-
+		
 		var routerNm = req.url.split("?")[0];
 		//var paramsO = paramToObject( req.url );
-		console.log( data )
-
+		console.log( "POST data = ", data );
 
 		res.statusCode = 200;
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
-
-		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
 		var _d = { email : data.email, pass : data.pass }
-
+		console.log("-----")
 		var option = {
 			host: 'localhost',
 			port: '8888',
@@ -272,13 +269,19 @@ var memberJoin = function( data, cbFunction ){
 
 		httpPostCallback( option, _d, function(d){
 
+
+			var r = JSON.parse( d );
+			console.log( "_d.success ==>", r.success )
+			if( r.success ) res.end( d );
+			else
+			{
+				console.log( "====>", r );
+				res.setHeader('Set-Cookie', 'sid=' + r.sid + "; max-age=" + 3600 + "; path=/;" );
+				//res.statusCode = 301;
+				//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+				res.end( d );	
+			}
 			
-			var _d = JSON.parse( d );
-			console.log( "====>", _d );
-			res.setHeader('Set-Cookie', 'sid=' + _d.sid + "; max-age=" + 3600 + "; path=/;" );
-			//res.statusCode = 301;
-			//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-			res.end( d );
 		})
 
 		

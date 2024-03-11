@@ -12,6 +12,33 @@ var crypto = require("crypto");
 var util = require("util");
 
 //-------------------------------------------------------;
+// MongoDB Driver Test;
+//-------------------------------------------------------;
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://12k4:tjrwns2482%21%40@cluster0.suwebz6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
+//-------------------------------------------------------;
 // VARIABLE;
 //-------------------------------------------------------;
 /*
@@ -67,11 +94,15 @@ var createSalt = async () => {
  * @param {boolean} bResult
  * @return {String} r
  */
-var createHashedPassword = async (password, cbFunction) => {
+var createHashedPassword = async (password) => {
   const salt = await createSalt();
   const key = await pbkdf2Promise(password, salt, 104906, 64, "sha512");
   const hashedPassword = key.toString("base64");
-  cbFunction({ hashedPassword, salt }) ;
+  console.log( hashedPassword )
+  console.log( salt )
+  var r = { hashedPassword : hashedPassword, salt : salt };
+  console.log( r );
+  return r;
 };
 
 /*
@@ -305,9 +336,9 @@ function parseCookie( reqCookie ){
 function randomStr(){
 	return Math.random().toString(36).substr(2,11)
 }
-function generateSessionSecret() {
-	const secretBytes = crypto.randomBytes(32); // 32바이트 랜덤 데이터 생성
-	const sessionSecret = secretBytes.toString('base64'); // base64로 인코딩
+async function generateSessionSecret() {
+	const secretBytes = await crypto.randomBytes(32); // 32바이트 랜덤 데이터 생성
+	const sessionSecret = await secretBytes.toString('base64'); // base64로 인코딩
 
 	return sessionSecret;
 }
@@ -347,168 +378,206 @@ function generateSessionSecret() {
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	var insertSesstion = function( data, cbFunction ){
-		var _tdbjs_nm = "insertSession";
+	var insertSesstion = async function( data, cbFunction ){
+
+		try {
+			console.log( "[S] - insertSession" );
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("session");
+			// Query for a movie that has the title 'The Room'
+			var doc = {
+				sid : data.sid,
+				userId : data.userId,
+				creatDate :  new Date()
+			}
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+			// var options = {};
+			// Execute query
+
+			const query = { userId : data.userId };
+			const update = { $set: doc};
+			const options = { upsert: true };
+
+			const r = await col0.updateOne(query, update, options);
+
+			//const r = await col0.insertOne( doc );
+			console.log( r )
+			console.log( "[E] - insertSession" );
+			return r;
+			
+		  } finally {
+			await client.close();
+		  }
+		  
+	}
+	var checkSesstion = async function( sid, cbFunction ){
 		
-		console.log(data);
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
 		
 		try
 		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
+
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("session");
+			// Query for a movie that has the title 'The Room'
+			const _q = { 
+				sid : sid 
+			};
+			
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+
+			var options = {};
+			
+			// Execute query
+			const r = await col0.findOne(_q, options);
+			console.log( r )
+
+			return r;
+			
 		}
-		catch( err )
+		finally
 		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
+			await client.close();
 		}
 		
-		//console.log( _tQuery );
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", data.session )
-		.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "insertSesstion.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
-		cbFunction( r );
+		  
 	}
-	var checkSesstion = function( sid, cbFunction ){
-		console.log( 2 )
-		var _tdbjs_nm = "checkSession";
-		
-		console.log(sid);
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
+	var deleteSession = async function( sid ){
 		
 		try
 		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
+			console.log( "[S] - deleteSession" );
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("session");
+			// Query for a movie that has the title 'The Room'
+			var _q = {
+				sid : sid
+			}
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+			var options = {};
+			// Execute query
+			const r = await col0.deleteOne( _q );
+			console.log( r )
+			console.log( "[E] - deleteSession" );
+			return r;
+			
+		} 
+		finally
 		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
+			await client.close();
 		}
-		
-		//console.log( _tQuery );
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
-		//.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "checkSesstion.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-		console.log( 3 )
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		console.log( 4 )
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( 5 )
-		console.log( r );
-		cbFunction( r );
 	}
-	var deleteSession = function( sid, cbFunction ){
-		var _tdbjs_nm = "deleteSession";
-		
-		console.log(sid);
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
-		}
-		
-		console.log( _tQuery );
-		var query = _tQuery.replace( "<!=SSESION_ID=!>", sid )
-		//.replace( "<!=USER_ID=!>", data.userId );
-		var dbjs_nm = "deleteSession.dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
-		cbFunction( r );
-	}
-	var createUser = function( data, password, salt, ssoType, isSSO,cbFunction ){
+	var createUser = async function( data, password, salt, ssoType, isSSO ){
 		console.log( "[S] - createUser" );
 
 		console.log( "data - ", data );
 		console.log( "ssoType - ", ssoType );
-		
+		console.log( "password - ", password );
+		console.log( "salt - ", salt );
+		console.log( "ssoType - ", ssoType );
+		console.log( "isSSO - ", isSSO );
+
 		password = password || null;
+		
 
-		/*
-		{
-			"resultcode": "00",
-			"message": "success",
-			"response": {
-				"id": "gdSLm7IG5uoC9w3X1WAhLWwnL1jA98fnmoO8p--WodM",
-				"nickname": "최석준",
-				"profile_image": "https://phinf.pstatic.net/contact/20231115_39/17000369280735pXRv_PNG/02_icon.png",
-				"email": "jun@b2link.co.kr",
-				"mobile": "010-6863-6311",
-				"mobile_e164": "+821068636311",
-				"name": "최석준"
+
+		try {
+			console.log( "[S] - insertSession" );
+			
+			await client.connect();
+			
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("member");
+			const col1 = db.collection("memberInfo");
+
+			var _q = { userId : data.email }
+			var exsitEmail = await col0.findOne( _q );
+			console.log( "exsitEmail -- ",exsitEmail )
+			if( exsitEmail ) return { success : 1, m : "이미 등록된 메일입니다." }
+
+			// Query for a movie that has the title 'The Room'
+			var doc = {
+				userId : data.email,
+				password : password,
+				salt : salt,
+				isSso : isSSO,
+				ssoType : ssoType,
 			}
-		}
-		*/
 
-		var _tdbjs_nm = "createUser";
-		
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			// console.log( routerNm + " - DBJS File Not Found! - " + err );
-			// res.end("{ sucess : 0, data : null }");
-		}
-		
-		console.log( _tQuery );
-		var query = _tQuery.replace( "<!=EMAIL=!>", data.email )
-		.replace( "<!=USER_INFO=!>", JSON.stringify( data ) )
-		.replace( "<!=PASSWORD=!>", password )
-		.replace( "<!=SALT=!>", salt )
-		.replace( "<!=IS_SSO=!>", isSSO )
-		.replace( "<!=SSO_TYPE=!>", ssoType );
-		var dbjs_nm = "createUser.dbjs";
+			var userInfo = {
+				userId : data.email,
+				username : data.email,
+				profile_image : "",
+				mobile : "",
+				name : "",
+				userInfos : {
+					site : {},
+					google : {},
+					naver : {},
+					kakao : {},
+				}
 
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH );
+				
+				
+			}
 
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var _r = exec_query_DB( dbjs_nm );
-		
-		var r = deleteLines( _r, 4 ).replace(/\n/gi,"");
-		console.log( r );
-		console.log( "[E] - createUser" );
-		cbFunction( r );
+
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+
+
+
+
+			//var options = {};
+			// Execute query
+			const r = await col0.insertOne( doc );
+			console.log( r )
+
+			
+
+			const query = { userId : data.email };
+			const update = { $set: userInfo};
+			const options = { upsert: true };
+
+			let r0 = await col1.updateOne(query, update, options);
+
+			//let r0 = await col1.insertOne( userInfo );
+			console.log( r0 )
+
+			console.log( "[E] - createUser" );
+			return r;
+			
+		  } finally {
+			await client.close();
+		  }
 	}
 
-	global.server.addRouter("/join",function( req, res, data ){
+	global.server.addRouter("/join",async function( req, res, data ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -525,7 +594,6 @@ function generateSessionSecret() {
 		var routerNm = req.url.split("?")[0];
 		var paramsO = paramToObject( req.url );
 		var paramBody = JSON.parse( data )
-		var _tdbjs_nm = "join";
 		
 		console.log( routerNm )
 		console.log( paramsO )
@@ -539,37 +607,20 @@ function generateSessionSecret() {
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
+		var hashedPassword = await createHashedPassword(paramBody.pass )
+			console.log("====>", hashedPassword )
+		var user = await createUser(paramBody, hashedPassword.hashedPassword, hashedPassword.salt, null, false )
+		console.log(user)
 
-
-
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		createHashedPassword(paramBody.pass, function(result){
-			console.log( result )
-			createUser(paramBody, result.hashedPassword, result.salt, null, false,function(d){
-
-				var sid = generateSessionSecret();
-
-				insertSesstion( { session : sid, userId : paramBody.email }, function(d){
-					var sid = generateSessionSecret();
-					console.log("[ E ] - /Join");
-					res.end( JSON.stringify( { sid : sid, d : d } ) )	
-				});
-			})
-
+		if( user.success ) res.end( JSON.stringify( user ) )
 			
+		var sid = await generateSessionSecret();
+			console.log("sid : ", sid)
+		var r = await insertSesstion( { sid : sid, userId : paramBody.email })
 
-		})
+		console.log("[ E ] - /Join");
+		res.end( JSON.stringify( { sid : sid, d : r } ) )	
+
 
 	});
 	/**
@@ -594,7 +645,7 @@ function generateSessionSecret() {
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	global.server.addRouter("/checksession",function( req, res, data ){
+	global.server.addRouter("/checksession",async function( req, res, data ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -619,9 +670,9 @@ function generateSessionSecret() {
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		console.log( 1 )
-		checkSesstion( paramsO.sid, function(r){
+		var r = checkSesstion( paramsO.sid );
+		console.log( r );
 			res.end( r )	
-		})
 	
 		console.log("[ E ] - /checksession");
 
@@ -650,7 +701,7 @@ function generateSessionSecret() {
 		http://localhost:8888/find?brand=varihope&page=1
 	* </code>
 	*/
-	global.server.addRouter("/deletesession",function( req, res, data ){
+	global.server.addRouter("/deletesession",async function( req, res, data ){
 		/*
 		
 		https://lab.cliel.com/entry/nodejs-http
@@ -675,539 +726,16 @@ function generateSessionSecret() {
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
 		
-		deleteSession( paramsO.sid, function(r){
+		var r =  await deleteSession( paramsO.sid );
+		console.log( r );
 			res.end( r )	
-		})
 	
 		console.log("[ E ] - /deletesession");
 
 		
 
 	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/findHashTag?tag=...&page=1
-	* </code>
-	*/
-	global.server.addRouter("/findHashTag",function( req, res ){
-		debugger;
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( decodeURIComponent( req.url  ));
-		var _tdbjs_nm = "findHashTag";
-				
-		var _tag = decodeURIComponent( paramsO.tag )
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=TAG=!>", decodeURIComponent( paramsO.tag ) )
-		.replace( "<!=PAGE=!>", paramsO.page )
-		.replace( "<!=LIMIT=!>", paramsO.limit );
-		var dbjs_nm = "find_" + _tag.replace(/\s/gi,"_") + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-				
-		res.end( r )
-
-
-	});
-
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/findContentsAll?page=1
-	* </code>
-	*/
-	global.server.addRouter("/findContentsAll",function( req, res ){
-		debugger;
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "findContentsAll";
-				
-		var _tag = decodeURIComponent( paramsO.tag )
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=PAGE=!>", paramsO.page );
-		var dbjs_nm = _tdbjs_nm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		res.end( r )	
-
-	});
-
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/findAll?page=1
-	* </code>
-	*/
-	global.server.addRouter("/findAll",function( req, res ){
-		debugger;
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "findAll";
-				
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=PAGE=!>", paramsO.page )
-				.replace( "<!=LIMIT=!>", paramsO.limit );
-		var dbjs_nm = _tdbjs_nm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		res.end( r )	
-
-	});
-
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/find_report_All_by_brand?brand=varihope
-	* </code>
-	*/
-	global.server.addRouter("/getTotalCount",function( req, res ){
-		
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "getTotalCount";
-				
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=COL_NM=!>", paramsO.colNm )
-				.replace( "<!=DB_NM=!>", paramsO.dbNm );
-		var dbjs_nm = "find_" + paramsO.colNm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		res.end( r )	
-
-	});
-
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/getHtml?fileNm=report_varihope_202008
-	* </code>
-	*/
-	global.server.addRouter("/getHtml",function( req, res ){
-		
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-				
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-		try
-		{
-			var _tHtml = fs.readFileSync( _thtml_PATH + "/" + paramsO.fileNm + ".thtml" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - thtml File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-
-		res.end( _tHtml )	
-
-	});
-
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/getTags
-	* </code>
-	*/
-	global.server.addRouter("/getTags",function( req, res ){
-		
-		var routerNm = req.url.split("?")[0];
-		//var paramsO = paramToObject( req.url );
-		var _tdbjs_nm = "getTags";
-				
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery//.replace( "<!=COL_NM=!>", paramsO.colNm );
-		var dbjs_nm = "find_" + _tdbjs_nm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-		res.end( r )	
-
-	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/findContentsAll?page=1
-	* </code>
-	*/
-	global.server.addRouter("/searchProduct",function( req, res ){
-		debugger;
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( decodeURIComponent( req.url  ));
-		var _tdbjs_nm = "searchProduct";
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=PAGE=!>", paramsO.page )
-			.replace( "<!=LIMIT=!>", paramsO.limit )
-			.replace( "<!=KEYWORD=!>", paramsO.keyword )
-			.replace( "<!=PAGE=!>", paramsO.page );
-		var dbjs_nm = _tdbjs_nm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-
-		res.end( r )	
-
-	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/findContentsAll?page=1
-	* </code>
-	*/
-	global.server.addRouter("/searchByShop",function( req, res ){
-		
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( decodeURIComponent( req.url  ));
-		var _tdbjs_nm = "searchByShop";
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=PAGE=!>", paramsO.page )
-			.replace( "<!=LIMIT=!>", paramsO.limit )
-			.replace( "<!=SHOP=!>", paramsO.shop )
-			.replace( "<!=PAGE=!>", paramsO.page );
-		var dbjs_nm = _tdbjs_nm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-
-
-		res.end( r )	
-
-	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8888/findContentsAll?page=1
-	* </code>
-	*/
-	global.server.addRouter("/searchByBrand",function( req, res ){
-		debugger;
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( decodeURIComponent( req.url  ));
-		var _tdbjs_nm = "searchByBrand";
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ); 
-		
-		try
-		{
-			var _tQuery = fs.readFileSync( _tDbjs_PATH + "/" + _tdbjs_nm + ".tdbjs" ).toString();
-		}
-		catch( err )
-		{
-			console.log( routerNm + " - DBJS File Not Found! - " + err );
-			res.end("{ sucess : 0, data : null }");
-		}
-		
-		var query = _tQuery.replace( "<!=PAGE=!>", paramsO.page )
-			.replace( "<!=LIMIT=!>", paramsO.limit )
-			.replace( "<!=BRAND=!>", paramsO.brand )
-			.replace( "<!=PAGE=!>", paramsO.page );
-		var dbjs_nm = _tdbjs_nm + ".dbjs";
-
-		var FILE_PATH = DBJS_DIRECTORY_PATH + dbjs_nm;
-		
-		console.log( FILE_PATH )
-
-		fs.writeFileSync( DBJS_DIRECTORY_PATH + dbjs_nm , query, { flag : "w" } );
-		var r = exec_query_DB( dbjs_nm )
-
-		res.end( r )	
-
-	});
+	
 })();
 
 //-------------------------------------------------------;

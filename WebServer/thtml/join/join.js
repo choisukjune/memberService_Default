@@ -29,7 +29,7 @@ window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
 window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
 window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
 window.el.div = {}
-window.el.div.emailTooltip = window.document.getElementById("toolipEmail");
+window.el.div.errMessage = window.document.getElementById("errMessage");
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -71,8 +71,6 @@ function showClock(){
 	}
 	setTimeout(showClock,1000);  //1초마다 갱신
 }
-
-showClock();
 
 var checkEmail = function(str){
 	let regex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)          
@@ -161,8 +159,12 @@ window.el.input.email.addEventListener("change",function(evt){
 	var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
 	var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
 
-
-	emailInputLoader.classList.remove("displayNone");
+	if( !window.el.div.errMessage.classList.contains("displayNone") )
+	{
+		window.el.div.errMessage.classList.add("displayNone");
+	}
+	
+	//emailInputLoader.classList.remove("displayNone");
 
 	if( !checkEmail(email) )
 	{
@@ -176,33 +178,34 @@ window.el.input.email.addEventListener("change",function(evt){
 	}
 	else
 	{
-		if( !window.el.div.emailTooltip.classList.contains( "displayNone" ) ) window.el.div.emailTooltip.classList.add( "displayNone" );
-		evt.target.classList.remove( "inputerror" );
-		// emailInputLoader.classList.add("displayNone");
-		requestGet("/api/existEmail?email=" + email, function(d){
-			var r = JSON.parse(d)
-			if( r.r )
-			{
-			console.log( "email exist : " + r.userId )
-			emailInputLoader.classList.add("displayNone");
-			window.el.input.email.attributes[ "data-validate" ].value = "true";
-			}
-			else
-			{
-			window.el.div.emailTooltip.classList.remove( "displayNone" );
-			emailInputLoader.classList.add("displayNone");
-			evt.target.classList.add( "inputerror" );
-			window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
-			console.log( "email exist : " + r.m )
-			window.el.input.email.attributes[ "data-validate" ].value = "false";
-			}
-			loginBtCheck();
-		})
+		window.el.input.email.attributes[ "data-validate" ].value = "true";
+		// if( !window.el.div.emailTooltip.classList.contains( "displayNone" ) ) window.el.div.emailTooltip.classList.add( "displayNone" );
+		// evt.target.classList.remove( "inputerror" );
+		// // emailInputLoader.classList.add("displayNone");
+		// requestGet("/api/existEmail?email=" + email, function(d){
+		// 	var r = JSON.parse(d)
+		// 	if( r.r )
+		// 	{
+		// 	console.log( "email exist : " + r.userId )
+		// 	emailInputLoader.classList.add("displayNone");
+		// 	window.el.input.email.attributes[ "data-validate" ].value = "true";
+		// 	}
+		// 	else
+		// 	{
+		// 	window.el.div.emailTooltip.classList.remove( "displayNone" );
+		// 	emailInputLoader.classList.add("displayNone");
+		// 	evt.target.classList.add( "inputerror" );
+		// 	window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
+		// 	console.log( "email exist : " + r.m )
+		// 	window.el.input.email.attributes[ "data-validate" ].value = "false";
+		// 	}
+		// 	loginBtCheck();
+		// })
 	}
+	loginBtCheck();
 
 });
-window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
-
+window.evt.btnLoginClick = window.el.btn.join.addEventListener("click",function(evt){
 
 	var email = window.el.input.email.value;
 	var password = window.el.input.password.value;
@@ -223,25 +226,27 @@ window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function
 	if( password == "" ){
 		return alert("비밀번호를 입력해주세요")
 	}
-	//window.el.btn.login.textContent = ""
+
 	window.el.btn.join.classList.add("loading");
 
-	console.log( "window.el.btn.login - click!" );
+	console.log( "window.el.btn.join - click!" );
 
 	var postBody = { email : email, pass : password }
 	requestPostBodyJson('/api/join',postBody , function( d ){
-		console.log( "===========" )
-		console.log( "===========" )
-		console.log( "===========" )
-		console.log( "===========" )
-		var _d = JSON.parse( d );
-		webStorageSetItem( JSON.parse( _d.d ) )
-		location.href="/"
-
+		debugger;
+		var _d = JSON.parse( d )
+		if( _d.success )
+		{
+			window.el.div.errMessage.innerText = _d.m;
+			window.el.div.errMessage.classList.remove("displayNone")
+			window.el.btn.join.classList.remove("loading");
+			alert( _d.m );
+		}
+		else location.href="/"
 	})
 
 })             
-window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){
+window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
 	console.log( "window.el.btn.join - click!" )
 	window.location.href = "/"
 })   
