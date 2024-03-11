@@ -103,8 +103,8 @@ window.el.input.email.addEventListener("change",async function(evt){
 	var emailInputLoader = window.document.getElementById("emailInputLoader");
 	var email = evt.target.value;
 	
-	var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
-	var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+	// var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
+	// var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
 
 
 	//emailInputLoader.classList.remove("displayNone");

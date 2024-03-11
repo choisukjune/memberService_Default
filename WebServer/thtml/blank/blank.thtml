@@ -3,15 +3,16 @@
   <head>
     <meta charset="utf-8">
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="asset/css/semantic.css">
-    <link rel="stylesheet" type="text/css" href="asset/css/common.css">
+    <link rel="stylesheet" type="text/css" href="/asset/css/semantic.css">
+    <link rel="stylesheet" type="text/css" href="/asset/css/common.css">
     <script
       src="https://code.jquery.com/jquery-3.1.1.min.js"
       integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
       crossorigin="anonymous"></script>
-    <script src="asset/js/semantic.js"></script>
-    <script src="asset/js/util.js"></script>
+    <script src="/asset/js/semantic.js"></script>
+    <script src="/asset/js/util.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="/thtml/<!=JS=!>/<!=JS=!>.js" async defer></script>
     <script type="text/javascript">
         
    
@@ -66,16 +67,6 @@
         console.log( "[E] - renderAddUserInfo" );
     }
 
-    var emailLogin = async function(){
-        console.log( "[S] - emailLogin" );
-        var html = await asyncFetch_GET("/getHtml?fileNm=emailLogin");
-        console.log( html );
-        window.document.getElementById("container").innerHTML = html;
-
-        var jsStr = await asyncFetch_GET("/getJs?fileNm=emailLogin" )
-        eval(jsStr);
-        console.log( "[E] - emailLogin" );
-    }
 
     var htmlToElement = function( html ){
         var template = document.createElement('template');
@@ -148,108 +139,7 @@
 
     var initPage = async function(){
 
-
-        var urlStr = window.location.href;
-        var url = new URL(urlStr);
-
-        var urlParams = url.searchParams;
-
-        var page = urlParams.get('p');
-
-        // javascript
-        console.log(page);
-
-        if( page ){
-            eval( page + "( );" );
-        } 
-
-        var a =  await checkSession();
-        if( a )
-        {            
-            var s = await getUerInfoBySession()   
-            var html = `
-            <div class="column" style="max-width: 450px;">
-            <h2 class="ui white header">
-                <div class="content">
-                <!-- <div>🔑</div> -->
-                <!-- <div class="colorWhite"> ✈️ 안녕하세요! 반갑습니다~</div> -->
-                <button id="badgeLoginBt" class="circular ui icon inverted button" style="padding: 10px;">
-                    <img class="ui right spaced avatar image" src="${s.profile_image }">
-            ${s.username }
-                </button>
-
-                </div>
-            </h2>
-            <!-- <div style="margin-bottom: 10px;">
-                <div style="font-size: 1.3rem">Sign in</div>
-                </div> -->
-            <!-- <div id="logout" class="ui fluid inverted large submit button">로그인</div> -->
-            </div>
-            `;
-            window.el.div.container.innerHTML = html;
-            debugger;
-            window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
-                window.el.btn.badgeLoginBt.addEventListener("click",function(e){
-                    debugger;
-                    // console.log("remove");
-                    // //window.el.btn.badgeLoginBt.removeEventListener("click",function(e){
-                    //     console.log("add");
-                         renderAfterLogin();
-                    // //})
-                })
-            return;
-        }
-        else
-        {   
-        //     renderBeforeLogin();
-        //     return;
-        // }
-
-        var html = `
-        <div class="column" style="max-width: 450px;">
-        <h2 class="ui white header">
-            <div class="content">
-            <!-- <div>🔑</div> -->
-            <!-- <div class="colorWhite"> ✈️ 안녕하세요! 반갑습니다~</div> -->
-            <button id="badgeLoginBt" class="circular ui icon inverted button" style="padding: 10px;">
-                지금시작하세요!
-            </button>
-
-            </div>
-        </h2>
-        <!-- <div style="margin-bottom: 10px;">
-            <div style="font-size: 1.3rem">Sign in</div>
-            </div> -->
-        <!-- <div id="logout" class="ui fluid inverted large submit button">로그인</div> -->
-        </div>
-
-        `;
-        window.el.div.container.innerHTML = html;
-        
-        window.el.btn.badgeLoginBt = window.document.getElementById("badgeLoginBt");
-
-        window.el.btn.badgeLoginBt.addEventListener("click", async function(evt){
-
-            var a =  await checkSession();
-            if( a )
-            {            
-                var s = await getUerInfoBySession()   
-                var html = `
-                <img class="ui right spaced avatar image" src="${s.userInfo.profile_image }">
-                ${s.userInfo.nickname }
-                `;
-                window.el.btn.badgeLoginBt.innerHTML = html;
-
-
-                return;
-            }
-            else
-            {   
-                renderBeforeLogin();
-                return;
-            }
-        })
-        }
+        //renderAddUserInfo();
     }
 
 
@@ -378,7 +268,9 @@
       </div>
       <div class="column"> -->
         <!-- <div id="naverIdLogin"><a id="naverIdLogin_loginButton" href="#" role="button"><img src="https://static.nid.naver.com/oauth/big_g.PNG" width=320></a></div> -->
-    <div id="container" class="ui middle aligned center aligned grid" style="height: 100%;"></div>
+    <div id="container" class="ui middle aligned center aligned grid" style="height: 100%;">
+    <!=HTML=!>
+    </div>
     <div class="some-wrapping-div">
       <div class="ui custom button">Show custom popup</div>
     </div>

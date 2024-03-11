@@ -432,16 +432,34 @@ function randomStr(){
 			
 			// }
 
+			// var userInfo = {
+			// 	userId : data.email,
+			// 	isSso : isSSO,
+			// 	ssoType : ssoType,
+			// 	ssoId : data.id,
+			// 	username : data.nickname,
+			// 	profile_image : data.profile_image,
+			// 	mobile : data.mobile,
+			// 	name : data.name
+			// }
+
 			var userInfo = {
 				userId : data.email,
-				isSso : isSSO,
-				ssoType : ssoType,
-				ssoId : data.id,
-				username : data.nickname,
-				profile_image : data.profile_image,
-				mobile : data.mobile,
-				name : data.name
+				username : "",
+				profile_image : "",
+				mobile : "",
+				name : data.name,
+				userInfos : {
+					site : {},
+					google : {},
+					naver : data,
+					kakao : {},
+				}
+
+				
+				
 			}
+
 
 			// const options = {
 			//   // Sort matched documents in descending order by rating
@@ -449,12 +467,24 @@ function randomStr(){
 			//   // Include only the `title` and `imdb` fields in the returned document
 			//   projection: { _id: 0, title: 1, imdb: 1 },
 			// };
-			var options = {};
+
+
+
+
+			//var options = {};
 			// Execute query
 			const r = await col0.insertOne( doc );
 			console.log( r )
+
 			
-			let r0 = await col1.insertOne( userInfo );
+
+			const query = { userId : data.email };
+			const update = { $set: userInfo};
+			const options = { upsert: true };
+
+			let r0 = await col1.updateOne(query, update, options);
+
+			//let r0 = await col1.insertOne( userInfo );
 			console.log( r0 )
 
 			console.log( "[E] - createUser" );

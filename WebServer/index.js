@@ -79,7 +79,7 @@ global.server = http.createServer(function(req, res){
 
 	//var routerNm = req.url.replace(/\//,"");
 	var routerNm = req.url.split("?")[0];
-	
+	console.log(req.url)
 	if (req.method == 'POST') {
         var jsonString = '';
 
@@ -173,18 +173,39 @@ global.server = http.createServer(function(req, res){
 		
 		console.log( "[S] - " +  req.url );
 		var urlPath = req.url.split("?")[0];
-
-		if( req.url == "/" )
+		console.log( "urlPath = ", urlPath)
+		if( urlPath == "/" )
 		{
 			var filePath = "./index.html"
 		}
-		else if( urlPath.indexOf( "asset" ) != -1 ){
-			//console.log( req.url.split("?")[0] )
+		else if( urlPath.indexOf( "/asset" ) != -1 ){
+			console.log( "/asset === " , req.url.split("?")[0] )
 			var filePath = '.' + req.url.split("?")[0].replace("/html","");
 		}
+		else if( urlPath.indexOf( "/page" ) != -1 ){
+			console.log( 'req.url.split("?")[0] --->',req.url.split("?")[0] )
+			var filePath = '.' + req.url.split("?")[0];
+
+			var _page = req.url.split("?")[0].split("/")
+			var page = _page[ _page.length - 1 ];
+			console.log( 'page --->',page )
+
+			var template = fs.readFileSync("./thtml/blank/blank.thtml").toString();
+			var html = fs.readFileSync(`./thtml/${page}/${page}.thtml`).toString();
+			var _t = template.replace("<!=HTML=!>",html)
+					.replace(/<!=JS=!>/gi,page);
+			res.end(_t, 'utf-8');
+			return;
+		}
+		// else if( urlPath == "/favicon.ico" ){
+		// 	//console.log( req.url.split("?")[0] )
+			
+		// 	var template = fs.readFileSync("./favicon.ico").toString();
+		// 	res.end(template, 'utf-8');
+		// 	return;
+		// }
 		else
 		{
-			//console.log( req.url.split("?")[0] )
 			var filePath = '.' + req.url.split("?")[0];
 		}
 

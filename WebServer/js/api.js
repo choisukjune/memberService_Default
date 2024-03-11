@@ -460,6 +460,44 @@ var memberJoin = function( data, cbFunction ){
 
 		
 	});
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8889/html/test.html
+	* </code>
+	*/
+	// global.server.addRouter("/api/renderTHTML",function( req, res, data ){
+
+	// 	var routerNm = req.url.split("?")[0];
+	// 	var paramsO = paramToObject( req.url );
+	// 	console.log( data )
+	// 	res.statusCode = 200;
+	// 	res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+	// 	res.setHeader( "Access-Control-Allow-Origin", "*" );
+	// 	res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+	// ZZZZ
+	// 		res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+	// 		res.end( d );
+	// 	})
+
+		
+	// });
 		/**
 	 * 쿼리파일을 실행하는 라우터
 	 * @function

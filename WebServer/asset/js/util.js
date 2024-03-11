@@ -273,3 +273,123 @@ var showClock = function(){
     }
     setTimeout(showClock,1000);  //1초마다 갱신
 }
+
+        
+var getUerInfoBySession = async function( cbfunction ){
+    
+    var sid = getCookie("sid");
+    if(!sid) return;
+
+    var url = "/api/getUerInfoBySession"
+    var method = "POST"
+    var data = { sid : sid };
+    var r = await asyncFetch_POST_JSONDATA( url, data )
+    console.log( "getUerInfoBySession - r : ",r );
+    
+    return r;
+    
+}
+    
+var renderBeforeLogin = async function(){
+    console.log( "[S] - renderBeforeLogin" );
+    var html = await asyncFetch_GET("/getHtml?fileNm=loginBefore");
+    console.log( html );
+    window.document.getElementById("container").innerHTML = html;
+
+    var jsStr = await asyncFetch_GET("/getJs?fileNm=loginBefore" )
+    eval(jsStr);
+    console.log( "[E] - renderBeforeLogin" );
+}
+
+var renderAfterLogin = async function(){
+    console.log( "[S] - renderAfterLogin" );
+    // var html = await asyncFetch_GET("/getHtml?fileNm=loginAfter");
+    // console.log( html );
+    // window.document.getElementById("container").innerHTML = html;
+
+    var jsStr = await asyncFetch_GET("/getJs?fileNm=loginAfter" )
+    eval(jsStr);
+    console.log( "[E] - renderAfterLogin" );
+}
+
+
+var renderAddUserInfo = async function(){
+    console.log( "[S] - renderAddUserInfo" );
+    var html = await asyncFetch_GET("/getHtml?fileNm=addUserInfo");
+    console.log( html );
+    window.document.getElementById("container").innerHTML = html;
+
+    var jsStr = await asyncFetch_GET("/getJs?fileNm=addUserInfo" )
+    eval(jsStr);
+    console.log( "[E] - renderAddUserInfo" );
+}
+
+
+var htmlToElement = function( html ){
+    var template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+ 
+    
+var deleteAllCookies = function( name ) {
+
+    if( name ) return document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    var cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+};
+
+var checkSession = async function(){
+
+    console.log( "[S] - checkSession" )
+    
+    var sid = await getCookie( "sid" );
+    
+    if( !sid || sid == "undefined" )
+    { 
+    
+        window.localStorage.clear();
+        await deleteSession();
+        await deleteAllCookies();
+        console.log( "   [MSG] - sid not found!" );
+        console.log( "[E] - checkSession" );
+        return false;
+    }
+    else
+    {
+        console.log( "sid : " + sid )
+        var r = await asyncFetch_GET("http://localhost:8888/checksession?sid=" + sid);
+        console.log( "   [Query Result] : " + JSON.stringify(r) );
+        if( r ){
+            console.log( "   [MSG] - session check complete!" );
+            console.log( "[E] - checkSession" );
+            return true;
+        }
+        else
+        {
+            //renderBeforeLogin();
+            await window.localStorage.clear();
+            await deleteSession();
+            await deleteAllCookies();
+            // location.href = "/";
+            console.log( "   [MSG] - session check fail!!" );
+            console.log( "[E] - checkSession" )
+            return false;
+        }
+    }
+}
+
+var deleteSession = async function(){
+    var sid = getCookie("sid");
+    if( sid ){
+        var r = await asyncFetch_GET("/api/deletesession?sid=" + sid);
+        console.log( r ) ;
+    }
+}
