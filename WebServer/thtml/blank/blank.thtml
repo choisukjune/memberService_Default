@@ -12,7 +12,7 @@
     <script src="/asset/js/semantic.js"></script>
     <script src="/asset/js/util.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="/thtml/<!=JS=!>/<!=JS=!>.js" async defer></script>
+    <script src="/thtml/<!=JS=!>/<!=JS=!>.js" defer></script>
     <script type="text/javascript">
         
    

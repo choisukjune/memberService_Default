@@ -324,6 +324,17 @@ var renderAddUserInfo = async function(){
     console.log( "[E] - renderAddUserInfo" );
 }
 
+var render_join = async function(){
+    console.log( "[S] - render_join" );
+    var html = await asyncFetch_GET("/getHtml?fileNm=join");
+    console.log( html );
+    window.document.getElementById("container").innerHTML = html;
+
+    var jsStr = await asyncFetch_GET("/getJs?fileNm=join" )
+    eval(jsStr);
+    console.log( "[E] - render_join" );
+}
+
 
 var htmlToElement = function( html ){
     var template = document.createElement('template');

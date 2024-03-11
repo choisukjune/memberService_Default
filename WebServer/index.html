@@ -160,7 +160,7 @@
         console.log(page);
 
         if( page ){
-            eval( page + "( );" );
+            eval( "render_" + page + "();" );
         } 
 
         var a =  await checkSession();
