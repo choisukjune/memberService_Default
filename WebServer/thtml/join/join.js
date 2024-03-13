@@ -117,6 +117,9 @@ window.el.input.email = window.document.getElementById("inputEmail");
 window.el.input.password = window.document.getElementById("inputPassword");
 window.el.input.passwordCheck = window.document.getElementById("inputPasswordCheck");
 */
+
+
+//패스워드확인
 window.el.input.password.addEventListener("input",function(evt){
 
 	//var emailInputLoader = window.document.getElementById("emailInputLoader");
@@ -137,7 +140,7 @@ window.el.input.password.addEventListener("input",function(evt){
 		window.el.input.password.attributes[ "data-validate" ].value = "true";
 		evt.target.classList.remove( "inputerror" );
 		window.el.div.errMessage1.innerText = "";
-		return;
+		//return;
 	}
 	else
 	{
@@ -147,27 +150,27 @@ window.el.input.password.addEventListener("input",function(evt){
 		//window.el.div.errMessage1.classList.remove("displayNone")
 		evt.target.classList.add( "inputerror" );
 	}
-	
-	if( window.el.input.passwordCheck.value == "" ) return;
-	if(window.el.input.password.value != window.el.input.passwordCheck.value )
-	{
-		debugger;
-		window.el.input.password.attributes[ "data-validate" ].value = "false";
-		window.el.input.passwordCheck.attributes[ "data-validate" ].value = "false";
-		window.el.div.errMessage1.innerText = "비밀번호와 비밀번호확인이 일치하지 않습니다.";
-		//window.el.div.errMessage1.classList.remove("displayNone")
-		evt.target.classList.add( "inputerror" );
-		return;
-	}
-	else
-	{
-		window.el.input.password.attributes[ "data-validate" ].value = "true";
-		window.el.input.passwordCheck.attributes[ "data-validate" ].value = "true";
-		//window.el.div.errMessage1.classList.add("displayNone");
-		evt.target.classList.remove( "inputerror" );
-		window.el.div.errMessage1.innerText = "";
-		loginBtCheck();
-	}
+	loginBtCheck();
+	// if( window.el.input.passwordCheck.value == "" ) return;
+	// if(window.el.input.password.value != window.el.input.passwordCheck.value )
+	// {
+	// 	debugger;
+	// 	window.el.input.password.attributes[ "data-validate" ].value = "false";
+	// 	window.el.input.passwordCheck.attributes[ "data-validate" ].value = "false";
+	// 	window.el.div.errMessage1.innerText = "비밀번호와 비밀번호확인이 일치하지 않습니다.";
+	// 	//window.el.div.errMessage1.classList.remove("displayNone")
+	// 	evt.target.classList.add( "inputerror" );
+	// 	return;
+	// }
+	// else
+	// {
+	// 	window.el.input.password.attributes[ "data-validate" ].value = "true";
+	// 	window.el.input.passwordCheck.attributes[ "data-validate" ].value = "true";
+	// 	//window.el.div.errMessage1.classList.add("displayNone");
+	// 	evt.target.classList.remove( "inputerror" );
+	// 	window.el.div.errMessage1.innerText = "";
+	// 	loginBtCheck();
+	// }
 
 	
 })
@@ -186,22 +189,22 @@ window.el.input.passwordCheck.addEventListener("input",function(evt){
 
 	//window.el.div.errMessage2.classList.add("displayNone");
 
-	if( checkPass(pass) )
-	{
-		window.el.input.passwordCheck.attributes[ "data-validate" ].value = "true";
-		evt.target.classList.remove( "inputerror" );
-		window.el.div.errMessage2.innerText = "";
-		return;
-	}
-	else
-	{
-		debugger;
-		window.el.input.passwordCheck.attributes[ "data-validate" ].value = "false";
-		window.el.div.errMessage2.innerText = "비밀번호 형식이 맞지않습니다.";
-		//window.el.div.errMessage2.classList.remove("displayNone")
-		evt.target.classList.add( "inputerror" );
+	// if( checkPass(pass) )
+	// {
+	// 	window.el.input.passwordCheck.attributes[ "data-validate" ].value = "true";
+	// 	evt.target.classList.remove( "inputerror" );
+	// 	window.el.div.errMessage2.innerText = "";
+	// 	return;
+	// }
+	// else
+	// {
+	// 	debugger;
+	// 	window.el.input.passwordCheck.attributes[ "data-validate" ].value = "false";
+	// 	window.el.div.errMessage2.innerText = "비밀번호 형식이 맞지않습니다.";
+	// 	//window.el.div.errMessage2.classList.remove("displayNone")
+	// 	evt.target.classList.add( "inputerror" );
 
-	}
+	// }
 	if( window.el.input.password.value == "" ) return;
 	if(window.el.input.password.value != window.el.input.passwordCheck.value )
 	{
@@ -233,6 +236,15 @@ window.el.input.email.addEventListener("input",function(evt){
 
 	var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
 	var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
+
+	if( email == "" ) 
+	{
+		evt.target.classList.remove( "inputerror" );
+		window.el.div.errMessage.innerText = "";
+		//window.el.div.errMessage2.innerText = "";
+		//window.el.div.errMessage2.classList.add("displayNone");
+		return;
+	}
 
 		//window.el.div.errMessage.classList.add("displayNone");
 	
