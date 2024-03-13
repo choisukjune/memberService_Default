@@ -37,6 +37,39 @@ window.el.div.emailTooltip = window.document.getElementById("toolipEmail");
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
+const fileInput = document.getElementById("fileUpload");
+// 또는 const fileInput = $("#fileUpload").get(0);
+
+const handleFiles = (e) => {
+	const selectedFile = [...fileInput.files];
+	const fileReader = new FileReader();
+  
+	var a = fileReader.readAsDataURL(selectedFile[0]);
+	console.log( selectedFile[0].name )
+	var orgFileNm = selectedFile[0].name;
+	fileReader.onload = async function () {
+	  //document.getElementById("previewImg").src = fileReader.result;
+	  console.log( fileReader.result )
+	  var t =  await asyncFetch_POST_JSONDATA("/api/uploadFile",{ data:fileReader.result,fileNm:orgFileNm})
+	  console.log( t );
+	};
+  };
+//   var asyncFetch_POST_JSONDATA = async function(url,data){
+// 	var option = {
+// 		method : "POST",
+// 		headers : {
+// 			"Content-Type" : "application/json"
+// 		},
+// 		body : JSON.stringify( data )
+// 	}
+
+// 	const res = await fetch( url, option );
+// 	const resText = await res.json();
+// 	console.log( "asyncFetch_POST_JSONDATA - resText : ", resText )
+// 	return resText;
+// }
+  fileInput.addEventListener("change", handleFiles);
+
 var webStorageSetItem = function( o ){
 	console.log( "[S] - webStorageSetItem ")
 	var s,so;

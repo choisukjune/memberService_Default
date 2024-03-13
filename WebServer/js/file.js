@@ -243,271 +243,81 @@ var memberJoin = function( data, cbFunction ){
 		http://localhost:8889/html/test.html
 	* </code>
 	*/
-	global.server.addRouter("/api/join",function( req, res, data ){
+	/*
+	
+		$.ajax({
+			type: "POST",
+			url: "/facedata",
+			data: { 
+				imgBase64: dataURL
+			}
+		}).done(function(o) {
+				console.log('saved'); 
+
+			});
+
+	    router.post('/facedata', function(req, res) {
+        var base64Data = req.body.imgBase64.replace(/^data:image\/png;base64,/, "");
+        fs.writeFile(<path-to-file>.png, base64Data, 'base64', function(err) {
+            if(err){
+               console.log(err);
+             }
+        });
+	
+	*/
+	global.server.addRouter("/api/uploadFile",function( req, res, data ){
 		
 		var routerNm = req.url.split("?")[0];
 		//var paramsO = paramToObject( req.url );
 		console.log( "POST data = ", data );
+		var paramBody = data;
 
 		res.statusCode = 200;
 		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
 		res.setHeader( "Access-Control-Allow-Origin", "*" );
 		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+
+		console.log(paramBody);
 		
-		var _d = { email : data.email, pass : data.pass }
-		console.log("-----")
-		var option = {
-			host: 'localhost',
-			port: '8888',
-			path: '/join',
-			method: 'POST',
-			headers: {
-				"content-type": "application/json",
-				//"Content-Length": Buffer.byteLength(post_data)
-			}
-		};
-
-		httpPostCallback( option, _d, function(d){
-
-
-			var r = JSON.parse( d );
-			console.log( "_d.success ==>", r.success )
-			if( r.success ) res.end( d );
-			else
-			{
-				console.log( "====>", r );
-				res.setHeader('Set-Cookie', 'sid=' + r.sid + "; max-age=" + 3600 + "; path=/;" );
-				//res.statusCode = 301;
-				//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-				res.end( d );	
-			}
-			
-		})
-
-		
-	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/existEmail",function( req, res ){
-
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		//console.log( data )
-
-
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-
-		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		//var _d = { email : data.email, pass : data.pass }
-
-		var url = "existEmail?email=" + paramsO.email
-
-		httpGetCallback( url, function(d){
-			res.end( d );
-		})
-
-		
-	});
-		/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/getUerInfoBySession",function( req, res, data ){
-		console.log("[S] - /api/getUerInfoBySession");
-		var routerNm = req.url.split("?")[0];
-		//var paramsO = paramToObject( req.url );
-
-		var paramsO = paramToObject( req.url );
-		 var paramBody = JSON.parse( data )
-		// console.log( paramsO )
-		// var a = req.headers.cookie.split(";");
-		// var cookieObject = {}
-		// var i=0,iLen=a.length,io;
-		// for(;i<iLen;++i){
-
-		// 	io = a[ i ].trim();
-		// 	var _t = io.split( "=" );
-
-		// 	var key = _t.shift();
-		// 	cookieObject[ key ] = io.replace(key+"=","");
-
-		// }
-
-		// console.log( cookieObject );
-
-		
-		var paramBody = data
-		console.log( "paramBody", paramBody )
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		console.log(1)
-		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-		var option = {
-			host: 'localhost',
-			port: '8888',
-			path: '/getUerInfoBySession',
-			method: 'POST',
-			headers: {
-				"content-type": "application/json",
-				//"Content-Length": Buffer.byteLength(post_data)
-			}
-		};
-		console.log(1)
-		//var _d = { email : "12k4@naver.com", pass : "123qwe"}
-		var _d = { sid : paramBody.sid }
-
-		httpPostCallback( option, _d, function(d){
-
-			var _d = JSON.parse( d );
-			
-			if( !_d.r ) 
-			{
-				console.log("---1")
+        var base64Data = paramBody.data.replace(/^data:image\/\w+;base64,/, "");
+		var fileNm = Date.now()
+        fs.writeFile( "./images/" + fileNm + "_" + paramBody.fileNm, base64Data, 'base64', async function(err) {
+            if(err){
+               console.log(err);
+             }
+			console.log("-----")
+			var option = {
+				host: 'localhost',
+				port: '8888',
+				path: '/uploadFile',
+				method: 'POST',
+				headers: {
+					//"content-type": "application/json",
+					//"Content-Length": Buffer.byteLength(post_data)
+				}
+			};
+			var _d = { fileNm : fileNm + "_" + paramBody.fileNm }
+			httpPostCallback( option, _d, function(d){
+	
+	
+				var r = JSON.parse( d );
+				console.log( "_d.success ==>", r.success )
+				if( r.success ) res.end( d );
+				else
+				{
+					console.log( "====>", r );
+					// res.setHeader('Set-Cookie', 'sid=' + r.sid + "; max-age=" + 3600 + "; path=/;" );
+					//res.statusCode = 301;
 					//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-					res.end( d );
-			}
-			else
-			{
-				console.log("---2")
-				//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-				res.end(d);
-			}
+					res.end( d );	
+				}
+				
+			})
 			
 		})
-		
-	});
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/checksession",function( req, res, data ){
-
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		console.log( data )
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-
-		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-		httpGetCallback( "checksession?sid=" + paramsO.sid, function(d){
-			// res.setHeader('Set-Cookie', 'sid=' + d + "; max-age=" + 3600 + "; path=/;" );
-			// res.statusCode = 301;
-			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-			res.end( d );
-		})
-
 		
 	});
 	
-	/**
-	 * 쿼리파일을 실행하는 라우터
-	 * @function
-	 * @param {http.ClientRequest} req
-	 * <code>
-		{
-
-		}
-	* </code>
-	*
-	* @param {http.ClientResponse} res
-	* <code>
-		{
-
-		}
-	* </code>
-	*
-	* @example
-	* <code>
-		http://localhost:8889/html/test.html
-	* </code>
-	*/
-	global.server.addRouter("/api/deletesession",function( req, res, data ){
-
-		var routerNm = req.url.split("?")[0];
-		var paramsO = paramToObject( req.url );
-		console.log( data )
-		res.statusCode = 200;
-		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
-		res.setHeader( "Access-Control-Allow-Origin", "*" );
-		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
-		
-
-		//var url = global.CONST.SERVER.API.AUTOH.protocol + global.CONST.SERVER.API.AUTOH.host + ":" + global.CONST.SERVER.API.AUTOH.port
-		httpGetCallback( "deletesession?sid=" + paramsO.sid, function(d){
-			// res.setHeader('Set-Cookie', 'sid=' + d + "; max-age=" + 3600 + "; path=/;" );
-			// res.statusCode = 301;
-			res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
-			res.end( d );
-		})
-
-		
-	});
-
 })();
 
 //-------------------------------------------------------;

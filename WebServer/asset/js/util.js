@@ -44,6 +44,20 @@ var asyncFetch_POST_JSONDATA = async function(url,data){
 	console.log( "asyncFetch_POST_JSONDATA - resText : ", resText )
 	return resText;
 }
+var asyncFetch_POST_JSONDATA_Text = async function(url,data){
+	var option = {
+		method : "POST",
+		headers : {
+			"Content-Type" : "application/json"
+		},
+		body : JSON.stringify( data )
+	}
+
+	const res = await fetch( url, option );
+	const resText = await res.text();
+	console.log( "asyncFetch_POST_JSONDATA - resText : ", resText )
+	return resText;
+}
 var asyncFetch_GET = async function( url ){
 	const response = await fetch(url,
 	{

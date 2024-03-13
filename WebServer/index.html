@@ -14,9 +14,6 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="text/javascript">
         
-   
-
-
     var getUerInfoBySession = async function( cbfunction ){
     
         var sid = getCookie("sid");
@@ -31,15 +28,41 @@
         return r;
         
     }
-        
+    var loadJSscript = function(id, js_src, callback) {
+            if (document.getElementById(id)) { return; }
+            var my_head = document.getElementsByTagName('head')[0];
+            var my_js = document.createElement('script');
+            my_js.id = id;
+            my_js.type= 'text/javascript';
+            my_js.async = true;
+            my_js.src = js_src;
+            my_js.addEventListener("load", function(event) { if(callback && typeof callback == "function"){ callback(); }});
+            my_head.appendChild(my_js);
+    }
+    var loadCss = function(filename){
+        var linkElement=document.createElement("link");
+        linkElement.setAttribute("rel", "stylesheet");
+        linkElement.setAttribute("type", "text/css");
+        linkElement.setAttribute("href", filename);
+        document.getElementsByTagName("head")[0].appendChild(linkElement);
+    }
+    var loadHtml = async function(targetDomId,filename){
+        var html = await asyncFetch_GET("/getHtml?fileNm=" + filename);
+        window.document.getElementById( targetDomId ).innerHTML = html;
+        return html;
+    }
+
     var renderBeforeLogin = async function(){
         console.log( "[S] - renderBeforeLogin" );
-        var html = await asyncFetch_GET("/getHtml?fileNm=loginBefore");
-        console.log( html );
-        window.document.getElementById("container").innerHTML = html;
-
-        var jsStr = await asyncFetch_GET("/getJs?fileNm=loginBefore" )
-        eval(jsStr);
+        await loadHtml("container","loginBefore");
+        loadCss( "/asset/css/common.css" )
+        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/loginBefore/loginBefore.js', function (){
+            // if(typeof my_example_init == "function")
+            // {
+                //my_example_init();
+                console.log("success")
+            // } 
+        });
         console.log( "[E] - renderBeforeLogin" );
     }
 
@@ -48,32 +71,38 @@
         // var html = await asyncFetch_GET("/getHtml?fileNm=loginAfter");
         // console.log( html );
         // window.document.getElementById("container").innerHTML = html;
-
-        var jsStr = await asyncFetch_GET("/getJs?fileNm=loginAfter" )
-        eval(jsStr);
+        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
         console.log( "[E] - renderAfterLogin" );
     }
 
 
-    var renderAddUserInfo = async function(){
+    var render_addUserInfo = async function(){
         console.log( "[S] - renderAddUserInfo" );
-        var html = await asyncFetch_GET("/getHtml?fileNm=addUserInfo");
-        console.log( html );
-        window.document.getElementById("container").innerHTML = html;
 
-        var jsStr = await asyncFetch_GET("/getJs?fileNm=addUserInfo" )
-        eval(jsStr);
+        await loadHtml("container","addUserInfo");
+        // loadCss( "/asset/css/common.css" )
+        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/addUserInfo/addUserInfo.js', function (){
+            // if(typeof my_example_init == "function")
+            // {
+                //my_example_init();
+                console.log("success")
+            // } 
+        });
         console.log( "[E] - renderAddUserInfo" );
     }
 
     var emailLogin = async function(){
         console.log( "[S] - emailLogin" );
-        var html = await asyncFetch_GET("/getHtml?fileNm=emailLogin");
-        console.log( html );
-        window.document.getElementById("container").innerHTML = html;
 
-        var jsStr = await asyncFetch_GET("/getJs?fileNm=emailLogin" )
-        eval(jsStr);
+        await loadHtml("container","emailLogin");
+        // loadCss( "/asset/css/common.css" )
+        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/emailLogin/emailLogin.js', function (){
+            // if(typeof my_example_init == "function")
+            // {
+                //my_example_init();
+                console.log("success")
+            // } 
+        });
         console.log( "[E] - emailLogin" );
     }
 
