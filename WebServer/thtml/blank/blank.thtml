@@ -146,6 +146,7 @@
 
     window.addEventListener('DOMContentLoaded', function()
     {
+        console.log("blank")
 
         //https://tyrannocoding.tistory.com/51 <-- SSO 로그인 구현방법 읽어보기!
         //-------------------------------------------------------;
@@ -163,14 +164,6 @@
         //-------------------------------------------------------;
         //-------------------------------------------------------;
         //-------------------------------------------------------;
-
-        window.el = {};
-        window.el.input = {};
-
-        window.el.btn = {}
-        
-        window.el.div = {}
-        window.el.div.container = window.document.getElementById("container");
 
         
 

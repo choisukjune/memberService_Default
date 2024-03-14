@@ -329,13 +329,14 @@ window.evt.btnLoginClick = window.el.btn.join.addEventListener("click",function(
 			window.el.div.errMessage.classList.remove("displayNone")
 			window.el.btn.join.classList.remove("loading");
 		}
-		else location.href="/"
+		//else location.href="/?p=addUserInfo"
+		else render_addUserInfo( d );
 	})
 
 })             
 window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
 	console.log( "window.el.btn.join - click!" )
-	window.location.href = "/"
+	window.location.href = "/?p=loginBefore"
 })   
 
 })();

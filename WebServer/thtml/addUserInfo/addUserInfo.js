@@ -14,22 +14,34 @@
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
+debugger;
 
+console.log( "adduserinfo.html" )
 window.el = {};
 window.el.input = {};
-window.el.input.email = window.document.getElementById("inputEmail");
-window.el.input.password = window.document.getElementById("inputPassword");
-window.el.input.passwordCheck = window.document.getElementById("inputPasswordCheck");
+window.el.input.username = window.document.getElementById("username");
+window.el.input.mobile = window.document.getElementById("mobile");
+//추가정보1
+window.el.input.addInfo1 = window.document.getElementById("addInfo1");
+//추가정보1
+window.el.input.addInfo2 = window.document.getElementById("addInfo2");
+//추가정보1
+window.el.input.addInfo3 = window.document.getElementById("addInfo3");
 
 window.el.btn = {}
-window.el.btn.login = window.document.getElementById("btnLogin");
-window.el.btn.join = window.document.getElementById("btnJoin");
-window.el.btn.showPassBt = window.document.getElementById("showPassBt");
-window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
-window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
-window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
-window.el.div = {}
-window.el.div.emailTooltip = window.document.getElementById("toolipEmail");
+window.el.btn.saveAddInfo = window.document.getElementById("saveAddInfo");
+window.el.btn.profileSave = window.document.getElementById("profileSave");
+window.el.btn.profileDelete = window.document.getElementById("profileDelete");
+
+window.el.img = {};
+window.el.img.profileImg = window.document.getElementById("profileImg");
+
+// window.el.btn.showPassBt = window.document.getElementById("showPassBt");
+// window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
+// window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
+// window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
+
+
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -105,7 +117,6 @@ function showClock(){
 	setTimeout(showClock,1000);  //1초마다 갱신
 }
 
-showClock();
 
 var checkEmail = function(str){
 	let regex = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)          
@@ -138,7 +149,32 @@ var loginBtCheck = function(){
 		window.el.btn.login.classList.add( "disabled" );
 	}
 }
+var addUserInfo_init = async function(){
+	var a = await getUerInfoBySession();
+	window.el.input.username.value = a.username;
+	window.el.input.mobile.value = a.mobile;
+	//추가정보1
+	window.el.input.addInfo1.value = "addInfo1"
+	//추가정보1
+	window.el.input.addInfo2.value = "addInfo2"
+	//추가정보1
+	window.el.input.addInfo3.value = "addInfo3"
+	function randomRgbaString (alpha) {
+		let r = Math.floor(Math.random() * 255)
+		let g = Math.floor(Math.random() * 255)
+		let b = Math.floor(Math.random() * 255)
+		let a = alpha
+		return `rgba(${r},${g},${b},${a})`
+	}
+	if( a.profile_image != "" ) var profileImg = a.profile_image;
+	else var imgsrc 
 
+	if( a.profile_image != "" ) var profileImg = a.profile_image;
+	else var profileImg = "data:image/svg+xml," + `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0,0,20,20' width='320' height='320'><rect height='20' width='20' fill='${randomRgbaString(100)}'/><text fill='white' x='10' y='14.8' font-size='14' font-family='-apple-system,BlinkMacSystemFont,Trebuchet MS,Roboto,Ubuntu,sans-serif' text-anchor='middle'>${a.username[1].toUpperCase()}</text></svg>`;
+
+	window.el.img.profileImg.src = profileImg;
+}
+addUserInfo_init();
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -147,136 +183,16 @@ var loginBtCheck = function(){
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 window.evt = {}
-window.el.btn.showPassBt.addEventListener("click",function(evt){
-	window.el.btn.hidePassBt.classList.remove("displayNone");
-	window.el.btn.showPassBt.classList.add("displayNone");
-	window.el.input.password.type = "text";
+window.el.btn.saveAddInfo.addEventListener("click",function(e){
+	console.log("window.el.btn.saveAddInfo - click!");
+	var d = {
+		username : window.el.input.username.value,
+		mobile : window.el.input.mobile.value,
+		addInfo1 : window.el.input.addInfo1.value,
+		addInfo2 : window.el.input.addInfo2.value,
+		addInfo3 : window.el.input.addInfo3.value,
+	}
+	console.log( d );
 })
-window.el.btn.hidePassBt.addEventListener("click",function(evt){
-	window.el.btn.hidePassBt.classList.add("displayNone");
-	window.el.btn.showPassBt.classList.remove("displayNone");
-	window.el.input.password.type = "password";
-})
-window.el.btn.showPassBt1.addEventListener("click",function(evt){
-	window.el.btn.hidePassBt1.classList.remove("displayNone");
-	window.el.btn.showPassBt1.classList.add("displayNone");
-	window.el.input.passwordCheck.type = "text";
-})
-window.el.btn.hidePassBt1.addEventListener("click",function(evt){
-	window.el.btn.hidePassBt1.classList.add("displayNone");
-	window.el.btn.showPassBt1.classList.remove("displayNone");
-	window.el.input.passwordCheck.type = "password";
-})
-
-window.el.input.password.addEventListener("keypress",function(evt){
-
-	//var emailInputLoader = window.document.getElementById("emailInputLoader");
-	var pass = evt.target.value;
-	var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
-	var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
-
-	if( checkPass(pass) )
-	{
-		window.el.input.password.attributes[ "data-validate" ].value = "true";
-	}
-	else
-	{
-		window.el.input.password.attributes[ "data-validate" ].value = "false";
-	}
-	loginBtCheck();
-})
-
-window.el.input.email.addEventListener("change",function(evt){
-
-	var emailInputLoader = window.document.getElementById("emailInputLoader");
-	var email = evt.target.value;
-
-	var checkEmailInputData = window.el.input.email.attributes[ "data-validate" ].value
-	var checkPassInputData = window.el.input.password.attributes[ "data-validate" ].value
-
-
-	emailInputLoader.classList.remove("displayNone");
-
-	if( !checkEmail(email) )
-	{
-		evt.target.classList.add( "inputerror" );
-		window.el.div.emailTooltip.classList.remove( "displayNone" );
-		emailInputLoader.classList.add("displayNone");
-		window.el.input.email.attributes[ "data-validate" ].value = "false";
-		return;
-		//return alert("이메일을 입력해주세요");
-
-	}
-	else
-	{
-		if( !window.el.div.emailTooltip.classList.contains( "displayNone" ) ) window.el.div.emailTooltip.classList.add( "displayNone" );
-		evt.target.classList.remove( "inputerror" );
-		// emailInputLoader.classList.add("displayNone");
-		requestGet("/api/existEmail?email=" + email, function(d){
-			var r = JSON.parse(d)
-			if( r.r )
-			{
-			console.log( "email exist : " + r.userId )
-			emailInputLoader.classList.add("displayNone");
-			window.el.input.email.attributes[ "data-validate" ].value = "true";
-			}
-			else
-			{
-			window.el.div.emailTooltip.classList.remove( "displayNone" );
-			emailInputLoader.classList.add("displayNone");
-			evt.target.classList.add( "inputerror" );
-			window.el.div.emailTooltip.innerText = "존재하지 않는 이메일입니다.!"
-			console.log( "email exist : " + r.m )
-			window.el.input.email.attributes[ "data-validate" ].value = "false";
-			}
-			loginBtCheck();
-		})
-	}
-
-});
-window.evt.btnLoginClick = window.el.btn.login.addEventListener("click",function(evt){
-
-
-	var email = window.el.input.email.value;
-	var password = window.el.input.password.value;
-
-	console.log( "email : ", email );
-	console.log( "password : ", password );
-
-	if( email == "" ){
-		return alert("이메일을 입력해주세요")
-	}
-	else
-	{
-		if( !checkEmail( email ) ){
-			return alert("이메일형식이 잘못되었습니다.")
-		}
-	}
-
-	if( password == "" ){
-		return alert("비밀번호를 입력해주세요")
-	}
-	//window.el.btn.login.textContent = ""
-	window.el.btn.join.classList.add("loading");
-
-	console.log( "window.el.btn.login - click!" );
-
-	var postBody = { email : email, pass : password }
-	requestPostBodyJson('/api/join',postBody , function( d ){
-		console.log( "===========" )
-		console.log( "===========" )
-		console.log( "===========" )
-		console.log( "===========" )
-		var _d = JSON.parse( d );
-		webStorageSetItem( JSON.parse( _d.d ) )
-		location.href="/"
-
-	})
-
-})             
-window.evt.btnJoinClick = window.el.btn.join.addEventListener("click",function(evt){
-	console.log( "window.el.btn.join - click!" )
-	window.location.href = "/"
-})   
 
 })();

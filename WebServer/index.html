@@ -27,7 +27,8 @@
         
         return r;
         
-    }
+    };
+
     var loadJSscript = function(id, js_src, callback) {
             if (document.getElementById(id)) { return; }
             var my_head = document.getElementsByTagName('head')[0];
@@ -38,41 +39,44 @@
             my_js.src = js_src;
             my_js.addEventListener("load", function(event) { if(callback && typeof callback == "function"){ callback(); }});
             my_head.appendChild(my_js);
-    }
+    };
+
     var loadCss = function(filename){
         var linkElement=document.createElement("link");
         linkElement.setAttribute("rel", "stylesheet");
         linkElement.setAttribute("type", "text/css");
         linkElement.setAttribute("href", filename);
         document.getElementsByTagName("head")[0].appendChild(linkElement);
-    }
+    };
+
     var loadHtml = async function(targetDomId,filename){
         var html = await asyncFetch_GET("/getHtml?fileNm=" + filename);
         window.document.getElementById( targetDomId ).innerHTML = html;
         return html;
-    }
+    };
 
-    var renderBeforeLogin = async function(){
-        console.log( "[S] - renderBeforeLogin" );
+    //render html;
+    var render_loginBefore = async function(){
+        console.log( "[S] - render_loginBefore" );
         await loadHtml("container","loginBefore");
         loadCss( "/asset/css/common.css" )
-        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/loginBefore/loginBefore.js', function (){
+        loadJSscript('loginBefore','/thtml/loginBefore/loginBefore.js', function (){
             // if(typeof my_example_init == "function")
             // {
                 //my_example_init();
                 console.log("success")
             // } 
         });
-        console.log( "[E] - renderBeforeLogin" );
+        console.log( "[E] - render_loginBefore" );
     }
 
-    var renderAfterLogin = async function(){
-        console.log( "[S] - renderAfterLogin" );
+    var render_loginAfter = async function(){
+        console.log( "[S] - render_loginAfter" );
         // var html = await asyncFetch_GET("/getHtml?fileNm=loginAfter");
         // console.log( html );
         // window.document.getElementById("container").innerHTML = html;
-        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
-        console.log( "[E] - renderAfterLogin" );
+        loadJSscript('loginAfter','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
+        console.log( "[E] - render_loginAfter" );
     }
 
 
@@ -81,7 +85,7 @@
 
         await loadHtml("container","addUserInfo");
         // loadCss( "/asset/css/common.css" )
-        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/addUserInfo/addUserInfo.js', function (){
+        loadJSscript('addUserInfo','/thtml/addUserInfo/addUserInfo.js', function (){
             // if(typeof my_example_init == "function")
             // {
                 //my_example_init();
@@ -96,7 +100,7 @@
 
         await loadHtml("container","emailLogin");
         // loadCss( "/asset/css/common.css" )
-        loadJSscript('MY_EXAMPLE_SCRIPT','/thtml/emailLogin/emailLogin.js', function (){
+        loadJSscript('emailLogin','/thtml/emailLogin/emailLogin.js', function (){
             // if(typeof my_example_init == "function")
             // {
                 //my_example_init();
@@ -155,7 +159,7 @@
             }
             else
             {
-                //renderBeforeLogin();
+                //render_loginBefore();
                 await window.localStorage.clear();
                 await deleteSession();
                 await deleteAllCookies();
@@ -196,6 +200,18 @@
         if( a )
         {            
             var s = await getUerInfoBySession()   
+            
+            function randomRgbaString (alpha) {
+			let r = Math.floor(Math.random() * 255)
+			let g = Math.floor(Math.random() * 255)
+			let b = Math.floor(Math.random() * 255)
+			let a = alpha
+			return `rgba(${r},${g},${b},${a})`
+		}
+
+            if( s.profile_image == "" ) var profile_image = "data:image/svg+xml," + `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0,0,20,20' width='320' height='320'><rect height='20' width='20' fill='${randomRgbaString(100)}'/><text fill='white' x='10' y='14.8' font-size='14' font-family='-apple-system,BlinkMacSystemFont,Trebuchet MS,Roboto,Ubuntu,sans-serif' text-anchor='middle'>${s.username[1].toUpperCase()}</text></svg>`;
+            else var profile_image = s.profile_image;
+            
             var html = `
             <div class="column" style="max-width: 450px;">
             <h2 class="ui white header">
@@ -203,7 +219,7 @@
                 <!-- <div>🔑</div> -->
                 <!-- <div class="colorWhite"> ✈️ 안녕하세요! 반갑습니다~</div> -->
                 <button id="badgeLoginBt" class="circular ui icon inverted button" style="padding: 10px;">
-                    <img class="ui right spaced avatar image" src="${s.profile_image }">
+                    <img class="ui right spaced avatar image" src="${profile_image}">
             ${s.username }
                 </button>
 
@@ -223,14 +239,14 @@
                     // console.log("remove");
                     // //window.el.btn.badgeLoginBt.removeEventListener("click",function(e){
                     //     console.log("add");
-                         renderAfterLogin();
+                        render_loginAfter();
                     // //})
                 })
             return;
         }
         else
         {   
-        //     renderBeforeLogin();
+        //     render_loginBefore();
         //     return;
         // }
 
@@ -274,7 +290,7 @@
             }
             else
             {   
-                renderBeforeLogin();
+                render_loginBefore();
                 return;
             }
         })
@@ -285,7 +301,7 @@
 
     window.addEventListener('DOMContentLoaded', function()
     {
-
+        console.log( "index.html" )
         //https://tyrannocoding.tistory.com/51 <-- SSO 로그인 구현방법 읽어보기!
         //-------------------------------------------------------;
         //-------------------------------------------------------;
