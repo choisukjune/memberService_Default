@@ -37,16 +37,38 @@
         var vvv = parseJwt(response.credential)
         console.log(vvv)
     }
+    //https://developers.google.com/identity/gsi/web/reference/js-reference?hl=ko
+    //참고!
     google.accounts.id.initialize({
         client_id: "144090840805-v8tngl71gvd3uudbsjeusrf7mha5pumn.apps.googleusercontent.com",
+        state_cookie_domain : "localhost:8889",
+        itp_support : true,
+        use_fedcm_for_prompt : true,
+        hd: '*',
         callback: handleCredentialResponse
     });
     google.accounts.id.renderButton(
         document.getElementById("buttonDiv"),
         { theme: "outline", size: "large",width: "312" }  // customization attributes
     );
-    google.accounts.id.prompt(); // also display the One Tap dialog
-
+   // google.accounts.id.prompt(); // also display the One Tap dialog
+    google.accounts.id.prompt((notification) => {
+        debugger;
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          // continue with another identity provider.
+            // notification.getNotDisplayedReason();
+            // notification.isDisplayMoment();
+            // notification.isDisplayed();
+            // notification.isNotDisplayed();
+            // notification.getNotDisplayedReason();
+            // notification.isSkippedMoment();
+            // notification.getSkippedReason();	
+            // notification.isDismissedMoment();
+            // notification.getDismissedReason();	
+            // notification.getMomentType();
+          debugger;
+        }
+      });
     //DOM;
     window.el.btn.emaillogin = window.document.getElementById("btnEmailLogin");
     window.el.btn.join = window.document.getElementById("btnJoin"); 

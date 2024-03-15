@@ -14,24 +14,8 @@
     <script src="/asset/js/ws.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="text/javascript">
-        
+
     var initPage = async function(){
-
-
-        var urlStr = window.location.href;
-        var url = new URL(urlStr);
-
-        var urlParams = url.searchParams;
-
-        var page = urlParams.get('p');
-
-        // javascript
-        console.log(page);
-
-        if( page ){
-            eval( "render_" + page + "();" );
-        } 
-
         var a =  await checkSession(); //true,false;
         if( !a ){
             debugger;

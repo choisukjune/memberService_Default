@@ -641,3 +641,20 @@ var blobToText = function( blob ){
     reader.readAsText(blob);
     }) 
 }
+
+var usePageUri = function(){
+    var urlStr = window.location.href;
+    var url = new URL(urlStr);
+
+    var urlParams = url.searchParams;
+
+    var page = urlParams.get('p');
+
+    // javascript
+    console.log(page);
+
+    if( page ){
+        eval( "render_" + page + "();" );
+    } 
+    return;
+}
