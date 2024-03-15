@@ -418,3 +418,226 @@ var deleteSession = async function(){
         console.log( r ) ;
     }
 }
+
+var getUerInfoBySession = async function( cbfunction ){
+    
+    var sid = getCookie("sid");
+    if(!sid) return;
+
+    var url = "/api/getUerInfoBySession"
+    var method = "POST"
+    var data = { sid : sid };
+    var r = await asyncFetch_POST_JSONDATA( url, data )
+    console.log( "getUerInfoBySession - r : ",r );
+    
+    return r;
+    
+};
+
+var loadJSscript = function(id, js_src, callback) {
+        if (document.getElementById(id)) { return; }
+        var my_head = document.getElementsByTagName('head')[0];
+        var my_js = document.createElement('script');
+        my_js.id = id;
+        my_js.type= 'text/javascript';
+        my_js.async = true;
+        my_js.src = js_src;
+        my_js.addEventListener("load", function(event) { if(callback && typeof callback == "function"){ callback(); }});
+        my_head.appendChild(my_js);
+};
+
+var loadCss = function(filename){
+    var linkElement=document.createElement("link");
+    linkElement.setAttribute("rel", "stylesheet");
+    linkElement.setAttribute("type", "text/css");
+    linkElement.setAttribute("href", filename);
+    document.getElementsByTagName("head")[0].appendChild(linkElement);
+};
+
+var loadHtml = async function(targetDomId,filename){
+    var html = await asyncFetch_GET("/getHtml?fileNm=" + filename);
+    window.document.getElementById( targetDomId ).innerHTML = html;
+    return html;
+};
+
+//render html;
+var render_loginBefore = async function(){
+    console.log( "[S] - render_loginBefore" );
+    await loadHtml("container","loginBefore");
+    loadCss( "/asset/css/common.css" )
+    loadJSscript('loginBefore','/thtml/loginBefore/loginBefore.js', function (){
+        // if(typeof my_example_init == "function")
+        // {
+            //my_example_init();
+            console.log("success")
+        // } 
+    });
+    console.log( "[E] - render_loginBefore" );
+}
+
+var render_loginAfter = async function(){
+    console.log( "[S] - render_loginAfter" );
+    // var html = await asyncFetch_GET("/getHtml?fileNm=loginAfter");
+    // console.log( html );
+    // window.document.getElementById("container").innerHTML = html;
+    loadJSscript('loginAfter','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
+    console.log( "[E] - render_loginAfter" );
+}
+
+
+var render_addUserInfo = async function(){
+    console.log( "[S] - renderAddUserInfo" );
+
+    await loadHtml("container","addUserInfo");
+    // loadCss( "/asset/css/common.css" )
+    loadJSscript('addUserInfo','/thtml/addUserInfo/addUserInfo.js', function (){
+        // if(typeof my_example_init == "function")
+        // {
+            //my_example_init();
+            console.log("success")
+        // } 
+    });
+    console.log( "[E] - renderAddUserInfo" );
+}
+
+var render_badgeLoginAfter = async function(){
+    console.log( "[S] - render_badgeLoginAfter" );
+
+    await loadHtml("container","badgeLoginAfter");
+    // loadCss( "/asset/css/common.css" )
+    loadJSscript('badgeLoginAfter','/thtml/badgeLoginAfter/badgeLoginAfter.js', function (){
+        // if(typeof my_example_init == "function")
+        // {
+            //my_example_init();
+            console.log("success")
+        // } 
+    });
+    console.log( "[E] - render_badgeLoginAfter" );
+}
+
+var render_badgeLoginBefore = async function(){
+    console.log( "[S] - render_badgeLoginBefore" );
+
+    await loadHtml("container","badgeLoginBefore");
+    // loadCss( "/asset/css/common.css" )
+    loadJSscript('badgeLoginBefore','/thtml/badgeLoginBefore/badgeLoginBefore.js', function (){
+        // if(typeof my_example_init == "function")
+        // {
+            //my_example_init();
+            console.log("success")
+        // } 
+    });
+    console.log( "[E] - render_badgeLoginBefore" );
+}
+
+var emailLogin = async function(){
+    console.log( "[S] - emailLogin" );
+
+    await loadHtml("container","emailLogin");
+    // loadCss( "/asset/css/common.css" )
+    loadJSscript('emailLogin','/thtml/emailLogin/emailLogin.js', function (){
+        // if(typeof my_example_init == "function")
+        // {
+            //my_example_init();
+            console.log("success")
+        // } 
+    });
+    console.log( "[E] - emailLogin" );
+}
+
+var htmlToElement = function( html ){
+    var template = document.createElement('template');
+    html = html.trim(); // Never return a text node of whitespace as the result
+    template.innerHTML = html;
+    return template.content.firstChild;
+}
+ 
+    
+var deleteAllCookies = function( name ) {
+
+    if( name ) return document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    var cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+};
+
+var checkSession = async function(){
+
+    console.log( "[S] - checkSession" )
+    
+    var sid = await getCookie( "sid" );
+    
+    if( !sid || sid == "undefined" )
+    { 
+    
+        window.localStorage.clear();
+        await deleteSession();
+        await deleteAllCookies();
+        console.log( "   [MSG] - sid not found!" );
+        console.log( "[E] - checkSession" );
+        return false;
+    }
+    else
+    {
+        console.log( "sid : " + sid )
+        var r = await asyncFetch_GET("http://localhost:8888/checksession?sid=" + sid);
+        console.log( "   [Query Result] : " + JSON.stringify(r) );
+        if( r ){
+            console.log( "   [MSG] - session check complete!" );
+            console.log( "[E] - checkSession" );
+            return true;
+        }
+        else
+        {
+            //render_loginBefore();
+            await window.localStorage.clear();
+            await deleteSession();
+            await deleteAllCookies();
+            // location.href = "/";
+            console.log( "   [MSG] - session check fail!!" );
+            console.log( "[E] - checkSession" )
+            return false;
+        }
+    }
+}
+
+var deleteSession = async function(){
+    var sid = getCookie("sid");
+    if( sid ){
+        var r = await asyncFetch_GET("/api/deletesession?sid=" + sid);
+        console.log( r ) ;
+    }
+}
+
+function randomRgbaString (alpha) {
+    let r = Math.floor(Math.random() * 255)
+    let g = Math.floor(Math.random() * 255)
+    let b = Math.floor(Math.random() * 255)
+    let a = alpha
+    return `rgba(${r},${g},${b},${a})`
+}
+
+var blobToText = function( blob ){
+    return new Promise((resolve,reject) => {
+        var reader = new FileReader();
+        reader.onload = function() {
+
+        try
+        {
+            resolve(reader.result);
+        }
+        catch( er )
+        {
+            debugger;
+            reject(er);
+        }
+        reader.onerror = reject;
+    }
+    reader.readAsText(blob);
+    }) 
+}

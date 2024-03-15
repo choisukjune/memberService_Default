@@ -1,4 +1,4 @@
-(function(){
+(async function(){
     var renderEmailLogin = async function(){
         console.log( "[S] - renderEmailLogin" );
         var html = await asyncFetch_GET("/getHtml?fileNm=emailLogin");
@@ -31,21 +31,21 @@
         return JSON.parse(jsonPayload);
     };
     
+
     function handleCredentialResponse(response) {
         console.log("Encoded JWT ID token: " + response.credential);
         var vvv = parseJwt(response.credential)
         console.log(vvv)
-      }
-        google.accounts.id.initialize({
-          client_id: "144090840805-v8tngl71gvd3uudbsjeusrf7mha5pumn.apps.googleusercontent.com",
-          callback: handleCredentialResponse
-        });
-        google.accounts.id.renderButton(
-          document.getElementById("buttonDiv"),
-          { theme: "outline", size: "large",width: "312" }  // customization attributes
-        );
+    }
+    google.accounts.id.initialize({
+        client_id: "144090840805-v8tngl71gvd3uudbsjeusrf7mha5pumn.apps.googleusercontent.com",
+        callback: handleCredentialResponse
+    });
+    google.accounts.id.renderButton(
+        document.getElementById("buttonDiv"),
+        { theme: "outline", size: "large",width: "312" }  // customization attributes
+    );
     google.accounts.id.prompt(); // also display the One Tap dialog
-
 
     //DOM;
     window.el.btn.emaillogin = window.document.getElementById("btnEmailLogin");
