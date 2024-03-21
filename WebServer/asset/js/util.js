@@ -59,10 +59,10 @@ var asyncFetch_POST_JSONDATA_Text = async function(url,data){
 	return resText;
 }
 var asyncFetch_GET = async function( url ){
-	const response = await fetch(url,
-	{
-		method: 'GET',
-	});
+    var option = {
+		method : "GET",
+	};
+	const response = await fetch(url, option );
 	const data = await response.text();
 	console.log(data)
 	return data;
@@ -608,10 +608,16 @@ var checkSession = async function(){
 
 var deleteSession = async function(){
     var sid = getCookie("sid");
-    if( sid ){
+    if( sid )
+    {
         var r = await asyncFetch_GET("/api/deletesession?sid=" + sid);
-        console.log( r ) ;
+        return console.log( r ) ;
     }
+    else
+    {
+        return;
+    }
+
 }
 
 function randomRgbaString (alpha) {
@@ -633,7 +639,6 @@ var blobToText = function( blob ){
         }
         catch( er )
         {
-            debugger;
             reject(er);
         }
         reader.onerror = reject;
