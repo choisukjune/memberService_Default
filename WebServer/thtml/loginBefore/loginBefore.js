@@ -51,24 +51,25 @@
         document.getElementById("buttonDiv"),
         { theme: "outline", size: "large",width: "312" }  // customization attributes
     );
-   // google.accounts.id.prompt(); // also display the One Tap dialog
-    google.accounts.id.prompt((notification) => {
-        debugger;
-        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-          // continue with another identity provider.
-            // notification.getNotDisplayedReason();
-            // notification.isDisplayMoment();
-            // notification.isDisplayed();
-            // notification.isNotDisplayed();
-            // notification.getNotDisplayedReason();
-            // notification.isSkippedMoment();
-            // notification.getSkippedReason();	
-            // notification.isDismissedMoment();
-            // notification.getDismissedReason();	
-            // notification.getMomentType();
-          debugger;
-        }
-      });
+   google.accounts.id.prompt(); // also display the One Tap dialog
+   //https://developers.google.com/identity/gsi/web/reference/js-reference?hl=ko#CredentialResponse
+    // google.accounts.id.prompt((notification) => {
+    //     debugger;
+    //     //if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+    //       // continue with another identity provider.
+    //         // notification.getNotDisplayedReason();
+    //         // notification.isDisplayMoment();
+    //         // notification.isDisplayed();
+    //         // notification.isNotDisplayed();
+    //         // notification.getNotDisplayedReason();
+    //         // notification.isSkippedMoment();
+    //         // notification.getSkippedReason();	
+    //         // notification.isDismissedMoment();
+    //         // notification.getDismissedReason();	
+    //         // notification.getMomentType();
+    //       debugger;
+    //    // }
+    //   });
     //DOM;
     window.el.btn.emaillogin = window.document.getElementById("btnEmailLogin");
     window.el.btn.join = window.document.getElementById("btnJoin"); 
