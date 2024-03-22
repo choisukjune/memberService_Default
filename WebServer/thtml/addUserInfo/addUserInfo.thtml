@@ -27,8 +27,16 @@
     </div>
     
     <!-- <form class="ui large form"> -->
+    
+    <div class="field text_align_left" style="margin-bottom: 20px;">
+        <label>유저이메일</label>
+        <div class="ui icon fluid disabled input">
+            <input id="userId" data-validate="false" type="text" name="email" placeholder="이메일">
+        </div>
+    </div>
 
-    <div class="field" style="margin-bottom: 20px;">
+    <div class="field text_align_left" style="margin-bottom: 20px;">
+        <label>유저네임</label>
         <div class="ui icon fluid input loading">
             <input id="username" data-validate="false" type="text" name="username" placeholder="유저네임">
             <i id="emailInputLoader" class="search icon displayNone" style="right: 70px!important;"></i>
@@ -42,7 +50,8 @@
         
     </div>
     
-    <div class="field" style="margin-bottom: 20px;">
+    <div class="field text_align_left" style="margin-bottom: 20px;">
+        <label>핸드폰번호</label>
         <div class="ui icon fluid input">
             <input id="mobile" data-validate="false" type="text" name="mobile" placeholder="핸드폰번호">
         </div>
@@ -50,18 +59,23 @@
     <div class="ui horizontal divider colorWhite" style="margin-top: 40px;">
     추가정보(선택)
     </div>
-    <div class="field" style="margin-bottom: 20px;">
+    
+    <div class="field text_align_left" style="margin-bottom: 20px;">
+        <label>추가정보1</label>
         <div class="ui icon fluid input">
             <input id="addInfo1" data-validate="false" type="text" name="addInfo1" placeholder="추가정보1">
         </div>
     </div>
-    <div class="field" style="margin-bottom: 20px;">
+    
+    <div class="field text_align_left" style="margin-bottom: 20px;">
+        <label>추가정보2</label>
         <div class="ui icon fluid input">
             <input id="addInfo2" data-validate="false" type="text" name="addInfo2" placeholder="추가정보2">
         </div>
     </div>
 
-    <div class="field" style="margin-bottom: 20px;">
+    <div class="field text_align_left" style="margin-bottom: 20px;">
+        <label>추가정보3</label>
         <div class="ui icon fluid input">
             <input id="addInfo3" data-validate="false" type="text" name="addInfo3" placeholder="추가정보3">
         </div>

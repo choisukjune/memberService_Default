@@ -735,7 +735,126 @@ async function generateSessionSecret() {
 		
 
 	});
-	
+
+	var addUserInfo = async function( data ){
+		console.log( "[S] - addUserInfo" );
+
+		console.log( "data - ", data );
+		/*
+		//data scheme;
+		{
+			"_id":{"$oid":"65f2c197538e6aaa8dd9a6dc"},
+			"userId":"test@naver.com",
+			"mobile":"",
+			"name":"",
+			"profile_image":"",
+			"userInfos":{
+				"site":{},
+				"google":{},
+				"naver":{},
+				"kakao":{}
+			},
+			"username":"test@naver.com"
+		}
+		*/
+		try {
+			
+			await client.connect();
+			
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("memberInfo");
+
+			var userInfo = {
+				userId : data.userId,
+				username : data.username,
+				profile_image : data.profile_image,
+				mobile : data.mobile,
+				name : data.name,
+				userInfos : {
+					site : {
+						userId : data.userId,
+						username : data.username,
+						profile_image : data.profile_image,
+						mobile : data.mobile,
+						name : data.name,
+					},
+					google : {},
+					naver : {},
+					kakao : {},
+				}
+			}
+
+			const query = { userId : data.userId };
+			const update = { $set: userInfo};
+			const options = { upsert: true };
+
+			let r0 = await col0.updateOne(query, update, options);
+			console.log( r0 )
+			/*
+			{
+				acknowledged: true,
+				modifiedCount: 1,
+				upsertedId: null,
+				upsertedCount: 0,
+				matchedCount: 1
+			}
+			*/
+			var r = { success : 0, m : "업데이트완료" };
+			console.log( "[E] - addUserInfo" );
+			return r;
+			
+		  } finally {
+			await client.close();
+		  }
+	}
+
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8888/find?brand=varihope&page=1
+	* </code>
+	*/
+	global.server.addRouter("/addUserInfo",async function( req, res, data ){
+
+		console.log("[ S ] - /addUserInfo");
+
+		console.log( data )
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		var paramBody = JSON.parse( data )
+
+		//console.log( parseCookie( req.headers.cookie ) );
+
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+		var r =  await addUserInfo( paramBody );
+		
+		console.log( "/addUserInfo - result : ",r );
+		console.log("[ E ] - /addUserInfo");
+
+		res.end( JSON.stringify( r ) )	
+
+	});
 })();
 
 //-------------------------------------------------------;

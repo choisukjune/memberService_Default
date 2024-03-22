@@ -12,9 +12,10 @@
 			let a = alpha
 			return `rgba(${r},${g},${b},${a})`
 		}
-		if( _d.profile_image != "" ) var imgsrc = _d.profile_image;
-		else var imgsrc = "data:image/svg+xml," + `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0,0,20,20' width='320' height='320'><rect height='20' width='20' fill='${randomRgbaString(100)}'/><text fill='white' x='10' y='14.8' font-size='14' font-family='-apple-system,BlinkMacSystemFont,Trebuchet MS,Roboto,Ubuntu,sans-serif' text-anchor='middle'>${_d.username[1].toUpperCase()}</text></svg>`
-	
+
+		if( _d.profile_image ) var profile_image = _d.profile_image;
+    	else var profile_image = makeAvatarImg(_d.username);
+
 		if( _d.name ) var name = _d.name;
 		else var name = " - ";
 
@@ -28,7 +29,7 @@
 		else var mobile = " - ";
 
 		
-		html = _thtml.replace("{IMG_SRC}",imgsrc)
+		html = _thtml.replace("{IMG_SRC}",profile_image)
 		.replace(/{USER_NAME}/gi,name)
 		.replace("{NICK_NAME}",username)
 		.replace("{EMAIL}",email)

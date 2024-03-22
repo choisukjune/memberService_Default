@@ -507,7 +507,73 @@ var memberJoin = function( data, cbFunction ){
 
 		
 	});
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
 
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8889/html/test.html
+	* </code>
+	*/
+	global.server.addRouter("/api/addUserInfo",function( req, res, data ){
+
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		console.log( "====>",data );
+		var paramsBody = data;
+		console.log( paramsBody )
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+
+		// var _d = { email : data.email, pass : data.pass }
+		console.log("-----")
+		var option = {
+			host: 'localhost',
+			port: '8888',
+			path: '/addUserInfo',
+			method: 'POST',
+			headers: {
+				"content-type": "application/json",
+				//"Content-Length": Buffer.byteLength(post_data)
+			}
+		};
+
+		httpPostCallback( option, paramsBody, function(d){
+
+
+			var r = JSON.parse( d );
+			console.log( "_d.success ==>", r.success )
+			if( r.success ) res.end( d );
+			else
+			{
+				console.log( "====>", r );
+				//res.setHeader('Set-Cookie', 'sid=' + r.sid + "; max-age=" + 3600 + "; path=/;" );
+				//res.statusCode = 301;
+				//res.writeHead(200, { 'Content-Type': 'text/html;charset=UTF-8' });
+				res.end( d );	
+			}
+			
+		})
+
+		
+	});
 })();
 
 //-------------------------------------------------------;

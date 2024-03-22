@@ -264,12 +264,6 @@
     <div id="container" class="ui middle aligned center aligned grid" style="height: 100%;">
     <!=HTML=!>
     </div>
-    <div class="some-wrapping-div">
-      <div class="ui custom button">Show custom popup</div>
-    </div>
-    <div class="ui custom popup top left transition hidden"  data-content="Bottom Center" data-position="bottom center">
-      I'm not on the same level as the button, but i can still be found.
-    </div>
       <!-- </div> -->
     <!-- </div> -->
   </body>

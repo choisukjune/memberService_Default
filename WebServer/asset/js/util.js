@@ -663,3 +663,17 @@ var usePageUri = function(){
     } 
     return;
 }
+
+function randomRgbaString (alpha) {
+    let r = Math.floor(Math.random() * 255)
+    let g = Math.floor(Math.random() * 255)
+    let b = Math.floor(Math.random() * 255)
+    let a = alpha
+    return `rgba(${r},${g},${b},${a})`
+}
+
+var makeAvatarImg = function(str){
+
+    return "data:image/svg+xml," + `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0,0,20,20' width='320' height='320'><rect height='20' width='20' fill='${randomRgbaString(100)}'/><text fill='white' x='10' y='14.8' font-size='14' font-family='-apple-system,BlinkMacSystemFont,Trebuchet MS,Roboto,Ubuntu,sans-serif' text-anchor='middle'>${str[0].toUpperCase()}</text></svg>`;
+
+}
