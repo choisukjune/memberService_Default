@@ -477,9 +477,8 @@ var render_loginBefore = async function(){
 
 var render_loginAfter = async function(){
     console.log( "[S] - render_loginAfter" );
-    // var html = await asyncFetch_GET("/getHtml?fileNm=loginAfter");
-    // console.log( html );
-    // window.document.getElementById("container").innerHTML = html;
+    await loadHtml("container","loginAfter");
+    // loadCss( "/asset/css/common.css" )
     loadJSscript('loginAfter','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
     console.log( "[E] - render_loginAfter" );
 }
