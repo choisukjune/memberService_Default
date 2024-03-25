@@ -47,6 +47,8 @@ window.el.fileInput.profileImg = window.document.getElementById("fileUpload");
 // window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
 // window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
 
+window.el.div = {};
+window.el.div.userNameTitle = window.document.getElementById("userNameTitle");
 
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -55,23 +57,32 @@ window.el.fileInput.profileImg = window.document.getElementById("fileUpload");
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
+var mobileCheck = function(str){
+	console.log( "[S] - checkEmail" );
+	var regex = /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/;
+	console.log("mobile check : ",regex.test(str));
+	console.log( "[E] - checkEmail" );
+    return regex.test(str)
+};
+const fileInput = document.getElementById("fileUpload");
+// 또는 const fileInput = $("#fileUpload").get(0);
 
 const handleFiles = (e) => {
-	
-	const selectedFile = [...window.el.fileInput.profileImg.files];
+	const selectedFile = [...fileInput.files];
 	const fileReader = new FileReader();
-
+  
 	var a = fileReader.readAsDataURL(selectedFile[0]);
 	console.log( selectedFile[0].name )
 	var orgFileNm = selectedFile[0].name;
 	fileReader.onload = async function () {
+	  //document.getElementById("previewImg").src = fileReader.result;
 	  console.log( fileReader.result )
 	  var t =  await asyncFetch_POST_JSONDATA("/api/uploadFile",{ data:fileReader.result,fileNm:orgFileNm})
 	  console.log( t );
 	};
-};
+  };
 
-var addUserInfo_init = async function(){
+var profile_init = async function(){
 	var a = await getUerInfoBySession();
 	window.el.input.username.value = a.username;
 	window.el.input.mobile.value = a.mobile;
@@ -86,8 +97,9 @@ var addUserInfo_init = async function(){
 	if( a.profile_image ) var profileImg = a.profile_image;
 	else var profileImg = makeAvatarImg( a.username );
 	window.el.img.profileImg.src = profileImg;
+	window.el.div.userNameTitle.innerText = `${a.username}님! 반갑습니다!`
 }
-addUserInfo_init();
+profile_init();
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -95,8 +107,25 @@ addUserInfo_init();
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
+//input validation 설정해야함....;
 window.evt = {}
-window.el.fileInput.profileImg.addEventListener("change", handleFiles);
+fileInput.addEventListener("change", handleFiles);
+window.el.input.mobile.addEventListener("focusout",function(evt){
+
+	var mobileNumber = evt.target.value;
+	debugger;
+	if( mobileCheck(mobileNumber) )
+	{
+		//성공
+		evt.target.parentElement.classList.remove("error")
+	}
+	else
+	{
+		//실패
+		//alert("휴대폰번호를 확인해주세요");
+		evt.target.parentElement.classList.add("error")
+	}
+})
 window.el.btn.saveAddInfo.addEventListener("click",async function(e){
 	console.log("window.el.btn.saveAddInfo - click!");
 	
@@ -154,8 +183,8 @@ window.el.btn.saveAddInfo.addEventListener("click",async function(e){
 	}
 	else
 	{
-		debugger;
-		location.href = "/"
+		//debugger;
+		profile_init();
 	}
 	
 })
