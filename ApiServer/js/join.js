@@ -855,6 +855,129 @@ async function generateSessionSecret() {
 		res.end( JSON.stringify( r ) )	
 
 	});
+
+	var deleteProfileImage = async function( data ){
+		console.log( "[S] - deleteProfileImage" );
+
+		console.log( "data - ", data );
+		/*
+		//data scheme;
+		{
+			"_id":{"$oid":"65f2c197538e6aaa8dd9a6dc"},
+			"userId":"test@naver.com",
+			"mobile":"",
+			"name":"",
+			"profile_image":"",
+			"userInfos":{
+				"site":{},
+				"google":{},
+				"naver":{},
+				"kakao":{}
+			},
+			"username":"test@naver.com"
+		}
+		*/
+		try {
+			
+			await client.connect();
+			
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("memberInfo");
+			const col1 = db.collection("session");
+
+			// Query for a movie that has the title 'The Room'
+			const _q = { 
+				sid : data.sid 
+			};
+			
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+
+			var options = {};
+			
+			// Execute query
+			var r1 = await col1.findOne(_q, options);
+			console.log( r1 )
+
+			var userInfo = {
+				profile_image : data.profile_image,
+			}
+
+			const query = { userId : r1.userId };
+			const update = { $set: userInfo};
+			var options = { upsert: true };
+
+			let r0 = await col0.updateOne(query, update, options);
+			console.log( r0 )
+			/*
+			{
+				acknowledged: true,
+				modifiedCount: 1,
+				upsertedId: null,
+				upsertedCount: 0,
+				matchedCount: 1
+			}
+			*/
+			var r = { success : 0, m : "업데이트완료" };
+			console.log( "[E] - deleteProfileImage" );
+			return r;
+			
+		  } finally {
+			await client.close();
+		  }
+	}
+
+	/**
+	 * 쿼리파일을 실행하는 라우터
+	 * @function
+	 * @param {http.ClientRequest} req
+	 * <code>
+		{
+
+		}
+	* </code>
+	*
+	* @param {http.ClientResponse} res
+	* <code>
+		{
+
+		}
+	* </code>
+	*
+	* @example
+	* <code>
+		http://localhost:8888/find?brand=varihope&page=1
+	* </code>
+	*/
+	global.server.addRouter("/deleteProfileImage",async function( req, res, data ){
+
+		console.log("[ S ] - /deleteProfileImage");
+
+		console.log( data )
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		var paramBody = JSON.parse( data )
+
+		//console.log( parseCookie( req.headers.cookie ) );
+
+		res.statusCode = 200;
+		res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+		res.setHeader( "Access-Control-Allow-Origin", "*" );
+		res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+		
+		var r =  await deleteProfileImage( paramBody );
+		
+		console.log( "/deleteProfileImage - result : ",r );
+		console.log("[ E ] - /deleteProfileImage");
+
+		res.end( JSON.stringify( r ) )	
+
+	});
 })();
 
 //-------------------------------------------------------;

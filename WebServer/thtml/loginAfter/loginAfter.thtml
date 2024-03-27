@@ -9,7 +9,7 @@
         <label for="fileUpload" class="ui tiny blue button">
             프로필 업로드
         </label>
-        <label class="ui tiny button">
+        <label id="profileImgDelete" class="ui tiny button">
             삭제
         </label>
 

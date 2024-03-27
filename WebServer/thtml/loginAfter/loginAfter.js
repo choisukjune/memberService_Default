@@ -1,3 +1,5 @@
+// const { getCookies } = require("undici-types");
+
 (function(){
 
 //-------------------------------------------------------;
@@ -33,7 +35,7 @@ window.el.input.addInfo3 = window.document.getElementById("addInfo3");
 window.el.btn = {}
 window.el.btn.saveAddInfo = window.document.getElementById("saveAddInfo");
 window.el.btn.profileSave = window.document.getElementById("profileSave");
-window.el.btn.profileDelete = window.document.getElementById("profileDelete");
+window.el.btn.profileDelete = window.document.getElementById("profileImgDelete");
 window.el.btn.logout = window.document.getElementById("logout");
 window.el.btn.changePass = window.document.getElementById("changePass");
 
@@ -79,9 +81,17 @@ const handleFiles = (e) => {
 	  console.log( fileReader.result )
 	  var t =  await asyncFetch_POST_JSONDATA("/api/uploadFile",{ data:fileReader.result,fileNm:orgFileNm})
 	  console.log( t );
+	  profile_img_reload();
 	};
   };
 
+var profile_img_reload = async function(){
+	var a = await getUerInfoBySession();
+	if( a.profile_image ) var profileImg = a.profile_image;
+	else var profileImg = makeAvatarImg( a.username );
+	window.el.img.profileImg.src = profileImg;
+}
+  
 var profile_init = async function(){
 	var a = await getUerInfoBySession();
 	window.el.input.username.value = a.username;
@@ -110,6 +120,31 @@ profile_init();
 //input validation 설정해야함....;
 window.evt = {}
 fileInput.addEventListener("change", handleFiles);
+window.el.btn.profileDelete.addEventListener("click",async function(e){
+
+	var sid = getCookie("sid");
+	var a = await getUerInfoBySession();
+
+	var profileImg = makeAvatarImg( a.username );
+
+	var postData = {
+		sid : sid,
+		profile_image : profileImg,
+	};
+	
+	var t =  await asyncFetch_POST_JSONDATA("/api/deleteProfileImage",postData)
+	console.log( t );
+	if( t.success )
+	{
+		debugger;
+		alert("test")
+	}
+	else
+	{
+		//debugger;
+		profile_init();
+	}
+})
 window.el.input.mobile.addEventListener("focusout",function(evt){
 
 	var mobileNumber = evt.target.value;

@@ -79,6 +79,7 @@ global.server = http.createServer(function(req, res){
 
 	//var routerNm = req.url.replace(/\//,"");
 	var routerNm = req.url.split("?")[0];
+	var uri = decodeURI( req.url.split("?")[0] );
 	console.log(req.url)
 	if (req.method == 'POST') {
         var jsonString = '';
@@ -122,8 +123,8 @@ global.server = http.createServer(function(req, res){
 			".ico": "image/x-icon",
 			".ics": "text/calendar",
 			".jar": "application/java-archive",
-			".jpeg.jpg": "image/jpeg",
-			".jpg.jpg": "image/jpeg",
+			".jpeg": "image/jpeg",
+			".jpg": "image/jpeg",
 			".js": "application/js",
 			".json": "application/json",
 			".midi": "audio/midi",
@@ -197,6 +198,7 @@ global.server = http.createServer(function(req, res){
 			res.end(_t, 'utf-8');
 			return;
 		}
+		
 		// else if( urlPath == "/favicon.ico" ){
 		// 	//console.log( req.url.split("?")[0] )
 			
@@ -206,12 +208,14 @@ global.server = http.createServer(function(req, res){
 		// }
 		else
 		{
-			var filePath = '.' + req.url.split("?")[0];
+			var filePath = '.' + uri;
 		}
 
-		//console.log( req.url );
-
+		console.log( req.url );
+		
 		var extname = path.extname(filePath);
+		console.log( "extname = ",extname );
+		console.log( "filePath = ",filePath );
 		var contentType = _oContentTypes[ extname ];
 
 		res.writeHead(200, { 'Content-Type': contentType + ';charset=UTF-8' });		
@@ -219,6 +223,7 @@ global.server = http.createServer(function(req, res){
 		fs.readFile(filePath, function(error, content) {
 			if(error)
 			{
+				console.log( "error = ",error )
 				if(error.code == 'ENOENT')
 				{
 					res.statusCode = 404;
