@@ -222,7 +222,7 @@ function num2han(num) {
             {
                 continue;
             }
-            str += number[num] + smallUnit[i];    
+            str += number[num] + smallUnit[i];
         }    
         return str;  
     }  
