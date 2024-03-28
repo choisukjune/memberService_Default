@@ -641,6 +641,82 @@ var memberJoin = function( data, cbFunction ){
 		res.end()
 
 	});
+
+	//구글크롬사용
+	global.server.addRouter("/api/oauth/google/browser",async function( req, res, data ){
+
+		var routerNm = req.url.split("?")[0];
+		var paramsO = paramToObject( req.url );
+		console.log( "====>",data );
+		var paramsBody = data;
+		console.log( paramsBody )
+
+		var code = paramsO.code;
+    	var state = paramsO.state;
+		
+		/*
+		//get access_token;
+		{
+			"iss": "https://accounts.google.com",
+			"azp": "144090840805-v8tngl71gvd3uudbsjeusrf7mha5pumn.apps.googleusercontent.com",
+			"aud": "144090840805-v8tngl71gvd3uudbsjeusrf7mha5pumn.apps.googleusercontent.com",
+			"sub": "107918654645068704276",
+			"hd": "goorm.io",
+			"email": "john.choi@goorm.io",
+			"email_verified": true,
+			"nbf": 1711594766,
+			"name": "john choi",
+			"picture": "https://lh3.googleusercontent.com/a/ACg8ocJtCoBIhRcZt-1NeqLz8EUQJN1fa16XzQIzzRk-j-_KDw=s96-c",
+			"given_name": "john",
+			"family_name": "choi",
+			"iat": 1711595066,
+			"exp": 1711598666,
+			"jti": "ae8679016d3479ffbee4eab0347a16d7c0b25eef"
+		}
+
+		//userInfo;
+		{
+			id: '114521993641336835103',
+			email: 'sukjune.choi@gmail.com',
+			verified_email: true,
+			name: 'suk june Choi',
+			given_name: 'suk june',
+			family_name: 'Choi',
+			picture: 'https://lh3.googleusercontent.com/a/ACg8ocKr7hLlmyvcHvYUz3s15TgfygAE_SoW7KuRgBERWKFmK5o=s96-c',
+			locale: 'ko'
+		}
+		*/
+
+		console.log( "google browser login sucesss!" );
+		
+		// res.end(JSON.stringify(b));
+		
+		var options = {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify( paramsBody )
+
+		};
+		
+		try {
+			var c = await fetch('http://localhost:8888/googleLogin', options )
+			const data = await c.json();
+			console.log( "google browser login = ",data )
+			//res.end( JSON.stringify(data) );
+			// api 서버 디비등록하고 세션발급하는 로직 생성후 만들기;
+				res.setHeader('Set-Cookie', 'sid=' + data.sid + "; max-age=" + 3600 + "; path=/;" );
+				res.writeHead(301, {'Location': '/'});
+				res.end(d);
+			//return data;
+		} catch (e) {
+			//return e;
+			res.end( JSON.stringify(e) );
+		}    
+
+	});
 })();
 
 //-------------------------------------------------------;

@@ -887,7 +887,7 @@ function randomStr(){
 
 			res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
 		}
-		res.end( t )
+		//res.end( t )
 		/*/
 		res.end( JSON.stringify( paramBody ) )
 		//*/

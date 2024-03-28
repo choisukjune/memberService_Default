@@ -32,10 +32,19 @@
     };
     
 
-    function handleCredentialResponse(response) {
+    async function handleCredentialResponse(response) {
         console.log("Encoded JWT ID token: " + response.credential);
         var vvv = parseJwt(response.credential)
         console.log(vvv)
+
+        //기존은 /api/oauth/google 로 요청하여 구글로그인 진행중;
+        ///api/oauth/google/browser 로 post request!
+
+        var url = "/api/oauth/google/browser";
+        var t = await asyncFetch_POST_JSONDATA_Text(url,vvv)
+        console.log( t );
+
+        debugger;
     }
     //https://developers.google.com/identity/gsi/web/reference/js-reference?hl=ko
     //참고!
