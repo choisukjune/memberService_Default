@@ -707,9 +707,17 @@ var memberJoin = function( data, cbFunction ){
 			console.log( "google browser login = ",data )
 			//res.end( JSON.stringify(data) );
 			// api 서버 디비등록하고 세션발급하는 로직 생성후 만들기;
-				res.setHeader('Set-Cookie', 'sid=' + data.sid + "; max-age=" + 3600 + "; path=/;" );
-				res.writeHead(301, {'Location': '/'});
-				res.end(d);
+			console.log( "------------------------------")
+			console.log( "sid = ", data.sid );
+			console.log( "------------------------------")
+			res.statusCode = 200;
+			res.setHeader( "Access-Control-Allow-Headers", "Content-Type" );
+			res.setHeader( "Access-Control-Allow-Origin", "*" );
+			res.setHeader( "Access-Control-Allow-Methods", "OPTIONS,POST,GET" );
+			res.setHeader('Set-Cookie', 'sid=' + data.sid + "; max-age=" + 3600 + "; path=/;" );
+			//res.writeHead(301, {'Location': '/'});
+			res.end(JSON.stringify(data));
+		
 			//return data;
 		} catch (e) {
 			//return e;

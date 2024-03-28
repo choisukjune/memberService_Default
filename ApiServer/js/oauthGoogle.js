@@ -427,7 +427,44 @@ function randomStr(){
 	// 생성된 세션 시크릿 키 출력
 	// const sessionSecret = generateSessionSecret();
 	// console.log('Generated Session Secret:', sessionSecret);
+	var getMemberInfo = async function( email ){
+		
+		
+		try
+		{
 
+			await client.connect();
+			// Get the database and collection on which to run the operation
+			const db = client.db("data");
+			const col0 = db.collection("memberInfo");
+			// Query for a movie that has the title 'The Room'
+			const _q = { 
+				userId : email 
+			};
+			
+			// const options = {
+			//   // Sort matched documents in descending order by rating
+			//   sort: { "imdb.rating": -1 },
+			//   // Include only the `title` and `imdb` fields in the returned document
+			//   projection: { _id: 0, title: 1, imdb: 1 },
+			// };
+
+			var options = {};
+			
+			// Execute query
+			const r = await col0.findOne(_q, options);
+			console.log( r )
+
+			return r;
+			
+		}
+		finally
+		{
+			await client.close();
+		}
+		
+		  
+	}
 	var insertSesstion = async function( data, cbFunction ){
 
 		try {
@@ -882,10 +919,11 @@ function randomStr(){
 			console.log( "-------------------------" );
 			var sid = generateSessionSecret();
 			await insertSesstion( { sid : sid, userId : paramBody.email } )
+			var memberInfo = await getMemberInfo( paramBody.email )
 
-			console.log("[ E ] - /naverLogin");
+			console.log("[ E ] - /googleLogin");
 
-			res.end( JSON.stringify( { sid : sid, d : paramBody } ) )	
+			res.end( JSON.stringify( { sid : sid, d : memberInfo } ) )	
 		}
 		//res.end( t )
 		/*/

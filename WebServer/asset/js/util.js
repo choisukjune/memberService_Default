@@ -25,11 +25,22 @@
     - 그외 상태 : 인터넷에서 http 응답 상태를 검색해서 확인
 */
 
+/**
+ * 쿠키 값을 가져오는 함수
+ * @param {string} name 쿠키 이름
+ * @returns {string|null} 쿠키 값 또는 null
+ */
 var getCookie = function(name) {      
 	var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');     
 	return value? value[2] : null;  
 };
 
+/**
+ * 비동기 함수: 주어진 URL로 POST 요청을 보내고 JSON 데이터를 전송함
+ * @param {string} url - 요청을 보낼 URL
+ * @param {Object} data - 전송할 JSON 데이터
+ * @returns {Promise<Object>} - 요청에 대한 응답으로 받은 JSON 데이터의 Promise 객체
+ */
 var asyncFetch_POST_JSONDATA = async function(url,data){
 	var option = {
 		method : "POST",
@@ -44,6 +55,13 @@ var asyncFetch_POST_JSONDATA = async function(url,data){
 	console.log( "asyncFetch_POST_JSONDATA - resText : ", resText )
 	return resText;
 }
+
+/**
+ * 비동기 함수: 주어진 URL로 POST 요청을 보내고 JSON 데이터를 전송하며, 응답으로 받은 텍스트 데이터를 반환함
+ * @param {string} url - 요청을 보낼 URL
+ * @param {Object} data - 전송할 JSON 데이터
+ * @returns {Promise<string>} - 요청에 대한 응답으로 받은 텍스트 데이터의 Promise 객체
+ */
 var asyncFetch_POST_JSONDATA_Text = async function(url,data){
 	var option = {
 		method : "POST",
@@ -58,6 +76,12 @@ var asyncFetch_POST_JSONDATA_Text = async function(url,data){
 	console.log( "asyncFetch_POST_JSONDATA - resText : ", resText )
 	return resText;
 }
+
+/**
+ * 비동기 함수: 주어진 URL로 GET 요청을 보내고, 응답으로 받은 데이터를 텍스트 형식으로 반환함
+ * @param {string} url - 요청을 보낼 URL
+ * @returns {Promise<string>} - 요청에 대한 응답으로 받은 텍스트 데이터의 Promise 객체
+ */
 var asyncFetch_GET = async function( url ){
     var option = {
 		method : "GET",
@@ -67,8 +91,6 @@ var asyncFetch_GET = async function( url ){
 	console.log(data)
 	return data;
 }
-
-
 /* 이벤트 함수 정의 */
 function requestGet( url, cbFunction ){
     console.log("");
@@ -435,12 +457,16 @@ var getUerInfoBySession = async function( cbfunction ){
 };
 
 var loadJSscript = function(id, js_src, callback) {
-        if (document.getElementById(id)) { return; }
+        if (document.getElementById(id)) { 
+            var scTarget = document.getElementById(id);
+            scTarget.remove();
+            // return; 
+        }
         var my_head = document.getElementsByTagName('head')[0];
         var my_js = document.createElement('script');
         my_js.id = id;
         my_js.type= 'text/javascript';
-        my_js.async = true;
+        //my_js.async = true;
         my_js.src = js_src;
         my_js.addEventListener("load", function(event) { if(callback && typeof callback == "function"){ callback(); }});
         my_head.appendChild(my_js);
@@ -465,7 +491,7 @@ var render_loginBefore = async function(){
     console.log( "[S] - render_loginBefore" );
     await loadHtml("container","loginBefore");
     loadCss( "/asset/css/common.css" )
-    loadJSscript('loginBefore','/thtml/loginBefore/loginBefore.js', function (){
+    loadJSscript('loginBeforeScript','/thtml/loginBefore/loginBefore.js', function (){
         // if(typeof my_example_init == "function")
         // {
             //my_example_init();
@@ -479,7 +505,7 @@ var render_loginAfter = async function(){
     console.log( "[S] - render_loginAfter" );
     await loadHtml("container","loginAfter");
     // loadCss( "/asset/css/common.css" )
-    loadJSscript('loginAfter','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
+    loadJSscript('loginAfterScript','/thtml/loginAfter/loginAfter.js',function(){console.log("OK!")})
     console.log( "[E] - render_loginAfter" );
 }
 
@@ -489,7 +515,7 @@ var render_addUserInfo = async function(){
 
     await loadHtml("container","addUserInfo");
     // loadCss( "/asset/css/common.css" )
-    loadJSscript('addUserInfo','/thtml/addUserInfo/addUserInfo.js', function (){
+    loadJSscript('addUserInfoScript','/thtml/addUserInfo/addUserInfo.js', function (){
         // if(typeof my_example_init == "function")
         // {
             //my_example_init();
@@ -504,7 +530,7 @@ var render_badgeLoginAfter = async function(){
 
     await loadHtml("container","badgeLoginAfter");
     // loadCss( "/asset/css/common.css" )
-    loadJSscript('badgeLoginAfter','/thtml/badgeLoginAfter/badgeLoginAfter.js', function (){
+    loadJSscript('badgeLoginAfterScript','/thtml/badgeLoginAfter/badgeLoginAfter.js', function (){
         // if(typeof my_example_init == "function")
         // {
             //my_example_init();
@@ -516,10 +542,10 @@ var render_badgeLoginAfter = async function(){
 
 var render_badgeLoginBefore = async function(){
     console.log( "[S] - render_badgeLoginBefore" );
-
+    debugger;
     await loadHtml("container","badgeLoginBefore");
     // loadCss( "/asset/css/common.css" )
-    loadJSscript('badgeLoginBefore','/thtml/badgeLoginBefore/badgeLoginBefore.js', function (){
+    loadJSscript('badgeLoginBeforeScript','/thtml/badgeLoginBefore/badgeLoginBefore.js', function (){
         // if(typeof my_example_init == "function")
         // {
             //my_example_init();
@@ -534,7 +560,7 @@ var emailLogin = async function(){
 
     await loadHtml("container","emailLogin");
     // loadCss( "/asset/css/common.css" )
-    loadJSscript('emailLogin','/thtml/emailLogin/emailLogin.js', function (){
+    loadJSscript('emailLoginScript','/thtml/emailLogin/emailLogin.js', function (){
         // if(typeof my_example_init == "function")
         // {
             //my_example_init();

@@ -41,10 +41,27 @@
         ///api/oauth/google/browser 로 post request!
 
         var url = "/api/oauth/google/browser";
-        var t = await asyncFetch_POST_JSONDATA_Text(url,vvv)
-        console.log( t );
-
-        debugger;
+        var t = await asyncFetch_POST_JSONDATA_Text(url,vvv);
+        var r = JSON.parse( t );
+        console.log( "=======",t );
+        if( r )
+        {
+            debugger;
+            var a =  await checkSession(); //true,false;
+            if( !a ){
+                debugger;
+                render_badgeLoginBefore();
+            }
+            else
+            {
+                render_badgeLoginAfter();
+            }
+        }
+        else
+        {
+            debugger;
+            alert("test")
+        }
     }
     //https://developers.google.com/identity/gsi/web/reference/js-reference?hl=ko
     //참고!
