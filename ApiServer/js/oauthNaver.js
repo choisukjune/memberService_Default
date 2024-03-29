@@ -445,10 +445,10 @@ function randomStr(){
 
 			var userInfo = {
 				userId : data.email,
-				username : "",
-				profile_image : "",
-				mobile : "",
-				name : data.name,
+				username : data.name,
+				profile_image : data.profile_image,
+				mobile : data.profile_image,
+				//name : data.name,
 				userInfos : {
 					site : {},
 					google : {},

@@ -5,6 +5,33 @@
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
+
+var element_init = function(){
+    window.el = {};
+    window.el.input = {};
+    window.el.btn = {};
+    window.el.div = {};
+    window.el.span = {};
+    window.el.img = {};
+    window.el.fileInput = {};
+}
+
+var event_init = function(){
+    window.evt = {};
+};
+
+
+var initPage = async function(){
+    var a =  await checkSession(); //true,false;
+    if( !a )
+    {
+        render_badgeLoginBefore();
+    }
+    else
+    {
+        render_badgeLoginAfter();
+    }
+}
 /* 
 [요약 설명]
 1. XMLHttpRequest : 비동기식 통신 방식 객체이며, 서버와 데이터를 교환할 때 사용됩니다
@@ -325,7 +352,20 @@ var getUerInfoBySession = async function( cbfunction ){
     return r;
     
 }
-    
+var render_index = async function(){
+    console.log( "[S] - render_index" );
+    //await loadHtml("container","loginBefore");
+    //loadCss( "/asset/css/common.css" )
+    loadJSscript('indexScript','/thtml/index/index.js', function (){
+        // if(typeof my_example_init == "function")
+        // {
+            //my_example_init();
+            console.log("success")
+        // } 
+    });
+    console.log( "[E] - render_index" );
+}
+
 var renderBeforeLogin = async function(){
     console.log( "[S] - renderBeforeLogin" );
     var html = await asyncFetch_GET("/getHtml?fileNm=loginBefore");
@@ -466,7 +506,7 @@ var loadJSscript = function(id, js_src, callback) {
         var my_js = document.createElement('script');
         my_js.id = id;
         my_js.type= 'text/javascript';
-        //my_js.async = true;
+        my_js.async = true;
         my_js.src = js_src;
         my_js.addEventListener("load", function(event) { if(callback && typeof callback == "function"){ callback(); }});
         my_head.appendChild(my_js);
@@ -530,6 +570,7 @@ var render_badgeLoginAfter = async function(){
 
     await loadHtml("container","badgeLoginAfter");
     // loadCss( "/asset/css/common.css" )
+    debugger;
     loadJSscript('badgeLoginAfterScript','/thtml/badgeLoginAfter/badgeLoginAfter.js', function (){
         // if(typeof my_example_init == "function")
         // {

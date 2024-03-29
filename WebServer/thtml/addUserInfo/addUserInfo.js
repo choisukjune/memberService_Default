@@ -16,9 +16,9 @@
 //-------------------------------------------------------;
 debugger;
 
+element_init();
 console.log( "adduserinfo.html" )
-window.el = {};
-window.el.input = {};
+
 window.el.input.username = window.document.getElementById("username");
 window.el.input.mobile = window.document.getElementById("mobile");
 window.el.input.userId = window.document.getElementById("userId");
@@ -29,15 +29,12 @@ window.el.input.addInfo2 = window.document.getElementById("addInfo2");
 //추가정보1
 window.el.input.addInfo3 = window.document.getElementById("addInfo3");
 
-window.el.btn = {}
 window.el.btn.saveAddInfo = window.document.getElementById("saveAddInfo");
 window.el.btn.profileSave = window.document.getElementById("profileSave");
 window.el.btn.profileDelete = window.document.getElementById("profileDelete");
 
-window.el.img = {};
 window.el.img.profileImg = window.document.getElementById("profileImg");
 
-window.el.fileInput = {};
 window.el.fileInput.profileImg = window.document.getElementById("fileUpload");
 // window.el.btn.showPassBt = window.document.getElementById("showPassBt");
 // window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");

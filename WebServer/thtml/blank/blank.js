@@ -235,12 +235,7 @@ window.addEventListener('DOMContentLoaded', function()
     //-------------------------------------------------------;
     //-------------------------------------------------------;
 
-    window.el = {};
-    window.el.input = {};
-
-    window.el.btn = {}
-    
-    window.el.div = {}
+    element_init();
     window.el.div.container = window.document.getElementById("container");
 
     

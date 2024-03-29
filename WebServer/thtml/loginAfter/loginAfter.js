@@ -1,15 +1,17 @@
 // const { getCookies } = require("undici-types");
 
 (function(){
-
+var fileNm = "loginAfter.js";
+console.log( fileNm );
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
-//REGEX;
+//INIT;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
-
+element_init();
+event_init();
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -17,11 +19,7 @@
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
-debugger;
 
-console.log( "adduserinfo.html" )
-window.el = {};
-window.el.input = {};
 window.el.input.username = window.document.getElementById("username");
 window.el.input.mobile = window.document.getElementById("mobile");
 window.el.input.userId = window.document.getElementById("userId");
@@ -32,24 +30,20 @@ window.el.input.addInfo2 = window.document.getElementById("addInfo2");
 //추가정보1
 window.el.input.addInfo3 = window.document.getElementById("addInfo3");
 
-window.el.btn = {}
 window.el.btn.saveAddInfo = window.document.getElementById("saveAddInfo");
 window.el.btn.profileSave = window.document.getElementById("profileSave");
 window.el.btn.profileDelete = window.document.getElementById("profileImgDelete");
 window.el.btn.logout = window.document.getElementById("logout");
 window.el.btn.changePass = window.document.getElementById("changePass");
 
-window.el.img = {};
 window.el.img.profileImg = window.document.getElementById("profileImg");
 
-window.el.fileInput = {};
 window.el.fileInput.profileImg = window.document.getElementById("fileUpload");
 // window.el.btn.showPassBt = window.document.getElementById("showPassBt");
 // window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
 // window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
 // window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
 
-window.el.div = {};
 window.el.div.userNameTitle = window.document.getElementById("userNameTitle");
 
 //-------------------------------------------------------;
@@ -109,6 +103,13 @@ var profile_init = async function(){
 	window.el.img.profileImg.src = profileImg;
 	window.el.div.userNameTitle.innerText = `${a.username}님! 반갑습니다!`
 }
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//Logic;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
+//-------------------------------------------------------;
 profile_init();
 //-------------------------------------------------------;
 //-------------------------------------------------------;
@@ -117,7 +118,7 @@ profile_init();
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 //-------------------------------------------------------;
-//input validation 설정해야함....;
+
 window.evt = {}
 fileInput.addEventListener("change", handleFiles);
 window.el.btn.profileDelete.addEventListener("click",async function(e){

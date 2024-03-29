@@ -15,95 +15,14 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script type="text/javascript">
 
-    var initPage = async function(){
-        var a =  await checkSession(); //true,false;
-        if( !a ){
-            debugger;
-            render_badgeLoginBefore();
-        }
-        else
-        {
-            render_badgeLoginAfter();
-        }
-    }
-
-
-
     window.addEventListener('DOMContentLoaded', function()
     {
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //REGEX;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //DOM element;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-
-        window.el = {};
-        window.el.input = {};
-        window.el.btn = {}
-        window.el.div = {}
-        window.el.span = {}
-        window.el.img = {}
-        
-        window.el.div.container = window.document.getElementById("container");
-
-        
-
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //Functions;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-
-    
-
-        initPage();
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //Event;
-        window.evt = {}
-
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        //-------------------------------------------------------;
-        $('.custom.button').popup({
-            popup : $('.custom.popup'),
-            on    : 'click'
-        });
-
-
-    
+		render_index();
     });
   
     </script>
   </head>
   <body>
-    <!-- <div class="ui stackable two column grid">
-      <div class="column" style="background-image:url('https://cdn-624f2791c1ac184990d5b36b.closte.com/wp-content/uploads/2020/05/outdoor-rock-climbing-for-beginners-woman-sport-climbing--1638x2048.jpg');background-size: 100%;">
-
-      </div>
-      <div class="column"> -->
-        <!-- <div id="naverIdLogin"><a id="naverIdLogin_loginButton" href="#" role="button"><img src="https://static.nid.naver.com/oauth/big_g.PNG" width=320></a></div> -->
     <div id="container" class="ui middle aligned center aligned grid" style="height: 100%;"></div>
-    <!--div class="some-wrapping-div">
-      <div class="ui custom button">Show custom popup</div>
-    </div-->
-    <!--div class="ui custom popup top left transition hidden"  data-content="Bottom Center" data-position="bottom center">
-      I'm not on the same level as the button, but i can still be found.
-    </div-->
-      <!-- </div> -->
-    <!-- </div> -->
   </body>
 </html>

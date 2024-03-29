@@ -15,20 +15,20 @@
 //-------------------------------------------------------;
 //-------------------------------------------------------;
 
-window.el = {};
-window.el.input = {};
+element_init();
+
 window.el.input.email = window.document.getElementById("inputEmail");
 window.el.input.password = window.document.getElementById("inputPassword");
 window.el.input.passwordCheck = window.document.getElementById("inputPasswordCheck");
 
-window.el.btn = {}
+
 window.el.btn.login = window.document.getElementById("btnLogin");
 window.el.btn.join = window.document.getElementById("btnJoin");
 window.el.btn.showPassBt = window.document.getElementById("showPassBt");
 window.el.btn.hidePassBt = window.document.getElementById("hidePassBt");
 window.el.btn.showPassBt1 = window.document.getElementById("showPassBt1");
 window.el.btn.hidePassBt1 = window.document.getElementById("hidePassBt1");
-window.el.div = {}
+
 window.el.div.errMessage = window.document.getElementById("errMessage");
 window.el.div.errMessage1 = window.document.getElementById("errMessage1");
 window.el.div.errMessage2 = window.document.getElementById("errMessage2");
